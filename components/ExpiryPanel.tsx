@@ -59,12 +59,12 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
   };
 
   const statusColor = !info.hasExpiry
-    ? 'bg-slate-100 text-slate-500'
+    ? 'bg-white/8 text-slate-400'
     : info.expired
-      ? 'bg-rose-100 text-rose-700'
+      ? 'bg-rose-900/30 text-rose-400'
       : info.daysLeft <= 14
-        ? 'bg-amber-100 text-amber-700'
-        : 'bg-emerald-100 text-emerald-700';
+        ? 'bg-amber-900/30 text-amber-400'
+        : 'bg-emerald-900/20 text-emerald-400';
 
   const statusLabel = !info.hasExpiry
     ? 'Pas de limite'
@@ -73,10 +73,9 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
       : `${info.daysLeft} jour${info.daysLeft !== 1 ? 's' : ''} restant${info.daysLeft !== 1 ? 's' : ''}`;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-[500] p-4"
+    <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-[500] p-4"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden"
-        style={{ animation: 'introSlideIn 0.28s cubic-bezier(0.34,1.56,0.64,1) both' }}>
+      <div className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 w-full max-w-md overflow-hidden animate-scale-in">
 
         {/* Header */}
         <div className="bg-gradient-to-r from-[#1e3a47] to-[#345d6e] px-7 py-5 flex items-center gap-4">
@@ -98,26 +97,26 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
 
         <div className="p-6 space-y-5">
           {/* Current status */}
-          <div className="bg-slate-50 rounded-2xl p-4 space-y-2.5 border border-slate-100">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">État actuel</p>
+          <div className="bg-white/4 rounded-2xl p-4 space-y-2.5 border border-white/6">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">État actuel</p>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-bold">Statut</span>
+              <span className="text-xs text-slate-400 font-bold">Statut</span>
               <span className={`text-xs font-black px-2.5 py-1 rounded-full ${statusColor}`}>{statusLabel}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-bold">Date d'expiration</span>
-              <span className="text-xs font-black text-slate-700">{fmtDate(info.expiryDate)}</span>
+              <span className="text-xs text-slate-400 font-bold">Date d'expiration</span>
+              <span className="text-xs font-black text-slate-200">{fmtDate(info.expiryDate)}</span>
             </div>
             {info.setBy && (
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-500 font-bold">Défini par</span>
-                <span className="text-xs font-bold text-slate-600">{info.setBy}</span>
+                <span className="text-xs text-slate-400 font-bold">Défini par</span>
+                <span className="text-xs font-bold text-slate-300">{info.setBy}</span>
               </div>
             )}
             {info.setDate && (
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-500 font-bold">Le</span>
-                <span className="text-xs font-bold text-slate-600">{fmtDate(info.setDate)}</span>
+                <span className="text-xs text-slate-400 font-bold">Le</span>
+                <span className="text-xs font-bold text-slate-300">{fmtDate(info.setDate)}</span>
               </div>
             )}
           </div>
@@ -126,16 +125,16 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
           {isAdmin && (
             <>
               {/* Mode toggle */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 p-1 bg-white/4 rounded-xl border border-white/6">
                 <button
                   onClick={() => setMode('date')}
-                  className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${mode === 'date' ? 'bg-[#345d6e] text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                  className={`flex-1 py-2 rounded-lg text-xs font-black transition-all ${mode === 'date' ? 'bg-[#345d6e] text-white shadow-lg shadow-[#345d6e]/25' : 'text-slate-500 hover:text-slate-300'}`}
                 >
                   Par date
                 </button>
                 <button
                   onClick={() => setMode('days')}
-                  className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${mode === 'days' ? 'bg-[#345d6e] text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                  className={`flex-1 py-2 rounded-lg text-xs font-black transition-all ${mode === 'days' ? 'bg-[#345d6e] text-white shadow-lg shadow-[#345d6e]/25' : 'text-slate-500 hover:text-slate-300'}`}
                 >
                   Par durée (jours)
                 </button>
@@ -144,18 +143,18 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
               {/* Input */}
               {mode === 'date' ? (
                 <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Nouvelle date d'expiration</label>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block">Nouvelle date d'expiration</label>
                   <input
                     type="date"
                     value={dateInput}
                     min={new Date().toISOString().split('T')[0]}
                     onChange={e => setDateInput(e.target.value)}
-                    className="w-full border-2 border-slate-200 focus:border-[#345d6e] focus:ring-2 focus:ring-[#345d6e]/20 px-4 py-2.5 rounded-xl text-slate-800 font-bold text-sm outline-none transition-all"
+                    className="premium-input w-full bg-white/5 border border-white/10 focus:border-[#345d6e]/50 focus:ring-2 focus:ring-[#345d6e]/20 px-4 py-2.5 rounded-xl text-slate-200 font-bold text-sm outline-none transition-all"
                   />
                 </div>
               ) : (
                 <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Nombre de jours à partir d'aujourd'hui</label>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block">Nombre de jours à partir d'aujourd'hui</label>
                   <input
                     type="number"
                     min="1"
@@ -163,7 +162,7 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
                     value={daysInput}
                     onChange={e => setDaysInput(e.target.value)}
                     placeholder="Ex: 365"
-                    className="w-full border-2 border-slate-200 focus:border-[#345d6e] focus:ring-2 focus:ring-[#345d6e]/20 px-4 py-2.5 rounded-xl text-slate-800 font-bold text-sm outline-none transition-all"
+                    className="premium-input w-full bg-white/5 border border-white/10 focus:border-[#345d6e]/50 focus:ring-2 focus:ring-[#345d6e]/20 px-4 py-2.5 rounded-xl text-slate-200 font-bold text-sm outline-none transition-all"
                   />
                 </div>
               )}
@@ -172,7 +171,7 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
               <button
                 onClick={handleSave}
                 disabled={mode === 'date' ? !dateInput : !daysInput || parseInt(daysInput) <= 0}
-                className="w-full py-3 bg-[#345d6e] hover:bg-[#2c5263] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black rounded-xl text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-[#345d6e] hover:bg-[#2c5263] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black rounded-xl text-sm transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-[#345d6e]/25"
               >
                 {saved ? (
                   <>
@@ -186,7 +185,7 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
               {info.hasExpiry && !confirmClear && (
                 <button
                   onClick={() => setConfirmClear(true)}
-                  className="w-full py-2 text-slate-400 hover:text-rose-500 font-bold text-xs rounded-xl hover:bg-rose-50 transition-all border border-slate-200"
+                  className="w-full py-2 text-slate-500 hover:text-rose-400 font-bold text-xs rounded-xl hover:bg-rose-900/15 transition-all border border-white/8"
                 >
                   Supprimer la limite d'expiration
                 </button>
@@ -194,14 +193,14 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
               {confirmClear && (
                 <div className="flex gap-2">
                   <button onClick={handleClear} className="flex-1 py-2 bg-rose-500 hover:bg-rose-600 text-white font-black text-xs rounded-xl transition-all">Confirmer</button>
-                  <button onClick={() => setConfirmClear(false)} className="flex-1 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-xl transition-all">Annuler</button>
+                  <button onClick={() => setConfirmClear(false)} className="flex-1 py-2 bg-white/8 text-slate-400 font-bold text-xs rounded-xl hover:bg-white/12 transition-all">Annuler</button>
                 </div>
               )}
             </>
           )}
 
           {!isAdmin && (
-            <p className="text-center text-slate-400 text-xs font-bold py-2">Seuls les administrateurs peuvent modifier la licence.</p>
+            <p className="text-center text-slate-500 text-xs font-bold py-2">Seuls les administrateurs peuvent modifier la licence.</p>
           )}
         </div>
       </div>

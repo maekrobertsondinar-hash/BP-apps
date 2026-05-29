@@ -1,0 +1,197 @@
+You are a senior product designer and frontend engineer improving an existing React + TypeScript + Vite app called CSGM AMROUS.
+
+The app is already functional. Do not rebuild it from scratch. Preserve all existing business logic, data structures, IndexedDB/localStorage persistence, import/export behavior, authentication, user roles, licence expiry system, worker records, brevet/document handling, Bordereau d’Envoi, and all current features.
+
+Your task is to perform a full UI/UX refinement and consistency pass across the entire application.
+
+Context:
+CSGM AMROUS is an internal industrial personnel and document management system. It manages workers, chantiers, functions, driver/grutier certificates, document previews, exports, imports, user approval, audit information, and Bordereau d’Envoi arrival/departure documents.
+
+Current main problem:
+The app is visually inconsistent. The login screen and some shell areas use a premium dark enterprise style, but many modals, tables, upload flows, Bordereau screens, and admin views still use light/white ERP surfaces or one-off styles. The result feels unfinished and fragmented.
+
+Primary goal:
+Transform the entire app into one cohesive, premium, dark enterprise desktop application. It should feel like high-end internal software for an industrial company: calm, powerful, fast, professional, and executive-grade.
+
+Important constraints:
+- Do not remove features.
+- Do not break data compatibility.
+- Do not change stored data keys unless migration is handled.
+- Do not simplify the app by deleting functionality.
+- Keep React, TypeScript, Vite, IndexedDB, localStorage, xlsx, JSZip, sql.js compatibility.
+- You may use existing dependencies such as framer-motion and lucide-react.
+- Prefer improving the existing component structure over rewriting everything.
+- Ensure the app builds successfully after changes.
+
+Design direction:
+Use a cohesive dark enterprise design system inspired by Linear dark mode, Arc Browser, Raycast, Notion database dark mode, Airtable dark mode, modern cybersecurity dashboards, and premium fintech/admin tools.
+
+Visual language:
+- Deep navy/slate app background, not pure black.
+- Layered dark panels with subtle contrast.
+- Petroleum/steel blue identity accents.
+- Controlled cyan highlights.
+- Muted emerald, amber, and rose only for statuses.
+- Subtle borders, soft shadows, restrained glow.
+- Compact professional spacing.
+- No childish colors, no generic Bootstrap look, no random white modals.
+- Avoid giant rounded cartoon buttons.
+- Avoid decorative gradient blobs/orbs except where already tasteful and restrained.
+
+Create a reusable design system:
+- Standardize colors, panel backgrounds, borders, shadows, radii, input states, buttons, badges, table rows, modal shells, empty states, and typography.
+- Prefer 8px to 12px radii for normal controls and cards; use larger radii only for major modals or brand moments.
+- Use consistent button variants: primary, secondary, ghost, danger, success, warning.
+- Use lucide-react icons where practical instead of inconsistent inline SVGs.
+- Keep typography compact and readable: strong hierarchy, no oversized dashboard text inside dense tools.
+
+Specific screens to improve:
+
+1. Authentication screen
+Keep the premium dark identity, but align its components with the rest of the new design system. Make login/signup/pending approval feel polished and consistent.
+
+2. Main shell and sidebar
+Refine the sidebar:
+- Compact, elegant, scannable.
+- Clear groups: Application, Administration, Import Documents, Actions, Export.
+- Strong active state with subtle accent line/glow.
+- Better visual separation between user profile, nav, and destructive actions.
+- Ensure long labels do not wrap awkwardly.
+
+Refine the top header:
+- Show current page, database status, worker count, sync/save status.
+- Make it feel like a desktop app command bar, not a website header.
+
+3. Search Ciblée
+Make this the core command-center experience:
+- Premium segmented control for Matricule vs Identité.
+- Strong focused input state.
+- Better empty/no-result states.
+- Smooth result reveal animations.
+- Worker result card should have clear information architecture:
+  - Identity summary
+  - Employment/site information
+  - Audit metadata
+  - Documents & Certifications section
+  - Actions grouped clearly
+
+4. Recherche de Masse
+Redesign the filter area:
+- Better grouping for Fonction, Chantier, Utilisateur, brevet expiry month/year, and advanced filters.
+- Active filter chips should be readable and removable.
+- Advanced filters should feel like a proper dark enterprise filter drawer/modal, not a cramped control pile.
+
+Redesign result tables/lists:
+- Sticky header where applicable.
+- Compact rows.
+- Clear status chips for missing/valid/expired/used/not used.
+- Better hover states.
+- More readable columns.
+- Keep export buttons visible but not visually overpowering.
+
+5. Registre Général
+Make the full registry easier to scan:
+- Dark table/list styling.
+- Sticky headers.
+- Compact row actions.
+- Clear empty state.
+- Clicking a worker should feel immediate and obvious.
+
+6. WorkerForm modal
+Redesign the add/edit worker flow:
+- Use a consistent dark modal shell.
+- Group fields into sections: Identity, Assignment, Dates/Location, Documents & Certifications.
+- Add inline validation instead of only alert popups where practical.
+- When Fonction contains CHAUFFEUR or GRUTIER, reveal certificate/document sections with smooth framer-motion animation.
+- Document upload cards should be compact, clear, and consistent.
+- Expired/valid badges should be visually strong but not loud.
+
+7. Document preview cards and DocViewer
+Standardize document cards:
+- Better file type icons.
+- Clear actions: View, Download, Remove.
+- Avoid unclear abbreviations like “DL”.
+- Improve filename truncation and metadata display.
+- Keep PDF/image support.
+- DocViewer toolbar should be responsive and not overflow.
+
+8. ImportModal and BulkDocImportModal
+Convert all remaining white/light import modals to the same dark design system.
+Improve:
+- Step indicators.
+- Warning/confirmation hierarchy.
+- File drop/select states.
+- Success/error summary.
+- Bulk import result table readability.
+- Admin password confirmation styling.
+
+9. Bordereau d’Envoi
+This area currently has many light modals and mixed styling. Bring it fully into the same dark enterprise ecosystem.
+Improve:
+- Header actions layout.
+- Chantier cards or sections.
+- Arrival/departure document columns.
+- Select mode clarity.
+- Upload popup.
+- Delete confirmation.
+- Audit log modal.
+- ZIP import/export buttons.
+Ensure admin-only actions remain admin-only.
+
+10. User management
+Improve admin user view:
+- Pending approvals should be prominent.
+- User rows should be compact and readable.
+- Role/status badges should be consistent.
+- Password reveal should feel like a high-risk admin action, visually distinct.
+
+11. Expiry/licence system
+Keep all current behavior. Improve visual consistency of:
+- ExpiryPanel
+- expiry warning badge
+- contact popup
+- expired screen
+Use the same dark enterprise styling except where a critical warning needs strong contrast.
+
+12. Empty, loading, and error states
+Create polished states for:
+- App loading
+- No search result
+- No mass filter result
+- No database records
+- No uploaded document
+- No Bordereau documents
+- Import/export errors
+Use concise French copy and clear actions.
+
+Motion requirements:
+Use framer-motion selectively:
+- Page/view transitions
+- Modal entrance/exit
+- Search result reveal
+- Table/list row reveal
+- Expanding certificate sections
+- Hover/press microinteractions
+Motion must be fast, subtle, and professional. Do not make the app feel slow or flashy.
+
+Responsive requirements:
+- Ensure all main screens work at desktop widths.
+- Ensure modals fit smaller screens with internal scrolling.
+- Prevent text overflow in buttons, badges, table cells, and cards.
+- Keep toolbar actions usable on narrower screens.
+- Avoid layout shifts when data changes.
+
+Implementation quality:
+- Clean up duplicated styling where possible.
+- Create reusable UI primitives if helpful: Button, Badge, Panel, ModalShell, InputField, StatusChip, EmptyState, SectionHeader.
+- Do not introduce unnecessary complexity.
+- Keep the current French UI language.
+- Fix any TypeScript/build errors.
+- After changes, run the build and resolve errors.
+
+Final acceptance criteria:
+- The entire app feels like one cohesive premium dark enterprise product.
+- No major white/light ERP surfaces remain unless intentionally used for printable document content.
+- All modals, tables, forms, cards, uploads, confirmations, and admin views share the same design system.
+- Existing features still work.
+- The project builds successfully.

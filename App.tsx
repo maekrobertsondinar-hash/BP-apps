@@ -121,7 +121,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
       <div className="flex items-start justify-between gap-2">
         <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest leading-tight">{label}</span>
         {dateExpiration && (
-          <span className={`shrink-0 text-[8px] font-bold uppercase px-2 py-0.5 rounded-full tracking-wide ${isExpired ? 'bg-red-50 text-red-500 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
+          <span className={`shrink-0 text-[8px] font-bold uppercase px-2 py-0.5 rounded-full tracking-wide ${isExpired ? 'bg-red-900/30 text-red-400 border border-red-500/20' : 'bg-emerald-900/20 text-emerald-400 border border-emerald-500/20'}`}>
             {isExpired ? '⚠ Expiré' : '✓ Valide'}
           </span>
         )}
@@ -129,8 +129,8 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
 
       {(numero || dateExpiration) && (
         <div className="flex flex-wrap gap-1.5 text-[9px]">
-          {numero && <span className="bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-lg font-semibold text-slate-600">N° {numero}</span>}
-          {dateExpiration && <span className={`px-2 py-0.5 rounded-lg font-semibold border ${isExpired ? 'bg-red-50 border-red-100 text-red-600' : 'bg-emerald-50 border-emerald-100 text-emerald-700'}`}>{dateExpiration}</span>}
+          {numero && <span className="bg-white/5 border border-white/8 px-2 py-0.5 rounded-lg font-semibold text-slate-400">N° {numero}</span>}
+          {dateExpiration && <span className={`px-2 py-0.5 rounded-lg font-semibold border ${isExpired ? 'bg-red-900/25 border-red-500/20 text-red-400' : 'bg-emerald-900/20 border-emerald-500/20 text-emerald-400'}`}>{dateExpiration}</span>}
         </div>
       )}
 
@@ -139,10 +139,10 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
           <button
             type="button"
             onClick={() => onView({ data, label, filename: originalFilename || filename })}
-            className="w-full h-40 rounded-xl border border-slate-100 overflow-hidden bg-slate-50 cursor-pointer transition-all relative hover:shadow-md"
+            className="w-full h-40 rounded-xl border border-white/8 overflow-hidden bg-white/4 cursor-pointer transition-all relative hover:shadow-md"
           >
             {isPdf ? (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-b from-red-50/80 to-white">
+              <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-b from-[#1a0808]/80 to-[#0e1520]">
                 <svg className="w-9 h-9 text-red-300" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1H8v-1zm0 3h6v1H8v-1zm0-6h3v1H8v-1z"/></svg>
                 <span className="text-[9px] font-bold text-red-400 uppercase tracking-wider">PDF</span>
                 {originalFilename && <span className="text-[8px] text-slate-400 px-2 text-center truncate max-w-full">{originalFilename}</span>}
@@ -151,7 +151,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
               <img src={data} className="w-full h-full object-cover" alt={label} />
             )}
             <div className="absolute inset-0 bg-black/0 hover:bg-black/10 flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-150">
-              <span className="bg-white/95 text-slate-700 text-[9px] font-semibold uppercase px-3 py-1.5 rounded-lg shadow-sm border border-slate-100">Voir</span>
+              <span className="bg-white/15 text-white text-[9px] font-semibold uppercase px-3 py-1.5 rounded-lg shadow-sm border border-white/20">Voir</span>
             </div>
           </button>
 
@@ -166,22 +166,22 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
               Voir
             </button>
             <button type="button" onClick={(e) => { e.stopPropagation(); onDownload(data, originalFilename || filename); }}
-              className="btn-press flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-[9px] py-2 rounded-lg transition-colors uppercase tracking-wider flex items-center justify-center gap-1.5">
+              className="btn-press flex-1 bg-white/8 hover:bg-white/12 text-slate-300 font-semibold text-[9px] py-2 rounded-lg transition-colors uppercase tracking-wider flex items-center justify-center gap-1.5">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
               DL
             </button>
             {!isReadOnly && (
               <button type="button" onClick={(e) => { e.stopPropagation(); onRemove(field); }}
-                className="btn-press bg-rose-50 text-rose-400 hover:bg-rose-100 hover:text-rose-600 font-bold text-[9px] px-2.5 py-2 rounded-lg transition-colors">
+                className="btn-press bg-rose-900/20 text-rose-400 hover:bg-rose-900/35 hover:text-rose-300 font-bold text-[9px] px-2.5 py-2 rounded-lg transition-colors">
                 ✕
               </button>
             )}
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center py-6 gap-2 rounded-xl border-2 border-dashed border-slate-100">
-          <svg className="w-7 h-7 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-          <span className="text-[9px] font-medium text-slate-300 uppercase tracking-wider">Non renseigné</span>
+        <div className="flex-1 flex flex-col items-center justify-center py-6 gap-2 rounded-xl border-2 border-dashed border-white/8">
+          <svg className="w-7 h-7 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+          <span className="text-[9px] font-medium text-white/25 uppercase tracking-wider">Non renseigné</span>
         </div>
       )}
     </div>
@@ -2911,7 +2911,7 @@ const App: React.FC = () => {
       {/* ── App Expired: full-screen block ── */}
       {isExpired && !showExpiryPanel && currentUser?.role !== 'ADMIN' && (
         <div className="fixed inset-0 bg-slate-900/95 backdrop-blur-md flex items-center justify-center z-[9999] p-6">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden text-center"
+          <div className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 max-w-md w-full overflow-hidden text-center"
             style={{ animation: 'introSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both' }}>
             <div className="bg-gradient-to-br from-rose-600 to-rose-700 px-8 pt-10 pb-8">
               <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-5">
@@ -2923,12 +2923,12 @@ const App: React.FC = () => {
               <p className="text-rose-200 text-sm font-bold">L'accès à cette application a expiré.</p>
             </div>
             <div className="px-8 py-8 space-y-4">
-              <p className="text-slate-700 font-black text-sm">Pour continuer, veuillez contacter :</p>
+              <p className="text-slate-200 font-black text-sm">Pour continuer, veuillez contacter :</p>
               <div className="space-y-3 text-left">
-                <div className="bg-[#1e3a47]/5 border border-[#1e3a47]/15 rounded-2xl p-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Propriétaire</p>
-                  <p className="text-slate-800 font-black text-base">AMROUS Abdallah</p>
-                  <a href="tel:0699407036" className="text-[#345d6e] font-black text-xl hover:underline tracking-wide">06 99 40 70 36</a>
+                <div className="bg-[#1e3a47]/15 border border-[#1e3a47]/30 rounded-2xl p-4">
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Propriétaire</p>
+                  <p className="text-slate-100 font-black text-base">AMROUS Abdallah</p>
+                  <a href="tel:0699407036" className="text-[#7ecde8] font-black text-xl hover:underline tracking-wide">06 99 40 70 36</a>
                 </div>
               </div>
             </div>
@@ -2953,7 +2953,7 @@ const App: React.FC = () => {
           {/* Contact popup for normal users */}
           {showExpiryContactPopup && currentUser?.role !== 'ADMIN' && (
             <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[400] p-4" onClick={() => setShowExpiryContactPopup(false)}>
-              <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden" style={{ animation: 'introSlideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={e => e.stopPropagation()}>
+              <div className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 max-w-sm w-full overflow-hidden" style={{ animation: 'introSlideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={e => e.stopPropagation()}>
                 <div className="bg-amber-500 px-6 py-5 flex items-center gap-3">
                   <div className="w-10 h-10 bg-white/25 rounded-xl flex items-center justify-center shrink-0">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2966,8 +2966,8 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <div className="px-6 py-6">
-                  <p className="text-slate-600 text-sm font-medium leading-relaxed mb-5">
-                    La date d'expiration de l'application approche. Veuillez contacter le propriétaire <span className="font-black text-slate-800">AMROUS Abdallah</span> pour obtenir un délai supplémentaire.
+                  <p className="text-slate-400 text-sm font-medium leading-relaxed mb-5">
+                    La date d'expiration de l'application approche. Veuillez contacter le propriétaire <span className="font-black text-slate-200">AMROUS Abdallah</span> pour obtenir un délai supplémentaire.
                   </p>
                   <a
                     href="tel:0699407036"
