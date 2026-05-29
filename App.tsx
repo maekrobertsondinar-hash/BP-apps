@@ -273,6 +273,9 @@ const App: React.FC = () => {
   const [massSearchUser, setMassSearchUser] = useState('');
   const [massSearchBrevetMonth, setMassSearchBrevetMonth] = useState('');
   const [massSearchBrevetYear, setMassSearchBrevetYear] = useState('');
+  const [massSearchBrevetMode, setMassSearchBrevetMode] = useState<'single' | 'interval'>('single');
+  const [massSearchBrevetMonthFrom, setMassSearchBrevetMonthFrom] = useState('');
+  const [massSearchBrevetMonthTo, setMassSearchBrevetMonthTo] = useState('');
   
   // Users View State
   const [userSearchQuery, setUserSearchQuery] = useState('');
@@ -476,7 +479,8 @@ const App: React.FC = () => {
     const userSearch = massSearchUser.trim().toLowerCase();
     const noTextFilters = !chantier && !fonction && !userSearch;
 
-    if (noTextFilters && !massSearchBrevetMonth && !massSearchBrevetYear) return [];
+    const hasIntervalFilter = massSearchBrevetMode === 'interval' && (massSearchBrevetMonthFrom || massSearchBrevetMonthTo);
+    if (noTextFilters && !massSearchBrevetMonth && !massSearchBrevetYear && !hasIntervalFilter) return [];
 
     let filtered = noTextFilters ? [...workers] : workers.filter(w => {
       const matchChantier = chantier
@@ -491,14 +495,22 @@ const App: React.FC = () => {
     });
 
     // Brevet expiry month/year filter (any brevet type, independent of brevet kind)
-    if (massSearchBrevetMonth || massSearchBrevetYear) {
+    if (massSearchBrevetMonth || massSearchBrevetYear || hasIntervalFilter) {
       filtered = filtered.filter(w => {
         const dates = [w.dateExpirationPermis, w.dateExpirationBrevetMarch, w.dateExpirationBrevetDang, w.dateExpirationBrevetPers].filter((d): d is string => !!d);
         return dates.some(d => {
           const [y, m] = d.split('-');
           const yearMatch = massSearchBrevetYear ? y === massSearchBrevetYear : true;
-          const monthMatch = massSearchBrevetMonth ? m === massSearchBrevetMonth : true;
-          return yearMatch && monthMatch;
+          if (massSearchBrevetMode === 'interval') {
+            const mNum = parseInt(m, 10);
+            const fromNum = massSearchBrevetMonthFrom ? parseInt(massSearchBrevetMonthFrom, 10) : 1;
+            const toNum = massSearchBrevetMonthTo ? parseInt(massSearchBrevetMonthTo, 10) : 12;
+            const monthMatch = mNum >= fromNum && mNum <= toNum;
+            return yearMatch && monthMatch;
+          } else {
+            const monthMatch = massSearchBrevetMonth ? m === massSearchBrevetMonth : true;
+            return yearMatch && monthMatch;
+          }
         });
       });
     }
@@ -570,7 +582,7 @@ const App: React.FC = () => {
     }
 
     return filtered;
-  }, [workers, massSearchChantier, massSearchFonction, massSearchUser, massSearchBrevetMonth, massSearchBrevetYear, advancedFilters, currentUser]);
+  }, [workers, massSearchChantier, massSearchFonction, massSearchUser, massSearchBrevetMonth, massSearchBrevetYear, massSearchBrevetMode, massSearchBrevetMonthFrom, massSearchBrevetMonthTo, advancedFilters, currentUser]);
 
   const filteredUsers = useMemo(() => {
     if (!userSearchQuery) return users;
@@ -606,11 +618,19 @@ const App: React.FC = () => {
     if (massSearchUser) {
       tags.push({ id: 'user', label: `Utilisateur : ${massSearchUser}`, clearAction: () => setMassSearchUser('') });
     }
-    if (massSearchBrevetMonth || massSearchBrevetYear) {
+    const hasIntervalFilterTag = massSearchBrevetMode === 'interval' && (massSearchBrevetMonthFrom || massSearchBrevetMonthTo);
+    if (massSearchBrevetMonth || massSearchBrevetYear || hasIntervalFilterTag) {
       const MONTHS = ['','Janv.','Févr.','Mars','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'];
-      const mLabel = massSearchBrevetMonth ? MONTHS[parseInt(massSearchBrevetMonth)] : '';
-      const label = [mLabel, massSearchBrevetYear].filter(Boolean).join(' ');
-      tags.push({ id: 'brevetExp', label: `Expiration Brevet : ${label}`, clearAction: () => { setMassSearchBrevetMonth(''); setMassSearchBrevetYear(''); } });
+      let monthPart = '';
+      if (massSearchBrevetMode === 'interval') {
+        const fromLabel = massSearchBrevetMonthFrom ? MONTHS[parseInt(massSearchBrevetMonthFrom)] : 'Jan.';
+        const toLabel = massSearchBrevetMonthTo ? MONTHS[parseInt(massSearchBrevetMonthTo)] : 'Déc.';
+        monthPart = `${fromLabel} → ${toLabel}`;
+      } else {
+        monthPart = massSearchBrevetMonth ? MONTHS[parseInt(massSearchBrevetMonth)] : '';
+      }
+      const label = [monthPart, massSearchBrevetYear].filter(Boolean).join(' ');
+      tags.push({ id: 'brevetExp', label: `Expiration Brevet : ${label}`, clearAction: () => { setMassSearchBrevetMonth(''); setMassSearchBrevetYear(''); setMassSearchBrevetMonthFrom(''); setMassSearchBrevetMonthTo(''); } });
     }
 
     if (advancedFilters.isActive) {
@@ -650,7 +670,7 @@ const App: React.FC = () => {
       }
     }
     return tags;
-  }, [massSearchFonction, massSearchChantier, massSearchUser, massSearchBrevetMonth, massSearchBrevetYear, advancedFilters]);
+  }, [massSearchFonction, massSearchChantier, massSearchUser, massSearchBrevetMonth, massSearchBrevetYear, massSearchBrevetMode, massSearchBrevetMonthFrom, massSearchBrevetMonthTo, advancedFilters]);
 
   const clearAllFilters = () => {
     setMassSearchFonction('');
@@ -658,6 +678,8 @@ const App: React.FC = () => {
     setMassSearchUser('');
     setMassSearchBrevetMonth('');
     setMassSearchBrevetYear('');
+    setMassSearchBrevetMonthFrom('');
+    setMassSearchBrevetMonthTo('');
     setAdvancedFilters(INITIAL_ADVANCED_FILTERS);
   };
 
@@ -2082,57 +2104,115 @@ const App: React.FC = () => {
               </section>
 
               {/* ── Filtre par mois/année d'expiration de brevet ── */}
-              <section className="bg-[#0e1520] rounded-2xl border border-white/6 px-5 py-4 shadow-xl shadow-black/20">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="w-9 h-9 bg-amber-900/20 rounded-xl flex items-center justify-center border border-amber-500/20">
-                      <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                      </svg>
+              {(() => {
+                const MONTH_NAMES = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+                const hasActive = massSearchBrevetMode === 'single'
+                  ? (massSearchBrevetMonth || massSearchBrevetYear)
+                  : (massSearchBrevetMonthFrom || massSearchBrevetMonthTo || massSearchBrevetYear);
+                const selectCls = (active: boolean) => `premium-input flex-1 min-w-[130px] border rounded-xl px-3 py-2 text-sm font-medium outline-none transition-all ${active ? 'border-amber-500/40 text-amber-300 bg-amber-900/15' : 'border-white/8 text-slate-500 bg-white/4'}`;
+                return (
+                <section className="bg-[#0e1520] rounded-2xl border border-white/6 px-5 py-4 shadow-xl shadow-black/20">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <div className="flex items-center gap-3 shrink-0">
+                        <div className="w-9 h-9 bg-amber-900/20 rounded-xl flex items-center justify-center border border-amber-500/20">
+                          <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Expiration Brevet</p>
+                          <p className="text-xs font-medium text-slate-400">Tous types confondus</p>
+                        </div>
+                      </div>
+
+                      {/* Mode toggle */}
+                      <div className="flex gap-1 p-1 bg-white/4 rounded-xl border border-white/6 shrink-0">
+                        <button
+                          onClick={() => { setMassSearchBrevetMode('single'); setMassSearchBrevetMonthFrom(''); setMassSearchBrevetMonthTo(''); }}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${massSearchBrevetMode === 'single' ? 'bg-amber-500/25 text-amber-300 border border-amber-500/30' : 'text-slate-500 hover:text-slate-300'}`}
+                        >
+                          Mois précis
+                        </button>
+                        <button
+                          onClick={() => { setMassSearchBrevetMode('interval'); setMassSearchBrevetMonth(''); }}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${massSearchBrevetMode === 'interval' ? 'bg-amber-500/25 text-amber-300 border border-amber-500/30' : 'text-slate-500 hover:text-slate-300'}`}
+                        >
+                          Intervalle
+                        </button>
+                      </div>
+
+                      {hasActive && (
+                        <span className="text-[9px] font-semibold text-amber-400 bg-amber-900/20 px-2.5 py-1 rounded-lg border border-amber-500/25 uppercase tracking-wide shrink-0">
+                          Filtre actif
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Expiration Brevet</p>
-                      <p className="text-xs font-medium text-slate-400">Tous types confondus</p>
-                    </div>
-                  </div>
-                  <div className="flex-1 flex gap-2.5 flex-wrap items-center">
-                    <select
-                      value={massSearchBrevetMonth}
-                      onChange={e => setMassSearchBrevetMonth(e.target.value)}
-                      className={`premium-input flex-1 min-w-[140px] border rounded-xl px-3 py-2 text-sm font-medium outline-none transition-all ${massSearchBrevetMonth ? 'border-amber-500/40 text-amber-300 bg-amber-900/15' : 'border-white/8 text-slate-500 bg-white/4'}`}
-                    >
-                      <option value="">Tous les mois</option>
-                      {['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'].map((m, i) => (
-                        <option key={i+1} value={String(i+1).padStart(2,'0')}>{m}</option>
-                      ))}
-                    </select>
-                    <select
-                      value={massSearchBrevetYear}
-                      onChange={e => setMassSearchBrevetYear(e.target.value)}
-                      className={`premium-input flex-1 min-w-[120px] border rounded-xl px-3 py-2 text-sm font-medium outline-none transition-all ${massSearchBrevetYear ? 'border-amber-500/40 text-amber-300 bg-amber-900/15' : 'border-white/8 text-slate-500 bg-white/4'}`}
-                    >
-                      <option value="">Toutes les années</option>
-                      {Array.from({ length: 12 }, (_, i) => new Date().getFullYear() - 1 + i).map(y => (
-                        <option key={y} value={String(y)}>{y}</option>
-                      ))}
-                    </select>
-                    {(massSearchBrevetMonth || massSearchBrevetYear) && (
-                      <button
-                        onClick={() => { setMassSearchBrevetMonth(''); setMassSearchBrevetYear(''); }}
-                        className="btn-press px-3 py-2 text-rose-400 hover:bg-rose-900/20 rounded-lg font-semibold text-xs transition-all border border-rose-500/20 flex items-center gap-1.5"
+
+                    {/* Filter inputs row */}
+                    <div className="flex gap-2.5 flex-wrap items-center">
+                      {massSearchBrevetMode === 'single' ? (
+                        <select
+                          value={massSearchBrevetMonth}
+                          onChange={e => setMassSearchBrevetMonth(e.target.value)}
+                          className={selectCls(!!massSearchBrevetMonth)}
+                        >
+                          <option value="">Tous les mois</option>
+                          {MONTH_NAMES.map((m, i) => (
+                            <option key={i+1} value={String(i+1).padStart(2,'0')}>{m}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <>
+                          <select
+                            value={massSearchBrevetMonthFrom}
+                            onChange={e => setMassSearchBrevetMonthFrom(e.target.value)}
+                            className={selectCls(!!massSearchBrevetMonthFrom)}
+                          >
+                            <option value="">De (mois)</option>
+                            {MONTH_NAMES.map((m, i) => (
+                              <option key={i+1} value={String(i+1).padStart(2,'0')}>{m}</option>
+                            ))}
+                          </select>
+                          <span className="text-slate-500 font-black text-sm shrink-0">→</span>
+                          <select
+                            value={massSearchBrevetMonthTo}
+                            onChange={e => setMassSearchBrevetMonthTo(e.target.value)}
+                            className={selectCls(!!massSearchBrevetMonthTo)}
+                          >
+                            <option value="">À (mois)</option>
+                            {MONTH_NAMES.map((m, i) => (
+                              <option key={i+1} value={String(i+1).padStart(2,'0')}>{m}</option>
+                            ))}
+                          </select>
+                        </>
+                      )}
+
+                      <select
+                        value={massSearchBrevetYear}
+                        onChange={e => setMassSearchBrevetYear(e.target.value)}
+                        className={selectCls(!!massSearchBrevetYear)}
                       >
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>
-                        Effacer
-                      </button>
-                    )}
+                        <option value="">Toutes les années</option>
+                        {Array.from({ length: 12 }, (_, i) => new Date().getFullYear() - 1 + i).map(y => (
+                          <option key={y} value={String(y)}>{y}</option>
+                        ))}
+                      </select>
+
+                      {hasActive && (
+                        <button
+                          onClick={() => { setMassSearchBrevetMonth(''); setMassSearchBrevetYear(''); setMassSearchBrevetMonthFrom(''); setMassSearchBrevetMonthTo(''); }}
+                          className="btn-press px-3 py-2 text-rose-400 hover:bg-rose-900/20 rounded-lg font-semibold text-xs transition-all border border-rose-500/20 flex items-center gap-1.5 shrink-0"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                          Effacer
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  {(massSearchBrevetMonth || massSearchBrevetYear) && (
-                    <span className="text-[9px] font-semibold text-amber-400 bg-amber-900/20 px-2.5 py-1 rounded-lg border border-amber-500/25 uppercase tracking-wide shrink-0">
-                      Filtre actif
-                    </span>
-                  )}
-                </div>
-              </section>
+                </section>
+                );
+              })()}
 
               {massSearchResults.length > 0 ? (
                 <div className="bg-[#0e1520] rounded-2xl border border-white/6 shadow-xl shadow-black/30 overflow-hidden animate-fade-up">
