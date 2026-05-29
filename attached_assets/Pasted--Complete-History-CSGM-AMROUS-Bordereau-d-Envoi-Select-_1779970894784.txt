@@ -1,0 +1,49 @@
+✅ Complete History — CSGM AMROUS
+🔴 Bordereau d'Envoi — Select Mode Fix
+The multi-select system was rebuilt from entry-level selection to chantier-level selection. Chantier cards became clickable with a red ring/glow effect and a checkmark badge. A red "Supprimer (N)" button appears in the multi-select bar showing how many chantiers are selected. The admin "Supprimer" button per-chantier is hidden while select mode is active to avoid conflicts.
+
+🔒 Full App Expiry / Licence System
+Built from scratch across three files:
+
+utils/expiry.ts — Core licence engine: getLicenseData, saveLicenseData, clearLicense, getExpiryInfo, and touchLastKnownTime (tamper-detection by storing last known time and rejecting clock roll-backs). Licence data is stored XOR-encrypted in localStorage under key csgm_lic_v1.
+components/ExpiryPanel.tsx — Admin-only management panel with two modes: set by exact date or set by number of days. Shows current status (valid/expired/days remaining), with save/clear/close actions.
+App.tsx integration — State wiring, useEffect on app load to check expiry and touch the time, Ctrl+Shift+F12 keyboard shortcut to open the panel, a full-screen "Licence Expirée" overlay for expired non-admin users, and a warning banner that appears when ≤14 days remain.
+🛡️ Admin Bypass for Expired Screen
+When the licence expires, admin users are completely unaffected — they can continue working normally. The full-screen lock screen only appears for regular (non-admin) users. The condition currentUser?.role !== 'ADMIN' was added to the expired overlay.
+
+📞 Expired Screen — Contact Info for Users
+When a non-admin hits the expired screen, instead of a generic message they now see a contact card for AMROUS Abdallah (propriétaire) with a clickable phone number 06 99 40 70 36.
+
+📅 Brevet Expiry Month/Year Filter — Recherche de Masse
+A new dedicated filter section was added below the main search bar in the "Recherche de Masse" page:
+
+Two dropdowns: Mois (all 12 months) and Année (12-year range)
+Completely independent — not tied to any specific brevet type
+Selecting a month/year shows ALL workers whose any brevet (Permis, Brevet March., Brevet Dang., or Brevet Pers.) expires in that period
+Works standalone (without any text search) or combined with fonction/chantier/user text filters
+Integrates with active filter tags (showing "Expiration Brevet : Mois Année") and the "Effacer tout" button
+massSearchBrevetMonth and massSearchBrevetYear state added, all dependency arrays updated
+📦 Smart Bordereau d'Envoi ZIP Import
+Added an "Importer ZIP" button (sky blue) in the Bordereau header. It:
+
+Accepts a .zip file previously exported from the app
+Parses the exact folder/filename structure: {chantierName}/{Arrivee|Depart}_{YYYY-MM-DD}_{HHhMM}_{filename}
+Reconstructs full BordereauEntry objects with correct chantier, type, date, filename, and MIME type
+Merges with existing entries, skipping exact duplicates (same chantier + type + filename)
+Auto-restores hidden chantiers and registers new chantiers as manual entries
+Reports how many documents were imported and how many duplicates were skipped
+Designed for full recovery after app reinstall or device change
+📋 Bordereau d'Envoi — Audit Log (Admin Only)
+Full audit trail system built end-to-end:
+
+BordereauEntry type extended with optional uploadedBy?: string and uploadedAt?: string fields in types.ts
+Every new upload via the popup now captures currentUser.fullName and the exact ISO timestamp
+Every ZIP import captures the importing user and the import timestamp (shared across all entries in that import batch)
+A new amber "Journal" button appears in the header (admin-only)
+Clicking it opens a full-screen audit log modal showing all documents sorted newest first, with columns: Date Upload · Uploadé par · Chantier · Type · Fichier · Date Doc.
+Rows with no user info (legacy entries uploaded before this feature) gracefully show —
+Footer of the modal shows how many entries have user tracking vs. total
+✏️ Name & Credits Changes
+Footer sidebar: "By Abdallah Amrous" → "By AMROUS Ayham"
+APP_CREDITS constant (used in login screen, import modal, auth screen): "Application créée par AMROUS Ayham Bachir" → "Application créée par AMROUS Ayham" — updated in App.tsx, components/AuthScreen.tsx, and components/ImportModal.tsx
+Expired modal: removed the "Créateur" card entirely (AMROUS Ayham + phone), keeping only AMROUS Abdallah as the contact

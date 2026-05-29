@@ -1,0 +1,447 @@
+You are a senior product designer and frontend engineer redesigning an existing enterprise desktop application called:
+
+# CSGM-AMROUS
+
+This is a premium internal enterprise software used by management teams to search, manage, and export employee data for a large industrial company.
+
+The app already works functionally.
+DO NOT rebuild the logic from scratch.
+DO NOT remove existing features.
+
+Your mission is to completely revamp the UI/UX into a world-class premium enterprise experience while preserving the current functionality and color identity.
+
+The current app feels too basic and static.
+The new version must feel like a mix between:
+
+* Linear
+* Notion
+* Stripe Dashboard
+* Arc Browser
+* Modern SAP/Figma enterprise tooling
+* High-end cybersecurity dashboards
+
+The application must feel:
+
+* premium
+* fast
+* smooth
+* intelligent
+* industrial-grade
+* modern
+* minimal
+* luxurious without being flashy
+
+The target is:
+“top-tier internal corporate software used by executives.”
+
+---
+
+## CORE DESIGN DIRECTION
+
+Keep the existing dark blue / petroleum / steel industrial color palette but modernize it.
+
+Primary vibe:
+
+* deep slate blues
+* steel gray
+* subtle frosted surfaces
+* refined shadows
+* clean typography
+* soft glows
+* precision spacing
+* premium motion design
+
+The UI should feel:
+
+* calm
+* expensive
+* efficient
+* futuristic
+* highly readable
+
+NO:
+
+* childish colors
+* giant rounded cartoon buttons
+* generic Bootstrap look
+* ugly tables
+* clunky spacing
+* outdated admin dashboard style
+
+---
+
+## DESIGN SYSTEM
+
+Create a cohesive enterprise design system.
+
+Use:
+
+* consistent spacing scale
+* premium typography hierarchy
+* subtle gradients
+* glassmorphism ONLY in moderation
+* layered depth
+* elegant borders
+* smooth hover states
+* responsive layouts
+
+Use:
+
+* soft shadows
+* blur effects carefully
+* animated transitions
+* motion that communicates hierarchy
+
+Everything must feel intentional.
+
+---
+
+## TYPOGRAPHY
+
+Use a premium modern font stack.
+
+Recommended:
+
+* Inter
+* Geist
+* SF Pro equivalent
+* Plus Jakarta Sans
+
+Typography should feel:
+
+* clean
+* sharp
+* executive-grade
+
+Use strong hierarchy:
+
+* large elegant headers
+* subtle section labels
+* compact data density
+* excellent readability
+
+---
+
+## MAIN LAYOUT
+
+Redesign the application shell completely.
+
+Create:
+
+* premium sidebar
+* floating content panels
+* modern top navigation
+* compact enterprise spacing
+* refined search areas
+
+The app should feel more like a modern operating system than a webpage.
+
+---
+
+## SIDEBAR
+
+The sidebar should:
+
+* feel premium and compact
+* have elegant icons
+* animated hover states
+* active indicator animations
+* subtle glow or accent line
+
+Use:
+
+* collapsible sections
+* refined spacing
+* soft transitions
+
+---
+
+## SEARCH EXPERIENCE
+
+The search experience is the heart of the app.
+
+Completely redesign it.
+
+Requirements:
+
+* instant visual feedback
+* intelligent search interactions
+* modern input styling
+* animated focus states
+* loading skeletons
+* smooth result transitions
+
+Search must feel:
+
+* ultra-fast
+* frictionless
+* satisfying
+
+Support:
+
+* search by matricule
+* search by nom/prénom
+* search by chantier
+* search by fonction
+
+---
+
+## RESULT CARDS
+
+Worker information should appear inside premium information panels/cards.
+
+Cards must include:
+
+* elegant hierarchy
+* grouped information
+* iconography
+* section separators
+* smooth reveal animations
+
+Driver-related fields:
+
+* brevet transport marchandise
+* brevet matières dangereuses
+* brevet transport personnel
+* permis de conduire
+
+must appear in a dedicated premium “Documents & Certifications” section.
+
+Display brevet images elegantly:
+
+* preview cards
+* zoom modal
+* smooth transitions
+* download buttons
+
+The UI must feel like a high-end HR intelligence system.
+
+---
+
+## TABLES
+
+Mass search results and exports must use redesigned enterprise tables.
+
+Requirements:
+
+* sticky headers
+* row hover animations
+* smooth filtering
+* zebra striping very subtle
+* modern sorting
+* column spacing optimization
+
+Tables should feel inspired by:
+
+* Airtable
+* Linear
+* modern analytics dashboards
+
+---
+
+## ANIMATIONS
+
+This is extremely important.
+
+Add premium animations everywhere WITHOUT making the app feel slow.
+
+Use:
+
+* Framer Motion
+* spring animations
+* staggered reveals
+* subtle fades
+* animated hover depth
+* smooth modal transitions
+* page transitions
+* skeleton loaders
+* animated state changes
+
+Animations must feel:
+
+* smooth
+* expensive
+* polished
+* intentional
+
+NO excessive flashy effects.
+
+---
+
+## MICROINTERACTIONS
+
+Add premium microinteractions:
+
+* hover feedback
+* button press depth
+* loading indicators
+* animated badges
+* smart tooltips
+* smooth dropdowns
+* elegant autocomplete behavior
+
+Autocomplete for Fonction and Chantier should feel world-class.
+
+---
+
+## FORMS
+
+Redesign all forms.
+
+The “Ajouter Travailleur” flow should feel:
+
+* simple
+* guided
+* frictionless
+* highly readable
+
+Use:
+
+* multi-section forms
+* inline validation
+* smart field grouping
+* progressive disclosure
+
+When Fonction contains:
+
+* Chauffeur
+* Grutier
+
+automatically reveal:
+
+* brevet upload section
+* permis upload section
+* certification management section
+
+with smooth animated expansion.
+
+---
+
+## VISUAL HIERARCHY
+
+The app currently lacks hierarchy.
+
+Fix this by:
+
+* using spacing correctly
+* improving contrast
+* grouping content intelligently
+* using elevation carefully
+* reducing visual noise
+
+Every screen should instantly communicate:
+
+* what matters most
+* what action to take
+* where the user is
+
+---
+
+## PERFORMANCE FEEL
+
+The app must FEEL extremely fast.
+
+Add:
+
+* optimistic UI behavior
+* smooth state updates
+* lightweight transitions
+* intelligent loading placeholders
+
+No blocking feeling.
+
+---
+
+## EMPTY STATES
+
+Design beautiful empty states.
+
+Examples:
+
+* no results
+* no database loaded
+* no brevet uploaded
+
+Use:
+
+* illustrations/icons
+* premium messaging
+* guidance text
+
+---
+
+## STATUS SYSTEM
+
+Improve all status indicators:
+
+* connecté
+* licence active
+* export réussi
+* importation
+* erreur
+
+Use:
+
+* elegant badges
+* animated indicators
+* subtle glow effects
+
+---
+
+## DARK MODE
+
+Implement a world-class dark mode.
+
+Dark mode should feel:
+
+* cinematic
+* premium
+* low-eye-strain
+* professional
+
+Not pure black.
+
+Use:
+
+* layered grays
+* deep blues
+* subtle borders
+* controlled contrast
+
+---
+
+## TECH STACK
+
+Keep:
+
+* React
+* TypeScript
+* Electron compatibility
+* current logic architecture
+
+You may add:
+
+* Framer Motion
+* Lucide React
+* Tailwind improvements
+* shadcn/ui
+* Radix UI
+
+DO NOT:
+
+* break current functionality
+* remove database compatibility
+* remove import/export logic
+
+---
+
+## FINAL GOAL
+
+Transform this app from:
+“functional internal tool”
+
+into:
+
+“elite enterprise-grade personnel intelligence platform.”
+
+The result should feel like software built by a top Silicon Valley product team for a multinational industrial corporation.

@@ -1,0 +1,94 @@
+Résumé Complet — Application CSGM AMROUS (Gestion Materiel HMD)
+Stack Technique
+React 19 + Vite 6 + TypeScript, Tailwind CSS (CDN), IndexedDB (stockage workers), localStorage (utilisateurs), sql.js (SQLite), JSZip, xlsx lib. Port 5000.
+
+Authentification & Utilisateurs
+Écran de connexion avec Nom / Prénom / Mot de passe (champs distincts)
+Système de rôles : ADMIN et Utilisateur standard
+Mot de passe chiffré via XOR + base64 (utils/crypto.ts, clé CSGM_AMROUS_2024_SEC)
+Admin par défaut : AMROUS Abdallah / mot de passe 13062010
+Flux d'approbation : nouveaux comptes nécessitent approbation admin avant de pouvoir se connecter
+Gestion des utilisateurs dans une vue dédiée (sidebar) : ajout, suppression, approbation
+Types de Données (types.ts)
+Chaque Worker contient :
+
+Infos de base : matricule, nom, prénom, fonction, chantier, affair, wilaya, affiliation, dates
+4 sections de brevets (Permis de Conduire, Brevet Marchandises, Brevet Matières Dangereuses, Brevet Personnel) avec pour chacune :
+docXxx — document en base64
+docXxxFilename — nom original du fichier
+docXxxUtilisation — OUI/NON
+numeroXxx — numéro du brevet
+dateExpirationXxx — date d'expiration
+Audit : createdBy, createdAt, lastModifiedBy, updatedAt
+Formulaire Collaborateur (WorkerForm.tsx)
+Sections conditionnelles : les 4 blocs de brevets n'apparaissent que si la fonction contient CHAUFFEUR ou GRUTIER
+Upload de documents : accepte tous les formats sauf Excel (.xlsx/.xls/.csv) et bases de données (.db/.sqlite)
+Traitement : images compressées (canvas JPEG 0.75, max 1200px) ; PDFs stockés en base64 brut
+Nom de fichier original conservé dans docXxxFilename
+Autocomplete sur les champs Fonction, Chantier
+Recherche & Affichage
+Recherche par matricule : affichage dossier complet avec audit trail
+Recherche par nom/prénom : liste de résultats avec navigation
+Filtre de Masse (vue dédiée) : filtres par fonction, chantier, utilisateur + filtres avancés par brevet/expiration
+Filtres avancés par section : possession / utilisation / expiration (Valide / Expiré)
+Tags de filtres actifs avec suppression individuelle
+Compteur "Total trouvé"
+Cartes DocumentPreview : badge N°, date d'expiration colorée (vert = valide / rouge = expiré), bordure colorée, boutons Voir / Télécharger / Supprimer
+Visionneuse de Documents (DocViewer)
+Modal plein écran (z-index 300) avec fond noir
+Images : affichage natif avec cursor: zoom-out
+PDFs : iframe avec visionneuse native du navigateur
+Toolbar : nom du document + nom de fichier original + boutons Imprimer et Télécharger
+Impression : ouvre une nouvelle fenêtre et déclenche window.print()
+Fermeture au clic sur le fond ou bouton ✕
+Protection par Mot de Passe (Actions Destructives)
+Chaque action irréversible nécessite le mot de passe administrateur :
+
+Supprimer un collaborateur — champ mot de passe intégré dans la popup de confirmation
+Vider la base de données — champ mot de passe intégré dans la popup de confirmation
+Supprimer un document brevet — popup dédiée pwdGuard avec champ mot de passe + show/hide
+Importer / Remplacer la base .db — étape admin_password dans ImportModal.tsx
+Export Excel
+Bouton Export Excel dans Filtre de Masse : exporte les résultats filtrés actuels
+Bouton Export Dossiers (.zip) dans Filtre de Masse : exporte uniquement les workers avec brevets dans les résultats filtrés
+Structure ZIP : RH_Chauffeurs.xlsx à la racine + un dossier par chauffeur (NOM_PRENOM_MAT/INFO.txt + brevets en direct)
+INFO.txt inclut le statut [EXPIRÉ] sur les dates passées
+Bouton Exporter Excel (.xlsx) dans la sidebar : exporte tous les workers éligibles (CHAUFFEUR/GRUTIER ou avec un brevet)
+Export Complet ZIP (handleExportZipPackage)
+Sidebar → Export Complet (.zip) — génère CSGM_Export_Complet_DD-MM-YYYY.zip avec :
+
+brevets/
+  Permis_de_Conduire/       ← tous les permis de tous les éligibles
+  Brevet_Marchandises/
+  Brevet_Matieres_Dangereuses/
+  Brevet_Personnel/
+excel/
+  RH_Global_DD-MM-YYYY.xlsx  ← onglets "Chauffeurs & Grutiers" + "Brevets Expirés"
+database/
+  RH_Database_DD-MM-YYYY.db  ← vrai fichier SQLite (sql.js), toutes les colonnes
+collaborateurs/
+  NOM_PRENOM_MAT/
+    INFO.txt                 ← fiche texte complète avec N°, dates, statut expiré
+    NOM_PRENOM_MAT_Permis_Conduire_N123_EXP2025-06-01.pdf
+    ...                      ← brevets directement à côté de INFO.txt
+
+Filtre éligibilité : uniquement workers dont la fonction contient CHAUFFEUR ou GRUTIER, ou ayant au moins un document brevet attaché.
+
+Import Base de Données (ImportModal.tsx)
+Accepte .db, .sqlite, .sqlite3, .db3
+Détecte automatiquement le nom de la table (workers, travailleurs, personnel, etc.)
+Mappe les colonnes de façon flexible (plusieurs noms possibles par champ)
+Étape de confirmation avec mot de passe admin obligatoire avant remplacement
+Bulk Import de Documents (BulkDocImportModal.tsx)
+Importer plusieurs images d'un coup pour un type de brevet
+Mappe automatiquement par matricule (extrait depuis le nom de fichier)
+Peut créer de nouveaux workers à la volée si matricule inexistant
+Audit trail automatique avec tag (AUTOMATED)
+Persistance
+Workers : IndexedDB (clé gtp_rh_workers_data)
+Utilisateurs : localStorage (clé gtp_rh_users)
+Sauvegarde automatique à chaque modification (effet React sur workers)
+Toast "Sauvegardé" avec heure de dernière sauvegarde
+Crédits Application
+"Application créée par AMROUS Ayham Bachir — Propriété de AMROUS Abdallah" — affiché dans le footer de chaque modal.
+

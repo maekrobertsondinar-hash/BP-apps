@@ -1,0 +1,175 @@
+Add a bulletproof application expiry system to an Electron desktop app. 
+
+REQUIREMENTS:
+- Admin can set an expiry date OR number of days before app expires
+- App refuses to run after expiry (no workarounds)
+- Users CANNOT bypass expiry by:
+  * Changing system date backwards
+  * Copying database to another machine
+  * Editing database files
+  * Uninstalling and reinstalling the app
+  * Modifying app files
+
+IMPLEMENTATION (5 layers):
+
+LAYER 1: HARDWARE ID BINDING
+- On first app startup, generate immutable hardware ID by hashing:
+  * MAC address (primary NIC)
+  * CPU serial number
+  * HDD/SSD serial number
+  * Windows installation GUID
+- Store encrypted in SQLite: {hwid, expiryDate, installDate, appVersion}
+- License only works on the machine it was issued for
+- If user copies .db to different machine → HWID mismatch → app denied
+
+LAYER 2: ENCRYPTED LICENSE STORAGE
+- Never store expiry date in plain text
+- Encrypt license block using AES-256-GCM:
+  * Key: derived from hardware ID + app secret
+  * Data: {hwid, expiryDate, installDate, appVersion, checksum}
+- If user edits .db directly → decryption fails OR checksum fails
+
+LAYER 3: TIME-TRAVEL DETECTION
+- On every app start, record system time
+- Store "last known good time" encrypted in appSettings table
+- If currentTime < lastKnownGoodTime → user changed clock backwards
+- Action: Lock app for 24 hours (show warning, refuse to start)
+- Timestamp stored as UTC to prevent timezone tricks
+
+LAYER 4: DATABASE INTEGRITY CHECKING
+- Calculate SHA-256 hash of entire encrypted database
+- Store hash in separate encrypted location
+- On startup: recalculate hash, compare against stored
+- If any byte of database changed → refuse to start
+- Show: "App files corrupted. Uninstall and reinstall from official source."
+
+LAYER 5: CODE SIGNATURE VERIFICATION (Electron built-in)
+- Sign Electron app with code certificate during build
+- Electron runtime verifies signature on launch
+- If any .js/.json file modified → signature invalid
+- App refuses to run unsigned code
+
+ADMIN CONTROL PANEL:
+- Accessible via secret key combo: Ctrl+Shift+F12 (or Admin menu)
+- Requires admin password entry
+- Shows:
+  * Current Hardware ID
+  * Current Expiry Date
+  * Days Remaining
+  * Last Extended Date
+- Admin can:
+  * Set new expiry date (date picker)
+  * Set expiry in N days (input field)
+  * View license history
+- On save: encrypt new license, update checksum, log audit entry
+- App requests restart after extension
+
+CODE STRUCTURE:
+
+src/main/security/expiry.ts:
+- getHardwareID() → string (hash of MAC + CPU + HDD + Windows GUID)
+- generateLicense(expiryDate) → encrypted string
+- verifyLicense(encrypted) → {hwid, expiryDate, installDate} or null
+- checkExpiry() → {isExpired: boolean, daysRemaining: number}
+- checkTimeTravelDetection() → {isValid: boolean, lockedUntil?: Date}
+- verifyDatabaseIntegrity() → boolean
+
+src/main/db/index.ts (initialization):
+- Before initDatabase():
+  1. Verify license (call verifyLicense)
+  2. Check expiry (call checkExpiry)
+  3. Detect time travel (call checkTimeTravelDetection)
+  4. Verify DB integrity (call verifyDatabaseIntegrity)
+  5. If ANY check fails → throw error, show message, exit app
+- After successful checks: proceed with normal startup
+
+src/main/ipc/admin.ts:
+- ipcMain.handle('admin:verifyPassword', ...)
+- ipcMain.handle('admin:getLicenseInfo', ...)
+- ipcMain.handle('admin:setExpiryDate', ...)
+- ipcMain.handle('admin:setExpiryDays', ...)
+- All actions require admin password
+- All actions logged to auditLogs table
+
+src/renderer/src/pages/Admin/ExpiryPanel.tsx:
+- Hidden modal, triggered by Ctrl+Shift+F12
+- Prompt for admin password
+- Show current license info
+- Date picker for new expiry date
+- Or input for "extend by N days"
+- Confirm button (shows what will happen)
+- Success message + restart request
+- Only visible if user.role === 'ADMIN'
+
+DATABASE SCHEMA ADDITIONS:
+
+appSettings table (add/update):
+- key: 'license', value: encrypted JSON {hwid, expiryDate, installDate, appVersion, checksum}
+- key: 'last_system_time', value: ISO timestamp
+- key: 'db_integrity_checksum', value: SHA-256 hash
+- key: 'license_history', value: JSON array of past extensions
+
+auditLogs (new entry type):
+- action: 'ADMIN_EXPIRY_EXTENDED'
+- summary: "App expiry extended from 2025-06-01 to 2025-12-01"
+- metadata: {oldExpiryDate, newExpiryDate, hwid}
+
+TESTING THE SYSTEM:
+
+Test 1: Try to change system date backwards
+→ App shows: "System clock was changed. Fix it and restart." → 24h lock
+
+Test 2: Copy .db file to different machine
+→ App shows: "This app is licensed to a different machine." → Denied
+
+Test 3: Edit .db file with SQLite browser
+→ Checksum fails → "App files may be corrupted. Reinstall." → Denied
+
+Test 4: Delete license key from .db
+→ Decryption fails → "Invalid license. Contact admin." → Denied
+
+Test 5: Try to run after expiry date
+→ App shows: "App license expired on [DATE]. Contact admin to extend." → Denied
+
+Test 6: Uninstall, delete AppData\Local\CSGM AMROUS folder, reinstall
+→ Fresh install regenerates license with SAME hardware ID
+→ Same expiry applies (can't reset by reinstalling)
+
+SECURITY NOTES:
+
+- Never log passwords or decrypted license data to console
+- Never expose hardware ID in UI (show obfuscated version: "****ABCD")
+- Use constant-time comparison for checksums (prevent timing attacks)
+- Store all encryption keys in memory only (never on disk)
+- Use HKDF (HMAC-based Key Derivation Function) for key generation
+- Rotate timestamps to UTC (prevent timezone bypass)
+- Rate limit admin password attempts (5 tries = 5 min lock)
+- Log all admin actions with timestamp + actor
+
+ENCRYPTION LIBRARY:
+- Use Node.js built-in: crypto.createCipheriv('aes-256-gcm', ...)
+- No external dependencies needed
+- Generate random IV per license
+- Store IV + ciphertext + authTag in one encrypted blob
+
+WHAT THIS PREVENTS:
+
+✓ System date changes (time-travel detection)
+✓ Copying app to different machine (hardware ID mismatch)
+✓ Database file tampering (checksum validation)
+✓ Editing database directly (encryption + checksum)
+✓ Uninstall/reinstall reset (hardware ID persists)
+✓ Modifying app code (Electron signature verification)
+✓ Deleting license (checksum fails entire DB)
+✓ Timezone tricks (UTC timestamps)
+✓ Running old cached version (signature check)
+✓ Brute force admin panel (rate limiting)
+
+WHAT THIS DOES NOT PREVENT:
+
+- Disassembling Electron app and rebuilding without checks
+  (But: requires serious reverse-engineering skills + breaking signature)
+- Physical access to machine + removing HDD and reading it elsewhere
+  (But: app still won't run on different machine due to HWID)
+
+For >99% of use cases, this is impenetrable.

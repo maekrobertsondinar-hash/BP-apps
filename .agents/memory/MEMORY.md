@@ -1,0 +1,2 @@
+- [CSGM AMROUS App Overview](csgm-overview.md) — Full feature inventory: auth, workers, brevets, exports, bordereau, expiry system, and audit log.
+- [CSGM design system](csgm-design.md) — Premium Inter-based UI; CSS utilities in index.css; dark sidebar (#0d1117), light content (#f8fafc); petroleum blue #345d6e primary; FileUploadField called as function not JSX component.

@@ -1,0 +1,158 @@
+The current redesign is visually inconsistent.
+
+The login screen has a premium dark futuristic design, but the main application still uses old-style light gray ERP surfaces. This creates a broken experience and destroys the premium feel.
+
+I want a FULLY COHESIVE DARK ENTERPRISE DESIGN SYSTEM across the ENTIRE application.
+
+DO NOT mix:
+
+dark sidebar
+light gray content area
+
+The entire application must feel unified.
+
+NEW VISUAL DIRECTION
+
+Adopt a full dark enterprise UI inspired by:
+
+Linear dark mode
+Arc Browser
+Raycast
+modern cybersecurity dashboards
+premium fintech/admin systems
+
+The app should feel:
+
+cinematic
+deep
+layered
+expensive
+futuristic
+highly professional
+BACKGROUND SYSTEM
+
+Replace ALL light gray page backgrounds.
+
+DO NOT use:
+
+flat white
+light gray ERP backgrounds
+washed-out surfaces
+
+Instead use:
+
+deep navy backgrounds
+slate blue surfaces
+layered dark cards
+subtle gradients
+soft glow accents
+
+Examples:
+
+app background: very dark navy/slate
+content panels: slightly lighter elevated surfaces
+cards: layered dark glass panels
+hover states: soft illuminated borders
+CONTENT AREA
+
+The main content area currently feels empty and unfinished.
+
+Fix this by:
+
+reducing excessive whitespace
+adding layered panels
+improving content density
+using better spacing hierarchy
+introducing subtle visual structure
+
+The app should feel alive and premium.
+
+CARDS & PANELS
+
+Every card should feel elevated and refined.
+
+Use:
+
+soft shadows
+subtle border glow
+layered transparency carefully
+rounded corners with discipline
+depth hierarchy
+
+NO flat dead gray containers.
+
+SEARCH SECTION
+
+The search module should become a premium command-center style interface.
+
+Use:
+
+floating search containers
+glowing active states
+animated focus borders
+smooth transitions
+refined input styling
+
+The search area should feel like the core intelligence engine of the application.
+
+SIDEBAR
+
+Keep the dark sidebar direction but refine it further.
+
+Make it:
+
+thinner
+more elegant
+more compact
+cleaner typography
+stronger active states
+
+Remove the bulky old-admin-dashboard feeling.
+
+TABLES
+
+Mass search tables should use dark premium styling.
+
+Inspired by:
+
+Airtable dark mode
+Notion database dark mode
+Linear issue tables
+
+Use:
+
+subtle row hover
+elevated headers
+sticky columns
+refined spacing
+premium typography
+ANIMATIONS
+
+Increase polish significantly.
+
+Add:
+
+Framer Motion transitions
+smooth page transitions
+staggered reveals
+animated hover depth
+animated cards
+smooth sidebar interactions
+
+Animations must feel expensive and intentional.
+
+OVERALL GOAL
+
+The application must feel like:
+
+elite industrial management software
+high-end internal enterprise tooling
+a modern desktop application executives would actually enjoy using
+
+NOT:
+
+a web admin template
+a white ERP portal
+an outdated dashboard
+
+Create a cohesive premium dark ecosystem across ALL screens.
