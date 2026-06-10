@@ -86,7 +86,7 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
           </div>
           <div className="flex-1">
             <h2 className="text-base font-black text-white tracking-wide">Gestion de Licence</h2>
-            <p className="text-white/70 text-[10px] font-bold uppercase tracking-widest">Expiration de l'application</p>
+            <p className="text-white/90 text-[10px] font-bold uppercase tracking-widest">Expiration de l'application</p>
           </div>
           <button onClick={onClose} className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-all">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

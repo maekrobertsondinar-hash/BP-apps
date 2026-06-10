@@ -136,3 +136,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0.5;
   cursor: pointer;
 }
+
+/* ══ Global Readability Improvements ══ */
+
+/* 1. Minimum font sizes — eliminate sub-11px text */
+.text-\[8px\]  { font-size: 11px !important; letter-spacing: 0.04em !important; }
+.text-\[9px\]  { font-size: 11px !important; }
+.text-\[10px\] { font-size: 12px !important; }
+
+/* 2. Boost low-contrast gray text */
+.text-gray-400 { color: #6B7280 !important; }
+.text-gray-500 { color: #4B5563 !important; }
+
+/* 3. Better placeholder contrast */
+.placeholder-gray-400::placeholder { color: #9CA3AF !important; }
+input::placeholder, textarea::placeholder { color: #9CA3AF; }
+
+/* 4. Better line-height on body copy and table cells */
+p, li { line-height: 1.6; }
+td, th { line-height: 1.45; }
+
+/* 5. Ensure credits / footer text stays readable */
+.text-\[10px\].text-gray-400 { font-size: 12px !important; color: #6B7280 !important; }

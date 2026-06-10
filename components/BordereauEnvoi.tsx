@@ -286,7 +286,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
             </div>
             <div>
               <h1 className="text-2xl font-black text-white tracking-tight">Bordereau d'Envoi</h1>
-              <p className="text-white/60 text-xs font-bold uppercase tracking-widest mt-0.5">
+              <p className="text-white/80 text-xs font-bold uppercase tracking-widest mt-0.5">
                 {allChantiers.length} chantier{allChantiers.length !== 1 ? 's' : ''} · {entries.length} document{entries.length !== 1 ? 's' : ''}
               </p>
             </div>
@@ -368,15 +368,15 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
 
         {/* Multi-select bar */}
         {selectMode && (
-          <div className="mt-4 flex items-center gap-3 bg-gray-100 rounded-xl px-4 py-3 flex-wrap">
+          <div className="mt-4 flex items-center gap-3 bg-white/15 rounded-xl px-4 py-3 flex-wrap">
             <button onClick={toggleSelectAll} className="text-xs font-black text-white hover:text-white/80 transition-colors">
               {selectedChantiers.size === allChantiers.length && allChantiers.length > 0 ? 'Tout désélectionner' : 'Tout sélectionner'}
             </button>
-            <span className="text-white/30">·</span>
-            <span className="text-xs font-bold text-white/70">{selectedChantiers.size} chantier{selectedChantiers.size > 1 ? 's' : ''} sélectionné{selectedChantiers.size > 1 ? 's' : ''}</span>
+            <span className="text-white/60">·</span>
+            <span className="text-xs font-bold text-white/90">{selectedChantiers.size} chantier{selectedChantiers.size > 1 ? 's' : ''} sélectionné{selectedChantiers.size > 1 ? 's' : ''}</span>
             {selectedChantiers.size > 0 && isAdmin && (
               <>
-                <span className="text-white/30">·</span>
+                <span className="text-white/60">·</span>
                 <button
                   onClick={() => setDeleteTarget('__selected__')}
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500 hover:bg-rose-400 text-white rounded-lg text-xs font-black transition-all active:scale-95"
