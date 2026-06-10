@@ -11,7 +11,6 @@ export interface Worker {
   affiliation: string;
   chantier?: string;
   affair?: string;
-  // Documents — stored as base64 data URIs (image or PDF)
   docPermis?: string;
   docPermisFilename?: string;
   docBrevetMarch?: string;
@@ -20,10 +19,8 @@ export interface Worker {
   docBrevetDangFilename?: string;
   docBrevetPers?: string;
   docBrevetPersFilename?: string;
-  // Legacy shared fields (kept for backward compat)
   numeroBrevet?: string;
   dateExpirationBrevet?: string;
-  // Per-section numero + date d'expiration
   numeroPermis?: string;
   dateExpirationPermis?: string;
   numeroBrevetMarch?: string;
@@ -32,12 +29,10 @@ export interface Worker {
   dateExpirationBrevetDang?: string;
   numeroBrevetPers?: string;
   dateExpirationBrevetPers?: string;
-  // Utilisation Status ('OUI' | 'NON')
   docPermisUtilisation?: string;
   docBrevetMarchUtilisation?: string;
   docBrevetDangUtilisation?: string;
   docBrevetPersUtilisation?: string;
-  // Audit Trail
   createdBy?: string;
   createdAt?: string;
   lastModifiedBy?: string;
@@ -61,13 +56,13 @@ export interface BordereauEntry {
   type: 'arrivee' | 'depart';
   date: string;
   filename: string;
-  data: string;
   mimeType: string;
+  data: string;
   uploadedBy?: string;
   uploadedAt?: string;
 }
 
 export interface BulkImportConfig {
-  docType: 'docBrevetMarch' | 'docBrevetDang' | 'docBrevetPers';
+  docType: 'docPermis' | 'docBrevetMarch' | 'docBrevetDang' | 'docBrevetPers';
   title: string;
 }

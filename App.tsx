@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Worker, ModalType, ViewType, User, BulkImportConfig, BordereauEntry } from './types';
-import { INITIAL_WORKERS, JOB_FUNCTIONS, INITIAL_USERS } from './constants';
+import { JOB_FUNCTIONS } from './constants';
 import WorkerForm from './components/WorkerForm';
 import ImportModal from './components/ImportModal';
 import BulkDocImportModal from './components/BulkDocImportModal';
@@ -9,71 +9,13 @@ import AuthScreen from './components/AuthScreen';
 import BordereauEnvoi from './components/BordereauEnvoi';
 import DocViewer from './components/DocViewer';
 import ExpiryPanel from './components/ExpiryPanel';
-import { getExpiryInfo, touchLastKnownTime } from './utils/expiry';
+import { getExpiryInfoFromServer } from './utils/expiry';
 import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
-import { encrypt, decrypt } from './utils/crypto';
+import { api } from './utils/api';
 
 const APP_CREDITS = "Application créée par AMROUS Ayham — Propriété de AMROUS Abdallah";
 
-// Accès global à initSqlJs chargé via le script dans index.html
-declare var initSqlJs: any;
-
-const STORAGE_KEY = 'gtp_rh_workers_data';
-const USERS_STORAGE_KEY = 'gtp_rh_users';
-
-// --- INDEXEDDB HELPERS ---
-const DB_NAME = 'GTP_RH_DB';
-const DB_VERSION = 1;
-const STORE_NAME = 'workers';
-
-const openDB = (): Promise<IDBDatabase> => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'matricule' });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
-
-const loadWorkersFromDB = async (): Promise<Worker[]> => {
-  try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(STORE_NAME, 'readonly');
-      const store = transaction.objectStore(STORE_NAME);
-      const request = store.getAll();
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-  } catch (e) {
-    console.error("Error opening DB for read", e);
-    return [];
-  }
-};
-
-const saveWorkersToDB = async (workers: Worker[]) => {
-  const db = await openDB();
-  return new Promise<void>((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
-    
-    // Clear and bulk put is robust for syncing array state to IDB
-    const clearRequest = store.clear();
-    
-    clearRequest.onsuccess = () => {
-        workers.forEach(w => store.put(w));
-    };
-
-    transaction.oncomplete = () => resolve();
-    transaction.onerror = () => reject(transaction.error);
-  });
-};
 
 /**
  * COMPOSANTS AUXILIAIRES
@@ -218,34 +160,8 @@ const INITIAL_ADVANCED_FILTERS: AdvancedFilterState = {
 const App: React.FC = () => {
   // --- AUTHENTICATION STATE ---
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>(() => {
-    const saved = localStorage.getItem(USERS_STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed: User[] = JSON.parse(saved);
-        // Migrate: add status field if missing, encrypt plaintext passwords
-        return parsed.map(u => {
-          const migrated = { ...u };
-          if (!migrated.status) {
-            migrated.status = migrated.role === 'ADMIN' ? 'APPROVED' : 'APPROVED';
-          }
-          // Detect if password is plaintext (not valid base64 encrypted) and encrypt it
-          try {
-            const dec = decrypt(migrated.password);
-            // If decrypting gives back the same value, it's likely already encrypted
-            // Simple heuristic: check if it looks like base64
-            if (!/^[A-Za-z0-9+/=]+$/.test(migrated.password) || migrated.password.length < 4) {
-              migrated.password = encrypt(migrated.password);
-            }
-          } catch {
-            migrated.password = encrypt(migrated.password);
-          }
-          return migrated;
-        });
-      } catch { return INITIAL_USERS; }
-    }
-    return INITIAL_USERS;
-  });
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
 
   // Admin user management state
   const [newUserName, setNewUserName] = useState('');
@@ -253,7 +169,6 @@ const App: React.FC = () => {
   const [newUserPassword, setNewUserPassword] = useState('');
   const [newUserRole, setNewUserRole] = useState<'USER' | 'ADMIN'>('USER');
   const [newUserError, setNewUserError] = useState('');
-  const [showPasswords, setShowPasswords] = useState(false);
 
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [isDbReady, setIsDbReady] = useState(false);
@@ -306,45 +221,44 @@ const App: React.FC = () => {
   const [expiryDaysLeft, setExpiryDaysLeft] = useState<number>(Infinity);
   const [showExpiryContactPopup, setShowExpiryContactPopup] = useState(false);
 
-  // Load Workers from DB on mount
+  // Session restore on mount
   useEffect(() => {
-    const initData = async () => {
-      try {
-        let loadedWorkers = await loadWorkersFromDB();
-        
-        // Migration strategy: If DB empty, try to load from LocalStorage once, then clear LS.
-        if (loadedWorkers.length === 0) {
-           const lsData = localStorage.getItem(STORAGE_KEY);
-           if (lsData) {
-             try {
-               loadedWorkers = JSON.parse(lsData);
-               console.log("Migrating data from LocalStorage to IndexedDB...");
-             } catch {
-               loadedWorkers = INITIAL_WORKERS;
-             }
-           } else {
-             loadedWorkers = INITIAL_WORKERS;
-           }
-        }
-        
-        setWorkers(loadedWorkers);
-      } catch (err) {
-        console.error("DB Init failed", err);
-        setWorkers(INITIAL_WORKERS);
-      } finally {
-        setIsDbReady(true);
-      }
-    };
-    initData();
+    api.get<{ username: string; fullName: string; role: string; status: string }>('/api/auth/me')
+      .then(data => {
+        setCurrentUser({ username: data.username, fullName: data.fullName, password: '***', role: data.role as 'ADMIN' | 'USER', status: data.status as 'PENDING' | 'APPROVED' });
+      })
+      .catch(() => setCurrentUser(null))
+      .finally(() => setIsAuthChecked(true));
   }, []);
 
-  // Expiry check on mount
+  // Load workers from API when authenticated
   useEffect(() => {
-    touchLastKnownTime();
-    const info = getExpiryInfo();
-    setIsExpired(info.expired);
-    setExpiryDaysLeft(info.daysLeft);
-  }, []);
+    if (!currentUser) return;
+    api.get<Worker[]>('/api/workers').then(data => {
+      setWorkers(data);
+      setIsDbReady(true);
+    }).catch(() => {
+      setWorkers([]);
+      setIsDbReady(true);
+    });
+  }, [currentUser?.username]);
+
+  // Load users list (admin only)
+  useEffect(() => {
+    if (currentUser?.role !== 'ADMIN') return;
+    api.get<{ username: string; fullName: string; role: string; status: string }[]>('/api/users').then(data => {
+      setUsers(data.map(u => ({ username: u.username, fullName: u.fullName, password: '***', role: u.role as 'ADMIN' | 'USER', status: u.status as 'PENDING' | 'APPROVED' })));
+    }).catch(() => {});
+  }, [currentUser?.role, currentUser?.username]);
+
+  // Expiry check when authenticated
+  useEffect(() => {
+    if (!currentUser) return;
+    getExpiryInfoFromServer().then(info => {
+      setIsExpired(info.expired);
+      setExpiryDaysLeft(info.daysLeft ?? Infinity);
+    }).catch(() => {});
+  }, [currentUser?.username]);
 
   // Keyboard shortcut: Ctrl+Shift+F12 opens admin expiry panel
   useEffect(() => {
@@ -360,82 +274,55 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentUser]);
 
-  // Persist Workers to DB when changed
-  useEffect(() => {
-    if (!isDbReady) return;
-
-    const saveData = async () => {
-      try {
-        await saveWorkersToDB(workers);
-        // Clear localStorage to ensure we don't hit quota limits anymore and rely on IDB
-        localStorage.removeItem(STORAGE_KEY);
-      } catch (e) {
-        console.error("Erreur sauvegarde DB:", e);
-      }
-    };
-    saveData();
-  }, [workers, isDbReady]);
-
-  // Persist Users (Small data, localStorage is fine)
-  useEffect(() => {
-    try {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-    } catch (e) { console.error("Error saving users", e); }
-  }, [users]);
-
   const handleLogin = (user: User) => {
     setCurrentUser(user);
   };
 
-  const handleSignup = (newUser: User) => {
-    // Encrypt password before storing, mark as PENDING
-    const secureUser: User = {
-      ...newUser,
-      password: encrypt(newUser.password),
-      status: 'PENDING'
-    };
-    setUsers(prev => [...prev, secureUser]);
-    // Do NOT log in — user must wait for admin approval
+  const handleApproveUser = async (username: string) => {
+    try {
+      await api.put(`/api/users/${encodeURIComponent(username)}/approve`);
+      setUsers(prev => prev.map(u => u.username === username ? { ...u, status: 'APPROVED' } : u));
+    } catch (err: any) {
+      alert(err.message ?? "Erreur lors de l'approbation");
+    }
   };
 
-  const handleApproveUser = (username: string) => {
-    setUsers(prev => prev.map(u => u.username === username ? { ...u, status: 'APPROVED' } : u));
+  const handleDeleteUser = async (username: string) => {
+    if (username === currentUser?.username) return;
+    try {
+      await api.del(`/api/users/${encodeURIComponent(username)}`);
+      setUsers(prev => prev.filter(u => u.username !== username));
+    } catch (err: any) {
+      alert(err.message ?? 'Erreur lors de la suppression');
+    }
   };
 
-  const handleDeleteUser = (username: string) => {
-    if (username === currentUser?.username) return; // Can't delete self
-    setUsers(prev => prev.filter(u => u.username !== username));
-  };
-
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     if (!newUserName || !newUserSurname || !newUserPassword) {
       setNewUserError("Tous les champs sont obligatoires.");
       return;
     }
     const fullName = `${newUserName.trim().toUpperCase()} ${newUserSurname.trim()}`;
-    if (users.some(u => u.username.toLowerCase() === fullName.toLowerCase())) {
-      setNewUserError("Cet utilisateur existe déjà.");
-      return;
+    try {
+      await api.post('/api/users', { username: fullName, fullName, password: newUserPassword, role: newUserRole });
+      setUsers(prev => [...prev, { username: fullName, fullName, password: '***', role: newUserRole, status: 'APPROVED' }]);
+      setNewUserName('');
+      setNewUserSurname('');
+      setNewUserPassword('');
+      setNewUserRole('USER');
+      setNewUserError('');
+      setActiveModal(null);
+    } catch (err: any) {
+      setNewUserError(err.message ?? 'Erreur lors de la création');
     }
-    const newUser: User = {
-      username: fullName,
-      fullName: fullName,
-      password: encrypt(newUserPassword),
-      role: newUserRole,
-      status: 'APPROVED'
-    };
-    setUsers(prev => [...prev, newUser]);
-    setNewUserName('');
-    setNewUserSurname('');
-    setNewUserPassword('');
-    setNewUserRole('USER');
-    setNewUserError('');
-    setActiveModal(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try { await api.post('/api/auth/logout'); } catch { /* ignore */ }
     setCurrentUser(null);
-    // Reset view states
+    setWorkers([]);
+    setUsers([]);
+    setIsDbReady(false);
     setSearchResults(null);
     setHasSearched(false);
     setSearchQuery('');
@@ -718,7 +605,7 @@ const App: React.FC = () => {
       }
 
       // If specific filters are touched, turn off "Aucun Brevet"
-      if ((key === 'march' || key === 'dang' || key === 'pers' || key === 'expiration') && value !== 'ALL') {
+      if ((key === 'march' || key === 'dang' || key === 'pers' || key === 'expirationPermis' || key === 'expirationMarch' || key === 'expirationDang' || key === 'expirationPers') && value !== 'ALL') {
         next.aucunBrevet = false;
       }
 
@@ -1103,48 +990,24 @@ const App: React.FC = () => {
     const xlsxBytes = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     zip.file(`excel/RH_Global_${dateStr}.xlsx`, xlsxBytes);
 
-    // --- FOLDER 3: database/ — SQLite .db snapshot ---
+    // --- FOLDER 3: json/ — JSON snapshot (replaces CDN-dependent SQLite export) ---
     try {
-      const SQL = await initSqlJs({
-        locateFile: (file: string) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/${file}`
-      });
-      const sqlDb = new SQL.Database();
-      sqlDb.run(`CREATE TABLE travailleurs (
-        matricule TEXT PRIMARY KEY, nom TEXT, prenom TEXT, dateNaissance TEXT, fonction TEXT,
-        dateEntree TEXT, dateFin TEXT, wilaya TEXT, affiliation TEXT, chantier TEXT, affair TEXT,
-        docPermis TEXT, docBrevetMarch TEXT, docBrevetDang TEXT, docBrevetPers TEXT,
-        docPermisFilename TEXT, docBrevetMarchFilename TEXT, docBrevetDangFilename TEXT, docBrevetPersFilename TEXT,
-        numeroPermis TEXT, dateExpirationPermis TEXT,
-        numeroBrevetMarch TEXT, dateExpirationBrevetMarch TEXT,
-        numeroBrevetDang TEXT, dateExpirationBrevetDang TEXT,
-        numeroBrevetPers TEXT, dateExpirationBrevetPers TEXT,
-        docPermisUtilisation TEXT, docBrevetMarchUtilisation TEXT, docBrevetDangUtilisation TEXT, docBrevetPersUtilisation TEXT,
-        createdBy TEXT, createdAt TEXT, lastModifiedBy TEXT, updatedAt TEXT
-      )`);
-      const stmt = sqlDb.prepare(`INSERT INTO travailleurs VALUES (
-        ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
-      )`);
-      workers.forEach(w => {
-        stmt.run([
-          w.matricule, w.nom, w.prenom, w.dateNaissance || '', w.fonction,
-          w.dateEntree || '', w.dateFin || '', w.wilaya || '', w.affiliation || '',
-          w.chantier || '', w.affair || '',
-          w.docPermis || '', w.docBrevetMarch || '', w.docBrevetDang || '', w.docBrevetPers || '',
-          w.docPermisFilename || '', w.docBrevetMarchFilename || '', w.docBrevetDangFilename || '', w.docBrevetPersFilename || '',
-          w.numeroPermis || '', w.dateExpirationPermis || '',
-          w.numeroBrevetMarch || '', w.dateExpirationBrevetMarch || '',
-          w.numeroBrevetDang || '', w.dateExpirationBrevetDang || '',
-          w.numeroBrevetPers || '', w.dateExpirationBrevetPers || '',
-          w.docPermisUtilisation || '', w.docBrevetMarchUtilisation || '', w.docBrevetDangUtilisation || '', w.docBrevetPersUtilisation || '',
-          w.createdBy || '', w.createdAt || '', w.lastModifiedBy || '', w.updatedAt || ''
-        ]);
-      });
-      stmt.free();
-      const dbBytes = sqlDb.export();
-      sqlDb.close();
-      zip.file(`database/RH_Database_${dateStr}.db`, dbBytes);
+      const jsonData = JSON.stringify(workers.map(w => ({
+        matricule: w.matricule, nom: w.nom, prenom: w.prenom,
+        dateNaissance: w.dateNaissance, fonction: w.fonction,
+        dateEntree: w.dateEntree, dateFin: w.dateFin || '',
+        wilaya: w.wilaya, affiliation: w.affiliation,
+        chantier: w.chantier || '', affair: w.affair || '',
+        numeroPermis: w.numeroPermis || '', dateExpirationPermis: w.dateExpirationPermis || '',
+        numeroBrevetMarch: w.numeroBrevetMarch || '', dateExpirationBrevetMarch: w.dateExpirationBrevetMarch || '',
+        numeroBrevetDang: w.numeroBrevetDang || '', dateExpirationBrevetDang: w.dateExpirationBrevetDang || '',
+        numeroBrevetPers: w.numeroBrevetPers || '', dateExpirationBrevetPers: w.dateExpirationBrevetPers || '',
+        createdBy: w.createdBy || '', createdAt: w.createdAt || '',
+        lastModifiedBy: w.lastModifiedBy || '', updatedAt: w.updatedAt || '',
+      })), null, 2);
+      zip.file(`database/RH_Database_${dateStr}.json`, jsonData);
     } catch (err) {
-      console.error('DB export error in ZIP:', err);
+      console.error('JSON export error in ZIP:', err);
     }
 
     // --- FOLDER 4: collaborateurs/ — one folder per eligible worker ---
@@ -1192,7 +1055,7 @@ const App: React.FC = () => {
 
     // --- FOLDER 5: bordereau/ — bordereau d'envoi docs organized by chantier ---
     try {
-      const bordereauEntries: BordereauEntry[] = JSON.parse(localStorage.getItem('csgm_bordereau_entries') || '[]');
+      const bordereauEntries: BordereauEntry[] = await api.get<BordereauEntry[]>('/api/bordereau').catch(() => []);
       if (bordereauEntries.length > 0) {
         for (const entry of bordereauEntries) {
           const chantierFolder = `bordereau/${safe(entry.chantier)}`;
@@ -1254,19 +1117,19 @@ const App: React.FC = () => {
     setDocViewer(state);
   }, []);
 
-  const handleInternalSave = () => {
+  const handleInternalSave = async () => {
     setIsSyncing(true);
-    // Explicit trigger to save effect (technically handled by effect on state change, but this visualizes sync)
-    setTimeout(() => {
-        saveWorkersToDB(workers).then(() => {
-            setLastSaved(new Date().toLocaleTimeString());
-            setShowSaveToast(true);
-            setTimeout(() => setShowSaveToast(false), 3000);
-        }).catch(err => {
-            alert("Erreur de synchronisation IndexedDB : " + err);
-        });
-        setIsSyncing(false);
-    }, 600);
+    try {
+      const refreshed = await api.get<Worker[]>('/api/workers');
+      setWorkers(refreshed);
+      setLastSaved(new Date().toLocaleTimeString());
+      setShowSaveToast(true);
+      setTimeout(() => setShowSaveToast(false), 3000);
+    } catch (err: any) {
+      alert("Erreur de synchronisation : " + (err.message ?? ''));
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const handleExportDB = async () => {
@@ -1275,60 +1138,75 @@ const App: React.FC = () => {
       return;
     }
     try {
-      const SQL = await initSqlJs({
-        locateFile: (file: string) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/${file}`
-      });
-      const db = new SQL.Database();
-      db.run(`CREATE TABLE travailleurs (matricule TEXT PRIMARY KEY, nom TEXT, prenom TEXT, dateNaissance TEXT, fonction TEXT, dateEntree TEXT, dateFin TEXT, wilaya TEXT, affiliation TEXT, chantier TEXT, affair TEXT, docPermis TEXT, docBrevetMarch TEXT, docBrevetDang TEXT, docBrevetPers TEXT)`);
-      const stmt = db.prepare("INSERT INTO travailleurs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-      workers.forEach(w => {
-        stmt.run([
-          w.matricule, w.nom, w.prenom, w.dateNaissance, w.fonction, w.dateEntree, w.dateFin || "", 
-          w.wilaya, w.affiliation, w.chantier || "", w.affair || "", w.docPermis || "", w.docBrevetMarch || "", w.docBrevetDang || "", w.docBrevetPers || ""
-        ]);
-      });
-      stmt.free();
-      const binaryArray = db.export();
-      const blob = new Blob([binaryArray], { type: 'application/x-sqlite3' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `rh_database_gtp_${new Date().toISOString().split('T')[0]}.db`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      const rows = workers.map(w => ({
+        Matricule: w.matricule,
+        Nom: w.nom,
+        Prénom: w.prenom,
+        'Date Naissance': w.dateNaissance,
+        Fonction: w.fonction,
+        'Date Entrée': w.dateEntree,
+        'Date Fin': w.dateFin || '',
+        Wilaya: w.wilaya,
+        Affiliation: w.affiliation,
+        Chantier: w.chantier || '',
+        Affaire: w.affair || '',
+        'N° Permis': w.numeroPermis || '',
+        'Exp. Permis': w.dateExpirationPermis || '',
+        'N° Brevet March.': w.numeroBrevetMarch || '',
+        'Exp. Brevet March.': w.dateExpirationBrevetMarch || '',
+        'N° Brevet Dang.': w.numeroBrevetDang || '',
+        'Exp. Brevet Dang.': w.dateExpirationBrevetDang || '',
+        'N° Brevet Pers.': w.numeroBrevetPers || '',
+        'Exp. Brevet Pers.': w.dateExpirationBrevetPers || '',
+        'Créé par': w.createdBy || '',
+        'Créé le': w.createdAt || '',
+        'Modifié par': w.lastModifiedBy || '',
+        'Modifié le': w.updatedAt || '',
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Travailleurs');
+      XLSX.writeFile(wb, `rh_database_gtp_${new Date().toISOString().split('T')[0]}.xlsx`);
     } catch (err) {
       console.error(err);
       alert("Erreur lors de l'exportation.");
     }
   };
 
-  const executeDelete = () => {
+  const executeDelete = async () => {
     if (!targetMatricule) return;
-    setWorkers(prev => prev.filter(w => w.matricule !== targetMatricule));
-    if (searchResults?.matricule === targetMatricule) {
-      setSearchResults(null);
-      setHasSearched(false);
-      setSearchQuery('');
+    try {
+      await api.del(`/api/workers/${encodeURIComponent(targetMatricule)}`);
+      setWorkers(prev => prev.filter(w => w.matricule !== targetMatricule));
+      if (searchResults?.matricule === targetMatricule) {
+        setSearchResults(null);
+        setHasSearched(false);
+        setSearchQuery('');
+      }
+      setNameSearchResults(prev => prev.filter(w => w.matricule !== targetMatricule));
+      setTargetMatricule(null);
+      setActiveModal(null);
+    } catch (err: any) {
+      alert(err.message ?? 'Erreur lors de la suppression');
     }
-    setNameSearchResults(prev => prev.filter(w => w.matricule !== targetMatricule));
-    setTargetMatricule(null);
-    setActiveModal(null);
   };
 
-  const executeClear = () => {
-    setWorkers([]);
-    saveWorkersToDB([]); // Clear DB
-    setHasSearched(false);
-    setSearchResults(null);
-    setSearchQuery('');
-    setNameSearchResults([]);
-    setHasSearchedByName(false);
-    setMassSearchChantier('');
-    setMassSearchFonction('');
-    setCurrentView('search');
-    setActiveModal(null);
+  const executeClear = async () => {
+    try {
+      await api.del('/api/workers');
+      setWorkers([]);
+      setHasSearched(false);
+      setSearchResults(null);
+      setSearchQuery('');
+      setNameSearchResults([]);
+      setHasSearchedByName(false);
+      setMassSearchChantier('');
+      setMassSearchFonction('');
+      setCurrentView('search');
+      setActiveModal(null);
+    } catch (err: any) {
+      alert(err.message ?? 'Erreur lors de la suppression');
+    }
   };
 
   const triggerPwdGuard = (label: string, sub: string, onConfirm: () => void) => {
@@ -1338,17 +1216,16 @@ const App: React.FC = () => {
     setPwdGuardShow(false);
   };
 
-  const executePwdGuard = () => {
-    const adminUser = users.find(u => u.role === 'ADMIN');
-    if (!adminUser) { setPwdGuardError('Aucun administrateur trouvé.'); return; }
-    if (decrypt(adminUser.password) !== pwdGuardInput) {
+  const executePwdGuard = async () => {
+    try {
+      await api.post('/api/auth/verify-password', { password: pwdGuardInput });
+      pwdGuard?.onConfirm();
+      setPwdGuard(null);
+      setPwdGuardInput('');
+      setPwdGuardError('');
+    } catch {
       setPwdGuardError('Mot de passe administrateur incorrect.');
-      return;
     }
-    pwdGuard?.onConfirm();
-    setPwdGuard(null);
-    setPwdGuardInput('');
-    setPwdGuardError('');
   };
 
   // Function to setup and open the Bulk Import Modal
@@ -1359,125 +1236,91 @@ const App: React.FC = () => {
 
   // Handle the confirmation from Bulk Import Modal
   // Updated to handle both UPDATES and CREATIONS
-  const handleBulkImportConfirm = (actions: { type: 'UPDATE' | 'CREATE', matricule: string, field: keyof Worker, data: string, workerData?: Partial<Worker> }[]) => {
+  const handleBulkImportConfirm = async (actions: { type: 'UPDATE' | 'CREATE', matricule: string, field: keyof Worker, data: string, workerData?: Partial<Worker> }[]) => {
     const now = new Date().toLocaleString('fr-FR', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
-    
-    // Append (AUTOMATED) to the username for audit trail
     const modifierName = `${currentUser?.fullName || "System"} (AUTOMATED)`;
 
-    setWorkers(prev => {
-        const newWorkers = [...prev];
-        
-        actions.forEach(action => {
-            if (action.type === 'UPDATE') {
-                const index = newWorkers.findIndex(w => w.matricule === action.matricule);
-                if (index !== -1) {
-                    newWorkers[index] = {
-                        ...newWorkers[index],
-                        [action.field]: action.data,
-                        lastModifiedBy: modifierName,
-                        updatedAt: now
-                    };
-                }
-            } else if (action.type === 'CREATE' && action.workerData) {
-                // Ensure no duplicate matricule before creating (double check)
-                const exists = newWorkers.find(w => w.matricule === action.matricule);
-                if (!exists) {
-                    // Create new worker object
-                    const newWorker: Worker = {
-                        ...(action.workerData as Worker), // Cast as we ensure essential fields are there
-                        [action.field]: action.data, // Add the image
-                        createdBy: modifierName,
-                        createdAt: now,
-                        lastModifiedBy: modifierName,
-                        updatedAt: now
-                    };
-                    newWorkers.push(newWorker);
-                }
-            }
-        });
-        return newWorkers;
+    const newWorkers = [...workers];
+    const workersToBatch: Worker[] = [];
+
+    actions.forEach(action => {
+      if (action.type === 'UPDATE') {
+        const index = newWorkers.findIndex(w => w.matricule === action.matricule);
+        if (index !== -1) {
+          newWorkers[index] = { ...newWorkers[index], [action.field]: action.data, lastModifiedBy: modifierName, updatedAt: now };
+          workersToBatch.push(newWorkers[index]);
+        }
+      } else if (action.type === 'CREATE' && action.workerData) {
+        const exists = newWorkers.find(w => w.matricule === action.matricule);
+        if (!exists) {
+          const newWorker: Worker = { ...(action.workerData as Worker), [action.field]: action.data, createdBy: modifierName, createdAt: now, lastModifiedBy: modifierName, updatedAt: now };
+          newWorkers.push(newWorker);
+          workersToBatch.push(newWorker);
+        }
+      }
     });
 
-    // Auto-save feedback
-    setLastSaved(now);
-    setShowSaveToast(true);
-    setTimeout(() => setShowSaveToast(false), 3000);
-    
-    setActiveModal(null);
-    setBulkImportConfig(null);
+    try {
+      if (workersToBatch.length > 0) {
+        await api.post('/api/workers/batch', { workers: workersToBatch });
+      }
+      setWorkers(newWorkers);
+      setLastSaved(now);
+      setShowSaveToast(true);
+      setTimeout(() => setShowSaveToast(false), 3000);
+      setActiveModal(null);
+      setBulkImportConfig(null);
+    } catch (err: any) {
+      alert(err.message ?? "Erreur lors de l'importation en masse");
+    }
   };
 
-  const saveWorker = (worker: Worker) => {
-    // UPDATED: Include Time in the timestamp
+  const saveWorker = async (worker: Worker) => {
     const now = new Date().toLocaleString('fr-FR', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
-    
     const modifierName = currentUser?.fullName || "Inconnu";
 
     if (activeModal === 'EDIT' && searchResults) {
       const originalMatricule = searchResults.matricule;
-      
-      // If matricule changed, check for duplicates
       if (worker.matricule !== originalMatricule) {
         if (workers.some(w => w.matricule === worker.matricule)) {
           alert("Ce matricule est déjà attribué à un autre dossier.");
           return;
         }
       }
-
-      // Update Audit Fields
-      const updatedWorker = {
-        ...worker,
-        lastModifiedBy: modifierName,
-        updatedAt: now,
-        // Preserve creation info
-        createdBy: searchResults.createdBy || worker.createdBy,
-        createdAt: searchResults.createdAt || worker.createdAt,
-      };
-
-      setWorkers(prev => prev.map(w => w.matricule === originalMatricule ? updatedWorker : w));
-      
-      // Update current displayed result
-      setSearchResults(updatedWorker);
-      
-      // If we were searching by the old ID, update the query to the new one
-      if (searchMode === 'id' && searchQuery === originalMatricule) {
-        setSearchQuery(updatedWorker.matricule);
+      const updatedWorker = { ...worker, lastModifiedBy: modifierName, updatedAt: now, createdBy: searchResults.createdBy || worker.createdBy, createdAt: searchResults.createdAt || worker.createdAt };
+      try {
+        await api.put(`/api/workers/${encodeURIComponent(originalMatricule)}`, updatedWorker);
+        setWorkers(prev => prev.map(w => w.matricule === originalMatricule ? updatedWorker : w));
+        setSearchResults(updatedWorker);
+        if (searchMode === 'id' && searchQuery === originalMatricule) setSearchQuery(updatedWorker.matricule);
+      } catch (err: any) {
+        alert(err.message ?? 'Erreur lors de la mise à jour'); return;
       }
     } else {
-      // Create New
       if (workers.some(w => w.matricule === worker.matricule)) {
-        alert("Ce matricule existe déjà.");
-        return;
+        alert("Ce matricule existe déjà."); return;
       }
-      
-      const newWorker = {
-        ...worker,
-        createdBy: modifierName,
-        createdAt: now, // Creation time also includes hour
-        lastModifiedBy: modifierName,
-        updatedAt: now
-      };
-
-      setWorkers(prev => [newWorker, ...prev]);
+      const newWorker = { ...worker, createdBy: modifierName, createdAt: now, lastModifiedBy: modifierName, updatedAt: now };
+      try {
+        await api.post('/api/workers', newWorker);
+        setWorkers(prev => [newWorker, ...prev]);
+      } catch (err: any) {
+        alert(err.message ?? 'Erreur lors de la création'); return;
+      }
     }
-    
-    // Auto-save feedback: Trigger the Save Toast immediately
     setLastSaved(now);
     setShowSaveToast(true);
     setTimeout(() => setShowSaveToast(false), 3000);
-    
     setActiveModal(null);
   };
 
-  const handleImportComplete = (newWorkers: Worker[]) => {
-    // When importing, we might want to tag them as imported by current user if they lack data
+  const handleImportComplete = async (newWorkers: Worker[]) => {
     const now = new Date().toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
     const modifierName = currentUser?.fullName || "System Import";
 
@@ -1489,17 +1332,53 @@ const App: React.FC = () => {
       updatedAt: w.updatedAt || now
     }));
 
-    setWorkers(taggedWorkers);
-    setHasSearched(false);
-    setSearchResults(null);
-    setHasSearchedByName(false);
-    setNameSearchResults([]);
-    setCurrentView('records');
+    try {
+      await api.post('/api/workers/batch', { workers: taggedWorkers });
+      setWorkers(taggedWorkers);
+      setHasSearched(false);
+      setSearchResults(null);
+      setHasSearchedByName(false);
+      setNameSearchResults([]);
+      setCurrentView('records');
+    } catch (err: any) {
+      alert(err.message ?? "Erreur lors de l'importation");
+    }
   };
 
   // --- RENDER ---
 
-  // Loading Screen for Database Initialization
+  // 1. Wait for session check
+  if (!isAuthChecked) {
+    return (
+      <div className="h-screen bg-[#F8F9FA] flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative flex flex-col items-center gap-5">
+          <div className="w-14 h-14 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center">
+            <svg className="w-7 h-7 text-[#1A56DB] animate-spin-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </div>
+          <div className="text-center">
+            <h1 className="text-xl font-bold text-[#1A56DB] mb-1">Chargement du Système</h1>
+            <p className="text-gray-500 text-sm">Vérification de la session sécurisée…</p>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 bg-[#1A56DB] rounded-full animate-bounce" style={{animationDelay:'0ms'}} />
+            <div className="w-1.5 h-1.5 bg-[#1A56DB] rounded-full animate-bounce" style={{animationDelay:'150ms'}} />
+            <div className="w-1.5 h-1.5 bg-[#1A56DB] rounded-full animate-bounce" style={{animationDelay:'300ms'}} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Not logged in → auth screen
+  if (!currentUser) {
+    return <AuthScreen onLogin={handleLogin} />;
+  }
+
+  // 3. Logged in but workers not yet loaded
   if (!isDbReady) {
     return (
       <div className="h-screen bg-[#F8F9FA] flex flex-col items-center justify-center gap-6 relative overflow-hidden">
@@ -1512,7 +1391,7 @@ const App: React.FC = () => {
             </svg>
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-white mb-1">Chargement du Système</h1>
+            <h1 className="text-xl font-bold text-[#1A56DB] mb-1">Chargement du Système</h1>
             <p className="text-gray-500 text-sm">Initialisation de la base de données sécurisée…</p>
           </div>
           <div className="flex items-center gap-1.5">
@@ -1523,10 +1402,6 @@ const App: React.FC = () => {
         </div>
       </div>
     );
-  }
-
-  if (!currentUser) {
-    return <AuthScreen users={users} onLogin={handleLogin} onSignup={handleSignup} />;
   }
 
   return (
@@ -2449,13 +2324,6 @@ const App: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => setShowPasswords(!showPasswords)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${showPasswords ? 'bg-rose-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={showPasswords ? "M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" : "M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"} /></svg>
-                      {showPasswords ? 'Masquer MDP' : 'Voir MDP'}
-                    </button>
-                    <button
                       onClick={() => { setNewUserError(''); setActiveModal('ADD_USER'); }}
                       className="flex items-center gap-2 px-5 py-2 bg-[#1A56DB] text-white rounded-xl text-xs font-semibold uppercase tracking-wider hover:bg-[#1E40AF] transition-all shadow-lg shadow-blue-500/20"
                     >
@@ -2495,11 +2363,6 @@ const App: React.FC = () => {
                             )}
                           </div>
                           <p className="text-[10px] text-gray-500 font-medium mt-0.5">{u.username}</p>
-                          {showPasswords && (
-                            <p className="text-[10px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded mt-1 border border-emerald-200">
-                              {decrypt(u.password)}
-                            </p>
-                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -2558,7 +2421,6 @@ const App: React.FC = () => {
           onClose={() => setActiveModal(null)}
           onImportComplete={handleImportComplete}
           currentUser={currentUser}
-          users={users}
         />
       )}
 
@@ -2575,10 +2437,13 @@ const App: React.FC = () => {
         const [delPwd, setDelPwd] = React.useState('');
         const [delErr, setDelErr] = React.useState('');
         const [delShow, setDelShow] = React.useState(false);
-        const confirmDelete = () => {
-          const adminUser = users.find(u => u.role === 'ADMIN');
-          if (!adminUser || decrypt(adminUser.password) !== delPwd) { setDelErr('Mot de passe administrateur incorrect.'); return; }
-          executeDelete();
+        const confirmDelete = async () => {
+          try {
+            await api.post('/api/auth/verify-password', { password: delPwd });
+            executeDelete();
+          } catch {
+            setDelErr('Mot de passe administrateur incorrect.');
+          }
         };
         return (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
@@ -2618,10 +2483,13 @@ const App: React.FC = () => {
         const [clrPwd, setClrPwd] = React.useState('');
         const [clrErr, setClrErr] = React.useState('');
         const [clrShow, setClrShow] = React.useState(false);
-        const confirmClear = () => {
-          const adminUser = users.find(u => u.role === 'ADMIN');
-          if (!adminUser || decrypt(adminUser.password) !== clrPwd) { setClrErr('Mot de passe administrateur incorrect.'); return; }
-          executeClear();
+        const confirmClear = async () => {
+          try {
+            await api.post('/api/auth/verify-password', { password: clrPwd });
+            executeClear();
+          } catch {
+            setClrErr('Mot de passe administrateur incorrect.');
+          }
         };
         return (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
@@ -3002,9 +2870,10 @@ const App: React.FC = () => {
           currentUser={currentUser}
           onClose={() => {
             setShowExpiryPanel(false);
-            const info = getExpiryInfo();
-            setIsExpired(info.expired);
-            setExpiryDaysLeft(info.daysLeft);
+            getExpiryInfoFromServer().then(info => {
+              setIsExpired(info.expired);
+              setExpiryDaysLeft(info.daysLeft ?? Infinity);
+            }).catch(() => {});
           }}
         />
       )}

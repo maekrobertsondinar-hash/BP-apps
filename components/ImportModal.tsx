@@ -1,111 +1,109 @@
 
 import React, { useState } from 'react';
 import { Worker, User } from '../types';
-import { decrypt } from '../utils/crypto';
+import { api } from '../utils/api';
+import * as XLSX from 'xlsx';
 
 interface ImportModalProps {
   onClose: () => void;
   onImportComplete: (workers: Worker[]) => void;
   currentUser: User;
-  users: User[];
 }
-
-declare var initSqlJs: any;
 
 const APP_CREDITS = "Application créée par AMROUS Ayham — Propriété de AMROUS Abdallah";
 
-const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, currentUser, users }) => {
+const fieldMap: Record<string, keyof Worker> = {
+  matricule: 'matricule', id: 'matricule', mat: 'matricule', code: 'matricule', num: 'matricule',
+  nom: 'nom', last_name: 'nom', surname: 'nom', lastname: 'nom',
+  prenom: 'prenom', first_name: 'prenom', firstname: 'prenom',
+  fonction: 'fonction', job: 'fonction', poste: 'fonction', occupation: 'fonction',
+  wilaya: 'wilaya', ville: 'wilaya', city: 'wilaya', region: 'wilaya',
+  affiliation: 'affiliation', service: 'affiliation', dept: 'affiliation',
+  chantier: 'chantier', site: 'chantier', project: 'chantier', projet: 'chantier',
+  affair: 'affair', affaire: 'affair', code_affaire: 'affair',
+};
+
+function mapRow(obj: Record<string, any>): Worker {
+  const w: any = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val === null || val === undefined || val === '') continue;
+    const k = key.toLowerCase().trim().replace(/[^a-z_]/g, '');
+    if (fieldMap[k]) { w[fieldMap[k]] = String(val); continue; }
+    if (k.includes('naissance') || k.includes('birth')) w.dateNaissance = String(val);
+    else if (k.includes('entree') || k.includes('hired') || k.includes('start')) w.dateEntree = String(val);
+    else if ((k.includes('fin') || k.includes('end') || k.includes('quit')) && !k.includes('affiliation')) w.dateFin = String(val);
+    else if (k.includes('numeropermis') || k === 'n_permis') w.numeroPermis = String(val);
+    else if (k.includes('expirationpermis') || k.includes('exp_permis')) w.dateExpirationPermis = String(val);
+    else if (k.includes('numerobrevet') && k.includes('march')) w.numeroBrevetMarch = String(val);
+    else if (k.includes('expirationbrevet') && k.includes('march')) w.dateExpirationBrevetMarch = String(val);
+    else if (k.includes('numerobrevet') && k.includes('dang')) w.numeroBrevetDang = String(val);
+    else if (k.includes('expirationbrevet') && k.includes('dang')) w.dateExpirationBrevetDang = String(val);
+    else if (k.includes('numerobrevet') && k.includes('pers')) w.numeroBrevetPers = String(val);
+    else if (k.includes('expirationbrevet') && k.includes('pers')) w.dateExpirationBrevetPers = String(val);
+    else { w[key] = val; }
+  }
+  return {
+    matricule: w.matricule || '0000',
+    nom: w.nom || 'INCONNU',
+    prenom: w.prenom || '',
+    dateNaissance: w.dateNaissance || '',
+    fonction: w.fonction || 'NON DÉFINI',
+    dateEntree: w.dateEntree || '',
+    dateFin: w.dateFin || '',
+    wilaya: w.wilaya || '',
+    affiliation: w.affiliation || '',
+    chantier: w.chantier || '',
+    affair: w.affair || '',
+    numeroPermis: w.numeroPermis,
+    dateExpirationPermis: w.dateExpirationPermis,
+    numeroBrevetMarch: w.numeroBrevetMarch,
+    dateExpirationBrevetMarch: w.dateExpirationBrevetMarch,
+    numeroBrevetDang: w.numeroBrevetDang,
+    dateExpirationBrevetDang: w.dateExpirationBrevetDang,
+    numeroBrevetPers: w.numeroBrevetPers,
+    dateExpirationBrevetPers: w.dateExpirationBrevetPers,
+  } as Worker;
+}
+
+const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, currentUser }) => {
   const [step, setStep] = useState<'confirm' | 'admin_password' | 'loading' | 'success' | 'error'>('confirm');
   const [adminPassword, setAdminPassword] = useState('');
   const [adminPwdError, setAdminPwdError] = useState('');
   const [showAdminPwd, setShowAdminPwd] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
-
-  const adminUser = users.find(u => u.role === 'ADMIN');
-
-  const verifyAdminPassword = (): boolean => {
-    if (!adminUser) return false;
-    return decrypt(adminUser.password) === adminPassword;
-  };
+  const [importCount, setImportCount] = useState(0);
 
   const processFile = async (file: File) => {
     setStep('loading');
     try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const u8array = new Uint8Array(reader.result as ArrayBuffer);
-          const SQL = await initSqlJs({
-            locateFile: (f: string) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/${f}`
-          });
+      const buf = await file.arrayBuffer();
+      let imported: Worker[] = [];
 
-          const db = new SQL.Database(u8array);
-          const tablesResult = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
-          if (tablesResult.length === 0) throw new Error("Aucune table trouvée dans le fichier.");
+      if (file.name.endsWith('.json')) {
+        const text = new TextDecoder().decode(buf);
+        const parsed = JSON.parse(text);
+        const arr = Array.isArray(parsed) ? parsed : parsed.workers ?? Object.values(parsed);
+        imported = (arr as any[]).map(mapRow);
+      } else {
+        // XLSX / XLS / CSV
+        const wb = XLSX.read(buf, { type: 'array' });
+        const sheetName = wb.SheetNames[0];
+        const sheet = wb.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet);
+        if (rows.length === 0) throw new Error("La feuille sélectionnée est vide.");
+        imported = rows.map(mapRow);
+      }
 
-          const tables = tablesResult[0].values
-            .map((v: any) => v[0])
-            .filter((t: string) => !t.startsWith('sqlite_'));
-
-          if (tables.length === 0) throw new Error("Le fichier ne contient aucune table de données utilisateur.");
-
-          const targetTable = tables.find((t: string) =>
-            ['workers', 'travailleurs', 'personnel', 'rh', 'data', 'base', 'staff', 'employes'].includes(t.toLowerCase())
-          ) || tables[0];
-
-          const contents = db.exec(`SELECT * FROM "${targetTable}"`);
-          if (contents.length === 0) throw new Error(`La table '${targetTable}' existe mais elle est vide.`);
-
-          const columns = contents[0].columns;
-          const rows = contents[0].values;
-
-          const imported: Worker[] = rows.map((row: any) => {
-            const obj: any = {};
-            columns.forEach((col: string, idx: number) => {
-              const val = row[idx];
-              if (val === null || val === undefined) return;
-              const normalizedCol = col.toLowerCase().trim();
-              if (['matricule', 'id', 'mat', 'code', 'num'].includes(normalizedCol)) obj.matricule = String(val);
-              else if (['nom', 'last_name', 'surname', 'lastname'].includes(normalizedCol)) obj.nom = String(val);
-              else if (['prenom', 'first_name', 'firstname'].includes(normalizedCol)) obj.prenom = String(val);
-              else if (normalizedCol.includes('naissance') || normalizedCol.includes('birth')) obj.dateNaissance = String(val);
-              else if (['fonction', 'job', 'poste', 'role', 'occupation'].includes(normalizedCol)) obj.fonction = String(val);
-              else if (normalizedCol.includes('entree') || normalizedCol.includes('hired') || normalizedCol.includes('start')) obj.dateEntree = String(val);
-              else if (normalizedCol.includes('fin') || normalizedCol.includes('end') || normalizedCol.includes('quit')) obj.dateFin = String(val);
-              else if (['wilaya', 'ville', 'city', 'location', 'region'].includes(normalizedCol)) obj.wilaya = String(val);
-              else if (['affiliation', 'service', 'dept', 'departement', 'unit'].includes(normalizedCol)) obj.affiliation = String(val);
-              else if (['chantier', 'site', 'project', 'projet'].includes(normalizedCol)) obj.chantier = String(val);
-              else if (['affair', 'affaire', 'code_affaire'].includes(normalizedCol)) obj.affair = String(val);
-            });
-            return {
-              matricule: obj.matricule || '0000',
-              nom: obj.nom || 'INCONNU',
-              prenom: obj.prenom || '',
-              dateNaissance: obj.dateNaissance || '',
-              fonction: obj.fonction || 'NON DÉFINI',
-              dateEntree: obj.dateEntree || '',
-              dateFin: obj.dateFin || '',
-              wilaya: obj.wilaya || '',
-              affiliation: obj.affiliation || '',
-              chantier: obj.chantier || '',
-              affair: obj.affair || ''
-            } as Worker;
-          });
-
-          setStep('success');
-          setTimeout(() => {
-            onImportComplete(imported);
-            onClose();
-          }, 800);
-        } catch (err: any) {
-          setError(err.message || "Erreur lors de la lecture de la base de données.");
-          setStep('error');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    } catch {
-      setError("Impossible d'ouvrir le fichier. Vérifiez qu'il s'agit d'un fichier SQLite valide.");
+      if (imported.length === 0) throw new Error("Aucun dossier trouvé dans le fichier.");
+      setImportCount(imported.length);
+      setStep('success');
+      setTimeout(() => {
+        onImportComplete(imported);
+        onClose();
+      }, 900);
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de la lecture du fichier.");
       setStep('error');
     }
   };
@@ -125,20 +123,21 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
     }
   };
 
-  const handleAdminPasswordSubmit = (e: React.FormEvent) => {
+  const handleAdminPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!verifyAdminPassword()) {
+    try {
+      await api.post('/api/auth/verify-password', { password: adminPassword });
+      if (pendingFile) processFile(pendingFile);
+    } catch {
       setAdminPwdError("Mot de passe administrateur incorrect.");
-      return;
     }
-    if (pendingFile) processFile(pendingFile);
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-200 animate-scale-in">
         <div className="border-b border-gray-200 px-8 py-5 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-900">Administration Base de Données</h2>
+          <h2 className="text-xl font-bold text-gray-900">Importation de Données</h2>
           {step !== 'loading' && (
             <button onClick={onClose} className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -159,13 +158,13 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
               {!pendingFile ? (
                 <>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-bold text-gray-900">Importer un fichier .db</h3>
-                    <p className="text-sm text-gray-500">Sélectionnez votre base de données SQLite locale.</p>
+                    <h3 className="text-lg font-bold text-gray-900">Importer des données</h3>
+                    <p className="text-sm text-gray-500">Formats acceptés : <span className="font-semibold">.xlsx, .xls, .csv, .json</span></p>
                   </div>
                   <div className="w-full">
                     <label className="block w-full border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer hover:border-[#1A56DB]/50 hover:bg-blue-50/50 transition-all">
-                      <input type="file" accept=".db,.sqlite,.sqlite3,.db3" className="hidden" onChange={handleFileSelect} />
-                      <span className="text-sm font-bold text-[#1A56DB]">Sélectionner le fichier .db</span>
+                      <input type="file" accept=".xlsx,.xls,.csv,.json" className="hidden" onChange={handleFileSelect} />
+                      <span className="text-sm font-bold text-[#1A56DB]">Sélectionner le fichier</span>
                     </label>
                     <button onClick={onClose} className="mt-4 text-sm text-gray-400 font-semibold hover:text-gray-600 transition-colors">Annuler</button>
                   </div>
@@ -174,22 +173,12 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
                 <>
                   <div className="space-y-2">
                     <h3 className="text-lg font-bold text-gray-900">Remplacer la base de données ?</h3>
-                    <p className="text-sm text-gray-500">Fichier sélectionné : <span className="font-bold text-[#1A56DB]">{pendingFile.name}</span></p>
+                    <p className="text-sm text-gray-500">Fichier : <span className="font-bold text-[#1A56DB]">{pendingFile.name}</span></p>
                     <p className="text-sm text-amber-600 font-medium">Cette action remplacera toutes les données actuelles.</p>
                   </div>
                   <div className="flex gap-3 w-full">
-                    <button
-                      onClick={() => setPendingFile(null)}
-                      className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-all"
-                    >
-                      Non
-                    </button>
-                    <button
-                      onClick={handleConfirmYes}
-                      className="flex-1 py-3 bg-[#1A56DB] text-white font-black rounded-xl hover:bg-[#1E40AF] transition-all shadow-sm"
-                    >
-                      Oui, Remplacer
-                    </button>
+                    <button onClick={() => setPendingFile(null)} className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-all">Non</button>
+                    <button onClick={handleConfirmYes} className="flex-1 py-3 bg-[#1A56DB] text-white font-black rounded-xl hover:bg-[#1E40AF] transition-all shadow-sm">Oui, Remplacer</button>
                   </div>
                 </>
               )}
@@ -205,7 +194,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-bold text-gray-900">Confirmation administrateur requise</h3>
-                <p className="text-sm text-gray-500">Entrez le mot de passe administrateur pour procéder à l'importation.</p>
+                <p className="text-sm text-gray-500">Entrez le mot de passe administrateur pour procéder.</p>
               </div>
               <form onSubmit={handleAdminPasswordSubmit} className="w-full space-y-4">
                 {adminPwdError && (
@@ -220,11 +209,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 pr-12 py-3 font-bold text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#1A56DB]/20 focus:border-[#1A56DB] focus:outline-none transition-all"
                     autoFocus
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowAdminPwd(!showAdminPwd)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
+                  <button type="button" onClick={() => setShowAdminPwd(!showAdminPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                   </button>
                 </div>
@@ -237,12 +222,10 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
           )}
 
           {step === 'loading' && (
-            <>
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-[#1A56DB] border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-gray-500 font-semibold">Lecture du fichier .db...</p>
-              </div>
-            </>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-4 border-[#1A56DB] border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-gray-500 font-semibold">Lecture du fichier...</p>
+            </div>
           )}
 
           {step === 'success' && (
@@ -254,7 +237,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-bold text-gray-900">Données Chargées</h3>
-                <p className="text-sm text-gray-500">Les fiches ont été extraites avec succès.</p>
+                <p className="text-sm text-gray-500">{importCount} dossier(s) extrait(s) avec succès.</p>
               </div>
             </>
           )}
@@ -270,10 +253,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
                 <h3 className="text-lg font-bold text-gray-900">Erreur d'Importation</h3>
                 <p className="text-sm text-red-600 font-medium">{error}</p>
               </div>
-              <button
-                onClick={() => { setStep('confirm'); setPendingFile(null); setError(null); }}
-                className="text-sm text-[#1A56DB] font-bold underline px-4 py-2 hover:bg-blue-50 rounded-lg transition-all"
-              >
+              <button onClick={() => { setStep('confirm'); setPendingFile(null); setError(null); }} className="text-sm text-[#1A56DB] font-bold underline px-4 py-2 hover:bg-blue-50 rounded-lg transition-all">
                 Réessayer
               </button>
             </>

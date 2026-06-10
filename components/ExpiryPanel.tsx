@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { User } from '../types';
-import { getExpiryInfo, saveLicenseData, clearLicense, ExpiryInfo } from '../utils/expiry';
+import { getExpiryInfoFromServer, saveExpiryToServer, clearExpiryFromServer, ExpiryInfo } from '../utils/expiry';
 
 interface Props {
   currentUser: User | null;
@@ -9,48 +9,68 @@ interface Props {
 }
 
 const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
-  const [info, setInfo] = useState<ExpiryInfo>(getExpiryInfo());
+  const [info, setInfo] = useState<ExpiryInfo>({ hasExpiry: false, expired: false, daysLeft: Infinity, expiryDate: null, setBy: null, setDate: null });
   const [mode, setMode] = useState<'date' | 'days'>('date');
   const [dateInput, setDateInput] = useState('');
   const [daysInput, setDaysInput] = useState('');
   const [saved, setSaved] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const isAdmin = currentUser?.role === 'ADMIN';
 
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    setDateInput(info.expiryDate || today);
-  }, [info.expiryDate]);
-
-  const refresh = () => setInfo(getExpiryInfo());
-
-  const handleSave = () => {
-    let expiryDate: string;
-    if (mode === 'date') {
-      if (!dateInput) return;
-      expiryDate = dateInput;
-    } else {
-      const days = parseInt(daysInput, 10);
-      if (isNaN(days) || days <= 0) return;
-      const d = new Date();
-      d.setDate(d.getDate() + days);
-      expiryDate = d.toISOString().split('T')[0];
-    }
-    saveLicenseData({
-      expiryDate,
-      setDate: new Date().toISOString(),
-      setBy: `${currentUser?.nom || ''} ${currentUser?.prenom || ''}`.trim() || 'Admin',
-    });
-    setSaved(true);
-    refresh();
-    setTimeout(() => setSaved(false), 2500);
+  const refresh = async () => {
+    const data = await getExpiryInfoFromServer();
+    setInfo(data);
+    if (data.expiryDate) setDateInput(data.expiryDate);
   };
 
-  const handleClear = () => {
-    clearLicense();
-    setConfirmClear(false);
+  useEffect(() => {
     refresh();
+  }, []);
+
+  useEffect(() => {
+    if (!info.expiryDate) {
+      setDateInput(new Date().toISOString().split('T')[0]);
+    }
+  }, [info.expiryDate]);
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      let expiryDate: string;
+      if (mode === 'date') {
+        if (!dateInput) return;
+        expiryDate = dateInput;
+      } else {
+        const days = parseInt(daysInput, 10);
+        if (isNaN(days) || days <= 0) return;
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        expiryDate = d.toISOString().split('T')[0];
+      }
+      await saveExpiryToServer(expiryDate);
+      setSaved(true);
+      await refresh();
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err: any) {
+      alert(err.message ?? 'Erreur lors de la sauvegarde');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClear = async () => {
+    setLoading(true);
+    try {
+      await clearExpiryFromServer();
+      setConfirmClear(false);
+      await refresh();
+    } catch (err: any) {
+      alert(err.message ?? 'Erreur lors de la suppression');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fmtDate = (iso: string | null) => {
@@ -76,8 +96,6 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[500] p-4"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-white border border-gray-200 rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-scale-in">
-
-        {/* Header */}
         <div className="bg-gradient-to-r from-[#1A56DB] to-[#6366F1] px-7 py-5 flex items-center gap-4">
           <div className="w-11 h-11 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +114,6 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
         </div>
 
         <div className="p-6 space-y-5">
-          {/* Current status */}
           <div className="bg-gray-50 rounded-2xl p-4 space-y-2.5 border border-gray-200">
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">État actuel</p>
             <div className="flex items-center justify-between">
@@ -123,78 +140,46 @@ const ExpiryPanel: React.FC<Props> = ({ currentUser, onClose }) => {
 
           {isAdmin && (
             <>
-              {/* Mode toggle */}
               <div className="flex gap-2 p-1 bg-gray-100 rounded-xl border border-gray-200">
-                <button
-                  onClick={() => setMode('date')}
-                  className={`flex-1 py-2 rounded-lg text-xs font-black transition-all ${mode === 'date' ? 'bg-[#1A56DB] text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                >
-                  Par date
-                </button>
-                <button
-                  onClick={() => setMode('days')}
-                  className={`flex-1 py-2 rounded-lg text-xs font-black transition-all ${mode === 'days' ? 'bg-[#1A56DB] text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                >
-                  Par durée (jours)
-                </button>
+                <button onClick={() => setMode('date')}
+                  className={`flex-1 py-2 rounded-lg text-xs font-black transition-all ${mode === 'date' ? 'bg-[#1A56DB] text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Par date</button>
+                <button onClick={() => setMode('days')}
+                  className={`flex-1 py-2 rounded-lg text-xs font-black transition-all ${mode === 'days' ? 'bg-[#1A56DB] text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Par durée (jours)</button>
               </div>
 
               {mode === 'date' ? (
                 <div>
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Nouvelle date d'expiration</label>
-                  <input
-                    type="date"
-                    value={dateInput}
-                    min={new Date().toISOString().split('T')[0]}
-                    onChange={e => setDateInput(e.target.value)}
-                    className="premium-input w-full bg-gray-50 border border-gray-200 focus:border-[#1A56DB] focus:ring-2 focus:ring-[#1A56DB]/15 px-4 py-2.5 rounded-xl text-gray-800 font-bold text-sm outline-none transition-all"
-                  />
+                  <input type="date" value={dateInput} min={new Date().toISOString().split('T')[0]} onChange={e => setDateInput(e.target.value)}
+                    className="premium-input w-full bg-gray-50 border border-gray-200 focus:border-[#1A56DB] focus:ring-2 focus:ring-[#1A56DB]/15 px-4 py-2.5 rounded-xl text-gray-800 font-bold text-sm outline-none transition-all" />
                 </div>
               ) : (
                 <div>
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Nombre de jours à partir d'aujourd'hui</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="3650"
-                    value={daysInput}
-                    onChange={e => setDaysInput(e.target.value)}
-                    placeholder="Ex: 365"
-                    className="premium-input w-full bg-gray-50 border border-gray-200 focus:border-[#1A56DB] focus:ring-2 focus:ring-[#1A56DB]/15 px-4 py-2.5 rounded-xl text-gray-800 font-bold text-sm outline-none transition-all"
-                  />
+                  <input type="number" min="1" max="3650" value={daysInput} onChange={e => setDaysInput(e.target.value)} placeholder="Ex: 365"
+                    className="premium-input w-full bg-gray-50 border border-gray-200 focus:border-[#1A56DB] focus:ring-2 focus:ring-[#1A56DB]/15 px-4 py-2.5 rounded-xl text-gray-800 font-bold text-sm outline-none transition-all" />
                 </div>
               )}
 
-              <button
-                onClick={handleSave}
-                disabled={mode === 'date' ? !dateInput : !daysInput || parseInt(daysInput) <= 0}
-                className="w-full py-3 bg-[#1A56DB] hover:bg-[#1E40AF] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black rounded-xl text-sm transition-all active:scale-95 flex items-center justify-center gap-2 shadow-sm"
-              >
-                {saved ? (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
-                    Enregistré
-                  </>
-                ) : 'Enregistrer la licence'}
+              <button onClick={handleSave} disabled={loading || (mode === 'date' ? !dateInput : !daysInput || parseInt(daysInput) <= 0)}
+                className="w-full py-3 bg-[#1A56DB] hover:bg-[#1E40AF] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black rounded-xl text-sm transition-all active:scale-95 flex items-center justify-center gap-2 shadow-sm">
+                {saved ? (<><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>Enregistré</>) : 'Enregistrer la licence'}
               </button>
 
               {info.hasExpiry && !confirmClear && (
-                <button
-                  onClick={() => setConfirmClear(true)}
-                  className="w-full py-2 text-gray-400 hover:text-red-600 font-bold text-xs rounded-xl hover:bg-red-50 transition-all border border-gray-200"
-                >
+                <button onClick={() => setConfirmClear(true)}
+                  className="w-full py-2 text-gray-400 hover:text-red-600 font-bold text-xs rounded-xl hover:bg-red-50 transition-all border border-gray-200">
                   Supprimer la limite d'expiration
                 </button>
               )}
               {confirmClear && (
                 <div className="flex gap-2">
-                  <button onClick={handleClear} className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white font-black text-xs rounded-xl transition-all">Confirmer</button>
+                  <button onClick={handleClear} disabled={loading} className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white font-black text-xs rounded-xl transition-all">Confirmer</button>
                   <button onClick={() => setConfirmClear(false)} className="flex-1 py-2 bg-gray-100 text-gray-600 font-bold text-xs rounded-xl hover:bg-gray-200 transition-all">Annuler</button>
                 </div>
               )}
             </>
           )}
-
           {!isAdmin && (
             <p className="text-center text-gray-400 text-xs font-bold py-2">Seuls les administrateurs peuvent modifier la licence.</p>
           )}

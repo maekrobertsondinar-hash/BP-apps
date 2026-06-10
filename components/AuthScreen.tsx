@@ -1,44 +1,71 @@
 
 import React, { useState } from 'react';
 import { User } from '../types';
-import { decrypt } from '../utils/crypto';
+import { api } from '../utils/api';
 
 interface AuthScreenProps {
-  users: User[];
   onLogin: (user: User) => void;
-  onSignup: (newUser: User) => void;
 }
 
 const APP_CREDITS = "Application créée par AMROUS Ayham — Propriété de AMROUS Abdallah";
 
-const AuthScreen: React.FC<AuthScreenProps> = ({ users, onLogin, onSignup }) => {
+const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [showSignupPending, setShowSignupPending] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState(0);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const fullName = `${name.trim()} ${surname.trim()}`;
-    const user = users.find(u => u.username.toLowerCase() === fullName.toLowerCase());
-    if (!user) { setError("Identifiants incorrects. Vérifiez votre nom et mot de passe."); return; }
-    const decryptedPwd = decrypt(user.password);
-    if (decryptedPwd !== password) { setError("Identifiants incorrects. Vérifiez votre nom et mot de passe."); return; }
-    if (user.status === 'PENDING') { setError("Votre compte est en attente d'approbation par l'administrateur."); return; }
-    onLogin(user);
+    if (Date.now() < lockedUntil) {
+      const secs = Math.ceil((lockedUntil - Date.now()) / 1000);
+      setError(`Trop de tentatives. Réessayez dans ${secs}s.`);
+      return;
+    }
+    if (!name || !surname || !password) { setError('Tous les champs sont obligatoires.'); return; }
+    setLoading(true);
+    setError('');
+    try {
+      const fullName = `${name.trim().toUpperCase()} ${surname.trim()}`;
+      const data = await api.post<{ user: User }>('/api/auth/login', { username: fullName, password });
+      setFailedAttempts(0);
+      onLogin({ ...data.user, password: '***' });
+    } catch (err: any) {
+      const attempts = failedAttempts + 1;
+      setFailedAttempts(attempts);
+      if (attempts >= 5) {
+        setLockedUntil(Date.now() + 30_000);
+        setFailedAttempts(0);
+        setError('Trop de tentatives. Réessayez dans 30 secondes.');
+      } else {
+        setError(err.message ?? 'Identifiants incorrects.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !surname || !password) { setError("Tous les champs sont obligatoires."); return; }
-    const fullName = `${name.trim()} ${surname.trim()}`;
-    const exists = users.some(u => u.username.toLowerCase() === fullName.toLowerCase());
-    if (exists) { setError("Cet utilisateur existe déjà."); return; }
-    onSignup({ username: fullName, fullName, password, role: 'USER', status: 'PENDING' });
-    setShowSignupPending(true);
+    if (!name || !surname || !password) { setError('Tous les champs sont obligatoires.'); return; }
+    if (password.length < 6) { setError('Le mot de passe doit faire au moins 6 caractères.'); return; }
+    setLoading(true);
+    setError('');
+    try {
+      const fullName = `${name.trim().toUpperCase()} ${surname.trim()}`;
+      await api.post('/api/auth/register', { username: fullName, fullName, password });
+      setShowSignupPending(true);
+    } catch (err: any) {
+      setError(err.message ?? 'Erreur lors de l\'inscription.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (showSignupPending) {
@@ -46,7 +73,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ users, onLogin, onSignup }) => 
       <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl pointer-events-none opacity-60" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-50 rounded-full blur-3xl pointer-events-none opacity-60" />
-
         <div className="animate-scale-in w-full max-w-sm relative z-10">
           <div className="bg-white border border-gray-200 rounded-3xl shadow-xl overflow-hidden">
             <div className="px-8 py-10 text-center">
@@ -57,11 +83,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ users, onLogin, onSignup }) => 
               </div>
               <h2 className="text-xl font-bold text-gray-900 mb-2">Inscription en attente</h2>
               <p className="text-gray-500 text-sm leading-relaxed mb-6">
-                Votre inscription est en attente d'approbation. Contactez le créateur de l'application :
+                Votre inscription est en attente d'approbation par l'administrateur.
               </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-2xl px-6 py-4 mb-8">
-                <p className="text-[#1A56DB] font-black text-2xl tracking-[0.15em]">06 99 40 70 36</p>
-              </div>
               <button
                 onClick={() => { setShowSignupPending(false); setIsLoginMode(true); setName(''); setSurname(''); setPassword(''); }}
                 className="btn-press w-full bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-semibold py-3 rounded-xl transition-colors text-sm shadow-sm"
@@ -83,7 +106,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ users, onLogin, onSignup }) => 
       <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] bg-blue-50 rounded-full blur-3xl pointer-events-none opacity-70" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-50 rounded-full blur-3xl pointer-events-none opacity-70" />
 
-      {/* Left panel — branding */}
       <div className="hidden lg:flex w-1/2 flex-col justify-between p-14 relative z-10">
         <div>
           <div className="flex items-center gap-3 mb-8">
@@ -97,19 +119,15 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ users, onLogin, onSignup }) => 
               <p className="text-gray-500 text-[10px] font-medium uppercase tracking-widest">Gestion Materiel HMD</p>
             </div>
           </div>
-
           <div className="animate-fade-up">
             <h1 className="text-5xl font-black text-gray-900 leading-tight tracking-tight mb-4">
               Plateforme de<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1A56DB] to-[#6366F1]">
-                Suivi BP
-              </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1A56DB] to-[#6366F1]">Suivi BP</span>
             </h1>
             <p className="text-gray-500 text-base leading-relaxed max-w-sm">
               Système de gestion sécurisé pour le personnel et les documents des chantiers HMD.
             </p>
           </div>
-
           <div className="mt-8 space-y-5 animate-fade-up stagger-2">
             {[
               { icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', label: 'Gestion du personnel', desc: 'Dossiers complets avec traçabilité' },
@@ -130,14 +148,12 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ users, onLogin, onSignup }) => 
             ))}
           </div>
         </div>
-
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <p className="text-gray-400 text-xs font-medium">Système sécurisé — Données stockées localement</p>
+          <p className="text-gray-400 text-xs font-medium">Système sécurisé — Authentification serveur bcrypt</p>
         </div>
       </div>
 
-      {/* Right panel — login form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative z-10">
         <div className="w-full max-w-sm animate-scale-in">
           <div className="lg:hidden flex items-center gap-3 mb-10 justify-center">
@@ -171,36 +187,24 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ users, onLogin, onSignup }) => 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Nom</label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => { setName(e.target.value.toUpperCase()); setError(''); }}
+                    <input type="text" value={name} onChange={(e) => { setName(e.target.value.toUpperCase()); setError(''); }}
                       className="premium-input w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-semibold text-gray-900 placeholder-gray-400 text-sm uppercase"
-                      placeholder="NOM"
-                    />
+                      placeholder="NOM" autoComplete="family-name" />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Prénom</label>
-                    <input
-                      type="text"
-                      value={surname}
-                      onChange={(e) => { setSurname(e.target.value); setError(''); }}
+                    <input type="text" value={surname} onChange={(e) => { setSurname(e.target.value); setError(''); }}
                       className="premium-input w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-semibold text-gray-900 placeholder-gray-400 text-sm capitalize"
-                      placeholder="Prénom"
-                    />
+                      placeholder="Prénom" autoComplete="given-name" />
                   </div>
                 </div>
-
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Mot de passe</label>
                   <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
+                    <input type={showPassword ? "text" : "password"} value={password}
                       onChange={(e) => { setPassword(e.target.value); setError(''); }}
                       className="premium-input w-full bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-12 py-3 font-semibold text-gray-900 placeholder-gray-400 text-sm"
-                      placeholder="••••••••"
-                    />
+                      placeholder="••••••••" autoComplete={isLoginMode ? "current-password" : "new-password"} />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                       {showPassword
@@ -210,13 +214,12 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ users, onLogin, onSignup }) => 
                     </button>
                   </div>
                 </div>
-
-                <button type="submit"
-                  className="btn-press w-full bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-bold py-3.5 rounded-xl transition-colors text-sm mt-2 shadow-sm">
+                <button type="submit" disabled={loading}
+                  className="btn-press w-full bg-[#1A56DB] hover:bg-[#1E40AF] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl transition-colors text-sm mt-2 shadow-sm flex items-center justify-center gap-2">
+                  {loading && <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>}
                   {isLoginMode ? 'Accéder au système' : "S'inscrire"}
                 </button>
               </form>
-
               <div className="mt-6 pb-6 text-center">
                 <button onClick={() => { setIsLoginMode(!isLoginMode); setError(''); setName(''); setSurname(''); setPassword(''); }}
                   className="text-xs text-gray-500 hover:text-[#1A56DB] transition-colors font-medium">

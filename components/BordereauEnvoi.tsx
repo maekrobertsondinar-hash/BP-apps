@@ -51,7 +51,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
   )).sort().filter(c => !hiddenChantiers.has(c));
 
   const bordereauOnlyChantiers = Array.from(new Set(
-    entries.map(e => e.chantier)
+    entries.map(e => e.chantier).filter(Boolean) as string[]
   )).filter(c => !workerChantiers.includes(c) && !hiddenChantiers.has(c)).sort();
 
   const manualOnlyChantiers = manualChantiers
@@ -155,7 +155,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
         const dataUri = `data:${mime};base64,${b64}`;
         newEntries.push({
           id: `imp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-          chantier, type, filename: actualFilename, data: dataUri,
+          chantier, type, filename: actualFilename, data: dataUri, mimeType: mime,
           date: date.toISOString(), uploadedBy: importUser, uploadedAt: importTime,
         });
         if (!importedChantiers.includes(chantier)) importedChantiers.push(chantier);

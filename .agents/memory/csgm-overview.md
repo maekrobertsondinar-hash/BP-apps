@@ -1,110 +1,87 @@
 ---
 name: CSGM AMROUS App Overview
-description: Full feature inventory of the CSGM AMROUS personnel management app — what has been built, key decisions, and component responsibilities.
+description: Full feature inventory of the CSGM AMROUS personnel management app — architecture, auth, key decisions, and component responsibilities.
 ---
 
 # CSGM AMROUS — Gestion Materiel HMD
 
 ## Stack
-- React 19 + Vite 6 + TypeScript, Tailwind CSS (CDN), IndexedDB (workers), localStorage (users), sql.js (SQLite), JSZip, xlsx. Port 5000.
+- **Frontend**: React 19 + Vite 6 + TypeScript, Tailwind CSS (CDN), Framer Motion, Lucide React, xlsx, JSZip. Port 5000 (Vite dev).
+- **Backend**: Express on port 3001, sql.js (server-side SQLite), bcryptjs (cost 12), JWT (15min access + 7d refresh, httpOnly cookies), helmet, cors, express-rate-limit, cookie-parser, zod.
+- **Two workflows**: "Start application" (npm run dev / Vite port 5000) and "Start server" (npm run dev:api / tsx server/index.ts port 3001, no waitForPort).
+- Vite proxies /api → localhost:3001.
+
+## Security Architecture (completed overhaul)
+- All passwords hashed server-side with bcrypt cost 12; no client-side password storage.
+- JWT httpOnly cookies: 15min access token + 7d refresh token (auto-refreshed by middleware).
+- Rate limiting on /api/auth/* routes (10 req/15min, validate:false to avoid IPv6 check error).
+- RBAC enforced server-side (requireAuth, requireAdmin middlewares).
+- Data URI validation on all document uploads (max 10MB, allowed MIME types only).
+- utils/crypto.ts is a stub (encrypt/decrypt return identity — crypto no longer used).
+- No hardcoded passwords or secrets anywhere.
 
 ## Auth & Users
-- Login: Nom / Prénom / Mot de passe (separate fields)
-- Roles: ADMIN and standard user
-- Passwords: XOR + base64 encryption (`utils/crypto.ts`, key `CSGM_AMROUS_2024_SEC`)
-- Default admin: AMROUS Abdallah / 13062010
-- New accounts require admin approval before login (PENDING status)
-- User management view in sidebar: add, delete, approve
+- Login: Nom / Prénom fields + Mot de passe → POST /api/auth/login → JWT cookies.
+- Session restore: GET /api/auth/me on mount (isAuthChecked flag gates render).
+- Roles: ADMIN and USER. New accounts require admin approval (PENDING status).
+- First-run admin: "AMROUS Abdallah" with random 12-char password printed to console + data/admin-setup.txt.
+- JWT secrets auto-generated to data/.secrets.json (mode 0o600, gitignored).
+- DB persisted to data/csgm.db.
+
+## Render Guard Order (App.tsx)
+1. `!isAuthChecked` → spinning loading screen (waits for /api/auth/me)
+2. `!currentUser` → AuthScreen (login form)
+3. `!isDbReady` → DB loading screen (waits for /api/workers)
+4. Main app
 
 ## Data Model (types.ts)
 Each Worker has:
 - Base info: matricule, nom, prénom, fonction, chantier, affair, wilaya, affiliation, dates
 - 4 brevet sections: Permis de Conduire, Brevet Marchandises, Brevet Matières Dangereuses, Brevet Personnel
-  - Each section: docXxx (base64), docXxxFilename, docXxxUtilisation (OUI/NON), numeroXxx, dateExpirationXxx
+  - Each section: docXxx (base64), docXxxFilename, docXxxUtilisation, numeroXxx, dateExpirationXxx
 - Audit: createdBy, createdAt, lastModifiedBy, updatedAt
+
+## API Routes
+- POST /api/auth/login, /api/auth/logout, /api/auth/me, /api/auth/refresh, /api/auth/verify-password
+- GET|POST /api/workers, GET|PUT|DELETE /api/workers/:matricule, POST /api/workers/batch, DELETE /api/workers/:matricule/documents/:docType, DELETE /api/workers
+- GET|POST /api/users, PUT /api/users/:username/approve, PUT /api/users/:username/role, POST /api/users/:username/reset-password, DELETE /api/users/:username
+- GET|POST /api/bordereau, DELETE /api/bordereau/:id
+- GET|POST /api/settings/expiry (admin only)
 
 ## WorkerForm (WorkerForm.tsx)
 - 4 brevet blocks only shown if fonction contains CHAUFFEUR or GRUTIER
-- Uploads: all formats except Excel (.xlsx/.xls/.csv) and .db/.sqlite
+- Uploads: all formats except Excel/csv and .db/.sqlite
 - Images compressed via canvas JPEG 0.75 max 1200px; PDFs stored raw base64
-- Autocomplete on Fonction and Chantier fields
-
-## Search & Display
-- By matricule: full dossier with audit trail
-- By nom/prénom: list with navigation
-- Filtre de Masse: filters by fonction, chantier, user + advanced brevet/expiry filters
-- Advanced filters per section: possession / utilisation / expiration (Valide / Expiré)
-- Month/Year brevet expiry filter: two dropdowns (Mois + Année), independent of other filters, matches ANY brevet expiring that period; state: massSearchBrevetMonth / massSearchBrevetYear
-- Active filter tags with individual removal, "Total trouvé" counter
-- DocumentPreview cards: badge N°, colored expiry date (green=valid / red=expired), colored border, Voir/Télécharger/Supprimer buttons
-
-## DocViewer (DocViewer.tsx)
-- Full-screen modal z-index 300, black background
-- Images: native display with cursor: zoom-out
-- PDFs: iframe with native browser viewer
-- Toolbar: doc name + original filename + Print + Download buttons
-- Print: opens new window and triggers window.print()
-- Close on background click or ✕ button
-
-## Password Guard (Destructive Actions)
-- Delete worker: password field embedded in confirm popup
-- Clear database: password field embedded in confirm popup
-- Delete brevet doc: dedicated pwdGuard popup with show/hide password
-- Import/replace .db: admin_password step in ImportModal.tsx
 
 ## Exports
-- Filtre de Masse → Export Excel: exports current filtered results
-- Filtre de Masse → Export Dossiers (.zip): workers with brevets only
-  - ZIP: RH_Chauffeurs.xlsx at root + one folder per worker (NOM_PRENOM_MAT/INFO.txt + brevets)
-  - INFO.txt includes [EXPIRÉ] status on past dates
-- Sidebar → Export Excel (.xlsx): all eligible workers (CHAUFFEUR/GRUTIER or has any brevet)
-- Sidebar → Export Complet (.zip) — CSGM_Export_Complet_DD-MM-YYYY.zip:
-  - brevets/{Permis_de_Conduire, Brevet_Marchandises, Brevet_Matieres_Dangereuses, Brevet_Personnel}/
-  - excel/RH_Global_DD-MM-YYYY.xlsx (tabs: "Chauffeurs & Grutiers" + "Brevets Expirés")
-  - database/RH_Database_DD-MM-YYYY.db (real SQLite via sql.js)
-  - collaborateurs/NOM_PRENOM_MAT/INFO.txt + named brevet files
-- Eligibility filter: fonction contains CHAUFFEUR or GRUTIER, OR has at least one brevet document
+- Filtre de Masse → Export Excel: filtered results
+- Sidebar → Export Excel (.xlsx): all eligible workers
+- Sidebar → Export Complet (.zip):
+  - brevets/ + excel/ + collaborateurs/ + database/ (JSON snapshot — NOT SQLite, CDN removed)
+  - Bordereau entries fetched from /api/bordereau (no more localStorage)
 
 ## Import (ImportModal.tsx)
-- Accepts .db, .sqlite, .sqlite3, .db3
-- Auto-detects table name (workers, travailleurs, personnel, etc.)
-- Flexible column mapping (multiple possible names per field)
-- Mandatory admin password confirmation before replacing data
+- Accepts .xlsx, .xls, .csv, .json (CDN sql.js removed — no longer accepts .db files)
+- Admin password verified via POST /api/auth/verify-password (no client-side decrypt)
 
-## Bulk Doc Import (BulkDocImportModal.tsx)
-- Import multiple images at once for one brevet type
-- Auto-maps by matricule extracted from filename
-- Can create new workers on the fly if matricule not found
-- Automatic audit trail with (AUTOMATED) tag
-
-## Bordereau d'Envoi
-- Multi-select rebuilt at chantier level (not entry level)
-- Chantier cards: clickable with red ring/glow + checkmark badge
-- Red "Supprimer (N)" button in multi-select bar; per-chantier delete hidden during select mode
-- ZIP Import: accepts previously exported .zip, parses {chantierName}/{Arrivee|Depart}_{YYYY-MM-DD}_{HHhMM}_{filename}, merges/deduplicates, restores hidden chantiers
-- Audit Log (admin only): amber "Journal" button → full-screen modal, sorted newest first
-  - Columns: Date Upload · Uploadé par · Chantier · Type · Fichier · Date Doc.
-  - BordereauEntry extended with uploadedBy? and uploadedAt? fields
-  - Legacy entries (no user info) show —
-  - Footer: count of tracked vs total entries
+## Password Guard (Destructive Actions)
+- All guarded actions use POST /api/auth/verify-password (server-side bcrypt check)
 
 ## Expiry / Licence System
-- utils/expiry.ts: getLicenseData, saveLicenseData, clearLicense, getExpiryInfo, touchLastKnownTime
-  - Tamper-detection: stores last known time, rejects clock roll-backs
-  - Encrypted in localStorage under key csgm_lic_v1 (XOR)
-- components/ExpiryPanel.tsx: admin-only panel, set by exact date or number of days, shows status/days remaining
-- App.tsx integration: Ctrl+Shift+F12 to open panel, checks expiry on load, touches time
-- Expired screen: full-screen lock for non-admin users only (ADMIN role bypasses completely)
-- Expired screen shows contact card: AMROUS Abdallah, phone 06 99 40 70 36
-- Warning banner shown when ≤14 days remain
+- utils/expiry.ts: getExpiryInfoFromServer() calls GET /api/settings/expiry
+- components/ExpiryPanel.tsx: admin sets expiry via POST /api/settings/expiry
+- Expired screen: full-screen lock for non-admin users only
 
-## Credits / Branding
-- APP_CREDITS: "Application créée par AMROUS Ayham" (updated from "AMROUS Ayham Bachir")
-- Used in: App.tsx, components/AuthScreen.tsx, components/ImportModal.tsx
-- Sidebar footer: "By AMROUS Ayham"
-- Expired modal: only AMROUS Abdallah contact card (creator card removed)
+## Bordereau d'Envoi
+- State persisted server-side via /api/bordereau
+- ZIP Import/Export, audit log (admin only)
 
 ## Persistence
-- Workers: IndexedDB key gtp_rh_workers_data
-- Users: localStorage key gtp_rh_users
-- Auto-save on every workers change; toast "Sauvegardé" with last-save time
+- Workers: server-side SQLite (data/csgm.db), mirrored in React state
+- Users: server-side SQLite
+- Auto-save feedback: toast after each API write
+
+## db.ts Helper Notes
+- query/run/get accept `unknown[]` params with `as any` cast for sql.js BindParams
+- server binds to 0.0.0.0:3001 (not 127.0.0.1) so workflow monitor can detect the port
+- "Start server" workflow configured without waitForPort (port detection unreliable in Replit for console-type workflows)
