@@ -169,66 +169,64 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ initialData, onSave, onCancel, 
     const isPdf = value?.startsWith('data:application/pdf');
 
     return (
-      <div className="flex flex-col gap-3 p-3 border border-white/6 rounded-xl bg-white/4">
+      <div className="flex flex-col gap-3 p-3 border border-gray-200 rounded-xl bg-gray-50">
         <div className="flex justify-between items-center">
-          <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">{label}</label>
+          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">{label}</label>
           {value ? (
             <div className="flex items-center gap-1.5">
               {isPdf ? (
                 <span className="text-base">📄</span>
               ) : (
-                <div className="w-6 h-6 rounded border border-white/10 overflow-hidden bg-white/8">
+                <div className="w-6 h-6 rounded border border-gray-200 overflow-hidden bg-white">
                   <img src={value} className="w-full h-full object-cover" alt="preview" />
                 </div>
               )}
-              <span className="text-[9px] font-semibold text-emerald-400 uppercase tracking-tighter">OK</span>
+              <span className="text-[9px] font-semibold text-emerald-600 uppercase tracking-tighter">OK</span>
             </div>
           ) : (
-            <span className="text-[9px] font-semibold text-slate-600 uppercase tracking-tighter italic">Vide</span>
+            <span className="text-[9px] font-semibold text-gray-400 uppercase tracking-tighter italic">Vide</span>
           )}
         </div>
 
-        {/* Per-section Numéro + Date d'expiration */}
         {numeroField && dateField && (
-          <div className="grid grid-cols-2 gap-2 pb-2 border-b border-white/6">
+          <div className="grid grid-cols-2 gap-2 pb-2 border-b border-gray-200">
             <div className="flex flex-col gap-1">
-              <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">N° Brevet</label>
+              <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-wider">N° Brevet</label>
               <input
                 name={numeroField as string}
                 type="text"
                 value={numeroValue || ''}
                 onChange={handleChange}
                 placeholder="Ex: 123456"
-                className="border border-white/10 px-2.5 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#345d6e] bg-white/5 font-semibold text-slate-200 placeholder-slate-600 text-xs"
+                className="border border-gray-200 px-2.5 py-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1A56DB]/20 focus:border-[#1A56DB] bg-white font-semibold text-gray-800 placeholder-gray-400 text-xs"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+              <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
                 Date Exp.
-                {isExpired && <span className="bg-red-900/30 text-red-400 px-1 rounded text-[8px] font-semibold">EXPIRÉ</span>}
-                {isValid && <span className="bg-emerald-900/20 text-emerald-400 px-1 rounded text-[8px] font-semibold">VALIDE</span>}
+                {isExpired && <span className="bg-red-50 text-red-600 border border-red-200 px-1 rounded text-[8px] font-semibold">EXPIRÉ</span>}
+                {isValid && <span className="bg-emerald-50 text-emerald-600 border border-emerald-200 px-1 rounded text-[8px] font-semibold">VALIDE</span>}
               </label>
               <input
                 name={dateField as string}
                 type="date"
                 value={dateValue || ''}
                 onChange={handleChange}
-                className={`border px-2.5 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#345d6e] bg-white/5 font-semibold text-xs ${isExpired ? 'border-red-500/30 text-red-400' : isValid ? 'border-emerald-500/25 text-emerald-400' : 'border-white/10 text-slate-300'}`}
+                className={`border px-2.5 py-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1A56DB]/20 focus:border-[#1A56DB] bg-white font-semibold text-xs ${isExpired ? 'border-red-300 text-red-600' : isValid ? 'border-emerald-300 text-emerald-700' : 'border-gray-200 text-gray-800'}`}
               />
             </div>
           </div>
         )}
 
-        {/* File name display */}
         {filename && (
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-lg border border-white/8">
+          <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-lg border border-gray-200">
             <span className="text-xs">{getFileIcon(filename)}</span>
-            <span className="text-[9px] text-slate-400 font-semibold truncate flex-1" title={filename}>{filename}</span>
+            <span className="text-[9px] text-gray-500 font-semibold truncate flex-1" title={filename}>{filename}</span>
           </div>
         )}
 
         <div className="flex items-center gap-2">
-          <label className="cursor-pointer bg-white/6 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-semibold text-[#7ecde8] hover:bg-[#345d6e]/20 transition-all flex-1 text-center">
+          <label className="cursor-pointer bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-[10px] font-semibold text-[#1A56DB] hover:bg-blue-50 transition-all flex-1 text-center">
             {value ? 'Remplacer' : 'Choisir fichier'}
             <input type="file" accept={ACCEPTED_DOC_TYPES} onChange={(e) => handleFileChange(e, field, filenameField)} className="hidden" />
           </label>
@@ -236,7 +234,7 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ initialData, onSave, onCancel, 
             <button
               type="button"
               onClick={() => handleRemoveFile(field, filenameField)}
-              className="bg-white/5 border border-white/8 px-3 py-1.5 rounded-lg text-[10px] font-semibold text-slate-500 hover:bg-rose-900/20 hover:text-rose-400 transition-all"
+              className="bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-lg text-[10px] font-semibold text-gray-500 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all"
             >
               ✕
             </button>
@@ -244,15 +242,15 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ initialData, onSave, onCancel, 
         </div>
 
         {utilField && (
-          <div className="flex items-center justify-between border-t border-white/6 pt-2 mt-1">
-            <span className="text-[9px] font-semibold text-slate-500 uppercase">Utilisation</span>
+          <div className="flex items-center justify-between border-t border-gray-200 pt-2 mt-1">
+            <span className="text-[9px] font-semibold text-gray-500 uppercase">Utilisation</span>
             <div className="flex gap-1">
               <button type="button" onClick={() => handleUtilisationChange(utilField, 'OUI')}
-                className={`px-3 py-1 rounded-md text-[9px] font-semibold transition-all ${utilValue === 'OUI' ? 'bg-red-500 text-white' : 'bg-white/8 text-slate-500 hover:bg-white/12'}`}>
+                className={`px-3 py-1 rounded-md text-[9px] font-semibold transition-all ${utilValue === 'OUI' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
                 Oui
               </button>
               <button type="button" onClick={() => handleUtilisationChange(utilField, 'NON')}
-                className={`px-3 py-1 rounded-md text-[9px] font-semibold transition-all ${utilValue === 'NON' || !utilValue ? 'bg-emerald-600 text-white' : 'bg-white/8 text-slate-500 hover:bg-white/12'}`}>
+                className={`px-3 py-1 rounded-md text-[9px] font-semibold transition-all ${utilValue === 'NON' || !utilValue ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
                 Non
               </button>
             </div>
@@ -263,49 +261,49 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ initialData, onSave, onCancel, 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-      <div className="bg-[#0e1520] w-full max-w-3xl rounded-2xl shadow-2xl shadow-black/50 overflow-hidden border border-white/8 animate-scale-in">
-        <div className="border-b border-white/6 px-6 py-4 flex justify-between items-center bg-[#0a1018]">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+      <div className="bg-white w-full max-w-3xl rounded-2xl shadow-xl overflow-hidden border border-gray-200 animate-scale-in">
+        <div className="border-b border-gray-200 px-6 py-4 flex justify-between items-center bg-white">
           <div>
-            <h2 className="text-base font-bold text-slate-100">
+            <h2 className="text-base font-bold text-gray-900">
               {isEdit ? "Édition du Dossier" : "Nouveau Dossier RH"}
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">{isEdit ? "Modifier les informations du collaborateur" : "Ajouter un nouveau collaborateur"}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{isEdit ? "Modifier les informations du collaborateur" : "Ajouter un nouveau collaborateur"}</p>
           </div>
-          <button onClick={onCancel} className="w-8 h-8 rounded-lg bg-white/8 hover:bg-white/12 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors">
+          <button onClick={onCancel} className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-6 py-5 max-h-[80vh] overflow-y-auto space-y-6">
+        <form onSubmit={handleSubmit} className="px-6 py-5 max-h-[80vh] overflow-y-auto space-y-6 bg-[#F8F9FA]">
           {isEdit && (
-            <div className="bg-white/4 border border-white/6 rounded-xl p-3.5 flex flex-col md:flex-row gap-4 text-xs">
+            <div className="bg-white border border-gray-200 rounded-xl p-3.5 flex flex-col md:flex-row gap-4 text-xs shadow-sm">
               <div className="flex flex-col">
-                <span className="font-semibold text-slate-500 uppercase tracking-wider text-[9px]">Créé par</span>
-                <span className="font-semibold text-slate-300 mt-0.5">{formData.createdBy || '—'}</span>
-                <span className="text-[9px] text-slate-500">{formData.createdAt || '—'}</span>
+                <span className="font-semibold text-gray-400 uppercase tracking-wider text-[9px]">Créé par</span>
+                <span className="font-semibold text-gray-700 mt-0.5">{formData.createdBy || '—'}</span>
+                <span className="text-[9px] text-gray-400">{formData.createdAt || '—'}</span>
               </div>
-              <div className="w-px bg-white/6 hidden md:block"></div>
+              <div className="w-px bg-gray-200 hidden md:block"></div>
               <div className="flex flex-col">
-                <span className="font-semibold text-slate-500 uppercase tracking-wider text-[9px]">Dernière modif. par</span>
-                <span className="font-semibold text-slate-300 mt-0.5">{formData.lastModifiedBy || '—'}</span>
-                <span className="text-[9px] text-slate-500">{formData.updatedAt || '—'}</span>
+                <span className="font-semibold text-gray-400 uppercase tracking-wider text-[9px]">Dernière modif. par</span>
+                <span className="font-semibold text-gray-700 mt-0.5">{formData.lastModifiedBy || '—'}</span>
+                <span className="text-[9px] text-gray-400">{formData.updatedAt || '—'}</span>
               </div>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Matricule *</label>
-              <input name="matricule" type="text" value={formData.matricule} onChange={handleChange} required className="premium-input border border-white/10 px-4 py-2.5 rounded-xl bg-white/5 font-semibold text-slate-200 text-sm placeholder-slate-600" />
+              <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Matricule *</label>
+              <input name="matricule" type="text" value={formData.matricule} onChange={handleChange} required className="premium-input border border-gray-200 px-4 py-2.5 rounded-xl bg-white font-semibold text-gray-900 text-sm placeholder-gray-400" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Nom *</label>
-              <input name="nom" type="text" value={formData.nom} onChange={handleChange} required className="premium-input border border-white/10 px-4 py-2.5 rounded-xl bg-white/5 font-semibold text-slate-200 text-sm placeholder-slate-600" />
+              <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Nom *</label>
+              <input name="nom" type="text" value={formData.nom} onChange={handleChange} required className="premium-input border border-gray-200 px-4 py-2.5 rounded-xl bg-white font-semibold text-gray-900 text-sm placeholder-gray-400" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Prénom *</label>
-              <input name="prenom" type="text" value={formData.prenom} onChange={handleChange} required className="premium-input border border-white/10 px-4 py-2.5 rounded-xl bg-white/5 font-semibold text-slate-200 text-sm placeholder-slate-600" />
+              <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Prénom *</label>
+              <input name="prenom" type="text" value={formData.prenom} onChange={handleChange} required className="premium-input border border-gray-200 px-4 py-2.5 rounded-xl bg-white font-semibold text-gray-900 text-sm placeholder-gray-400" />
             </div>
           </div>
 
@@ -315,24 +313,24 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ initialData, onSave, onCancel, 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Chantier</label>
-              <input name="chantier" type="text" value={formData.chantier} onChange={handleChange} className="premium-input border border-white/10 px-4 py-2.5 rounded-xl bg-white/5 font-semibold text-slate-200 text-sm placeholder-slate-600" />
+              <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Chantier</label>
+              <input name="chantier" type="text" value={formData.chantier} onChange={handleChange} className="premium-input border border-gray-200 px-4 py-2.5 rounded-xl bg-white font-semibold text-gray-900 text-sm placeholder-gray-400" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Affair</label>
-              <input name="affair" type="text" value={formData.affair} onChange={handleChange} className="premium-input border border-white/10 px-4 py-2.5 rounded-xl bg-white/5 font-semibold text-slate-200 text-sm placeholder-slate-600" />
+              <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Affair</label>
+              <input name="affair" type="text" value={formData.affair} onChange={handleChange} className="premium-input border border-gray-200 px-4 py-2.5 rounded-xl bg-white font-semibold text-gray-900 text-sm placeholder-gray-400" />
             </div>
           </div>
 
           {isSpecialRole && (
-            <div className="bg-[#345d6e]/10 border border-[#345d6e]/25 rounded-xl p-5">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 bg-[#345d6e]/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-[#7ecde8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-[#1A56DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold text-[#7ecde8] uppercase tracking-wider">Documents — Chauffeur / Grutier</p>
-                  <p className="text-[9px] text-slate-500 mt-0.5">Formats acceptés: PDF, JPG, PNG, et autres</p>
+                  <p className="text-[10px] font-semibold text-[#1A56DB] uppercase tracking-wider">Documents — Chauffeur / Grutier</p>
+                  <p className="text-[9px] text-gray-500 mt-0.5">Formats acceptés: PDF, JPG, PNG, et autres</p>
                 </div>
               </div>
 
@@ -391,9 +389,9 @@ const WorkerForm: React.FC<WorkerFormProps> = ({ initialData, onSave, onCancel, 
             </div>
           )}
 
-          <div className="flex justify-end gap-2.5 pt-5 border-t border-white/6">
-            <button type="button" onClick={onCancel} className="btn-press px-5 py-2.5 rounded-xl border border-white/8 text-slate-400 font-semibold text-sm hover:bg-white/5 transition-colors">Annuler</button>
-            <button type="submit" className="btn-press px-8 py-2.5 rounded-xl bg-[#345d6e] text-white font-semibold text-sm hover:bg-[#2c5263] transition-colors shadow-lg shadow-[#345d6e]/30">Enregistrer</button>
+          <div className="flex justify-end gap-2.5 pt-5 border-t border-gray-200">
+            <button type="button" onClick={onCancel} className="btn-press px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-colors">Annuler</button>
+            <button type="submit" className="btn-press px-8 py-2.5 rounded-xl bg-[#1A56DB] text-white font-semibold text-sm hover:bg-[#1E40AF] transition-colors shadow-sm">Enregistrer</button>
           </div>
         </form>
       </div>

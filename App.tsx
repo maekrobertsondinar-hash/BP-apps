@@ -80,9 +80,9 @@ const saveWorkersToDB = async (workers: Worker[]) => {
  */
 
 const InfoRow: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="flex border-b border-white/5 py-2.5 last:border-0 group">
-    <div className="w-2/5 text-slate-500 font-medium text-[10px] uppercase tracking-widest pt-0.5">{label}</div>
-    <div className="w-3/5 text-slate-200 font-semibold text-sm">{value || <span className="text-slate-600 italic font-normal">—</span>}</div>
+  <div className="flex border-b border-gray-200 py-2.5 last:border-0 group">
+    <div className="w-2/5 text-gray-500 font-medium text-[10px] uppercase tracking-widest pt-0.5">{label}</div>
+    <div className="w-3/5 text-gray-800 font-semibold text-sm">{value || <span className="text-gray-300 italic font-normal">—</span>}</div>
   </div>
 );
 
@@ -117,11 +117,11 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   const isValid = dateExpiration && dateExpiration >= today;
 
   return (
-    <div className={`flex flex-col gap-3 p-4 bg-[#0e1520] border rounded-2xl transition-all duration-200 relative group h-full hover:border-white/12 ${isExpired ? 'border-red-500/30 ring-1 ring-red-500/10' : isValid ? 'border-emerald-500/20 ring-1 ring-emerald-500/10' : 'border-white/8'}`}>
+    <div className={`flex flex-col gap-3 p-4 bg-white border rounded-2xl transition-all duration-200 relative group h-full hover:border-white/12 ${isExpired ? 'border-red-300 ring-1 ring-red-100' : isValid ? 'border-emerald-200 ring-1 ring-emerald-100' : 'border-gray-200'}`}>
       <div className="flex items-start justify-between gap-2">
-        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest leading-tight">{label}</span>
+        <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest leading-tight">{label}</span>
         {dateExpiration && (
-          <span className={`shrink-0 text-[8px] font-bold uppercase px-2 py-0.5 rounded-full tracking-wide ${isExpired ? 'bg-red-900/30 text-red-400 border border-red-500/20' : 'bg-emerald-900/20 text-emerald-400 border border-emerald-500/20'}`}>
+          <span className={`shrink-0 text-[8px] font-bold uppercase px-2 py-0.5 rounded-full tracking-wide ${isExpired ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}`}>
             {isExpired ? '⚠ Expiré' : '✓ Valide'}
           </span>
         )}
@@ -129,8 +129,8 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
 
       {(numero || dateExpiration) && (
         <div className="flex flex-wrap gap-1.5 text-[9px]">
-          {numero && <span className="bg-white/5 border border-white/8 px-2 py-0.5 rounded-lg font-semibold text-slate-400">N° {numero}</span>}
-          {dateExpiration && <span className={`px-2 py-0.5 rounded-lg font-semibold border ${isExpired ? 'bg-red-900/25 border-red-500/20 text-red-400' : 'bg-emerald-900/20 border-emerald-500/20 text-emerald-400'}`}>{dateExpiration}</span>}
+          {numero && <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-lg font-semibold text-gray-500">N° {numero}</span>}
+          {dateExpiration && <span className={`px-2 py-0.5 rounded-lg font-semibold border ${isExpired ? 'bg-red-50 border-red-200 text-red-600' : 'bg-emerald-50 border-emerald-200 text-emerald-600'}`}>{dateExpiration}</span>}
         </div>
       )}
 
@@ -139,13 +139,13 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
           <button
             type="button"
             onClick={() => onView({ data, label, filename: originalFilename || filename })}
-            className="w-full h-40 rounded-xl border border-white/8 overflow-hidden bg-white/4 cursor-pointer transition-all relative hover:shadow-md"
+            className="w-full h-40 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 cursor-pointer transition-all relative hover:shadow-md"
           >
             {isPdf ? (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-b from-[#1a0808]/80 to-[#0e1520]">
-                <svg className="w-9 h-9 text-red-300" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1H8v-1zm0 3h6v1H8v-1zm0-6h3v1H8v-1z"/></svg>
-                <span className="text-[9px] font-bold text-red-400 uppercase tracking-wider">PDF</span>
-                {originalFilename && <span className="text-[8px] text-slate-400 px-2 text-center truncate max-w-full">{originalFilename}</span>}
+              <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gray-50">
+                <svg className="w-9 h-9 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1H8v-1zm0 3h6v1H8v-1zm0-6h3v1H8v-1z"/></svg>
+                <span className="text-[9px] font-bold text-red-600 uppercase tracking-wider">PDF</span>
+                {originalFilename && <span className="text-[8px] text-gray-500 px-2 text-center truncate max-w-full">{originalFilename}</span>}
               </div>
             ) : (
               <img src={data} className="w-full h-full object-cover" alt={label} />
@@ -156,32 +156,32 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
           </button>
 
           {originalFilename && !isPdf && (
-            <span className="text-[9px] text-slate-400 text-center truncate">{originalFilename}</span>
+            <span className="text-[9px] text-gray-500 text-center truncate">{originalFilename}</span>
           )}
 
           <div className="flex gap-1.5 mt-auto">
             <button type="button" onClick={() => onView({ data, label, filename: originalFilename || filename })}
-              className="btn-press flex-1 bg-[#345d6e] hover:bg-[#2c5263] text-white font-semibold text-[9px] py-2 rounded-lg transition-colors uppercase tracking-wider flex items-center justify-center gap-1.5">
+              className="btn-press flex-1 bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-semibold text-[9px] py-2 rounded-lg transition-colors uppercase tracking-wider flex items-center justify-center gap-1.5">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               Voir
             </button>
             <button type="button" onClick={(e) => { e.stopPropagation(); onDownload(data, originalFilename || filename); }}
-              className="btn-press flex-1 bg-white/8 hover:bg-white/12 text-slate-300 font-semibold text-[9px] py-2 rounded-lg transition-colors uppercase tracking-wider flex items-center justify-center gap-1.5">
+              className="btn-press flex-1 bg-gray-100 hover:bg-gray-100 text-gray-700 font-semibold text-[9px] py-2 rounded-lg transition-colors uppercase tracking-wider flex items-center justify-center gap-1.5">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
               DL
             </button>
             {!isReadOnly && (
               <button type="button" onClick={(e) => { e.stopPropagation(); onRemove(field); }}
-                className="btn-press bg-rose-900/20 text-rose-400 hover:bg-rose-900/35 hover:text-rose-300 font-bold text-[9px] px-2.5 py-2 rounded-lg transition-colors">
+                className="btn-press bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 font-bold text-[9px] px-2.5 py-2 rounded-lg transition-colors">
                 ✕
               </button>
             )}
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center py-6 gap-2 rounded-xl border-2 border-dashed border-white/8">
-          <svg className="w-7 h-7 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-          <span className="text-[9px] font-medium text-white/25 uppercase tracking-wider">Non renseigné</span>
+        <div className="flex-1 flex flex-col items-center justify-center py-6 gap-2 rounded-xl border-2 border-dashed border-gray-200">
+          <svg className="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+          <span className="text-[9px] font-medium text-gray-400 uppercase tracking-wider">Non renseigné</span>
         </div>
       )}
     </div>
@@ -1502,23 +1502,23 @@ const App: React.FC = () => {
   // Loading Screen for Database Initialization
   if (!isDbReady) {
     return (
-      <div className="h-screen bg-[#0b1120] flex flex-col items-center justify-center gap-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#345d6e]/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="h-screen bg-[#F8F9FA] flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative flex flex-col items-center gap-5">
-          <div className="w-14 h-14 bg-[#345d6e]/15 border border-[#345d6e]/30 rounded-2xl flex items-center justify-center">
-            <svg className="w-7 h-7 text-[#7ecde8] animate-spin-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-14 h-14 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center">
+            <svg className="w-7 h-7 text-[#1A56DB] animate-spin-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
           </div>
           <div className="text-center">
             <h1 className="text-xl font-bold text-white mb-1">Chargement du Système</h1>
-            <p className="text-slate-500 text-sm">Initialisation de la base de données sécurisée…</p>
+            <p className="text-gray-500 text-sm">Initialisation de la base de données sécurisée…</p>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 bg-[#345d6e] rounded-full animate-bounce" style={{animationDelay:'0ms'}} />
-            <div className="w-1.5 h-1.5 bg-[#345d6e] rounded-full animate-bounce" style={{animationDelay:'150ms'}} />
-            <div className="w-1.5 h-1.5 bg-[#345d6e] rounded-full animate-bounce" style={{animationDelay:'300ms'}} />
+            <div className="w-1.5 h-1.5 bg-[#1A56DB] rounded-full animate-bounce" style={{animationDelay:'0ms'}} />
+            <div className="w-1.5 h-1.5 bg-[#1A56DB] rounded-full animate-bounce" style={{animationDelay:'150ms'}} />
+            <div className="w-1.5 h-1.5 bg-[#1A56DB] rounded-full animate-bounce" style={{animationDelay:'300ms'}} />
           </div>
         </div>
       </div>
@@ -1530,38 +1530,38 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[#080c14] overflow-hidden">
+    <div className="flex h-screen bg-[#F8F9FA] overflow-hidden">
       
       {/* SIDEBAR — dark premium */}
-      <aside className="w-60 bg-[#090d16] border-r border-white/5 flex flex-col shrink-0 shadow-2xl z-20">
+      <aside className="w-60 bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 shadow-2xl z-20">
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-white/6">
+        <div className="px-5 py-5 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#345d6e] rounded-lg flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 bg-[#1A56DB] rounded-lg flex items-center justify-center shrink-0">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
               </svg>
             </div>
             <div>
               <p className="text-white font-black text-sm tracking-tight leading-none">CSGM AMROUS</p>
-              <p className="text-slate-600 text-[9px] font-medium uppercase tracking-widest mt-0.5">Gestion Materiel HMD</p>
+              <p className="text-gray-400 text-[9px] font-medium uppercase tracking-widest mt-0.5">Gestion Materiel HMD</p>
             </div>
           </div>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto sidebar-scroll">
           {/* USER PROFILE */}
-          <div className="bg-white/4 border border-white/6 rounded-xl p-3">
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-[#345d6e] text-white flex items-center justify-center font-bold text-sm shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-[#1A56DB] text-white flex items-center justify-center font-bold text-sm shrink-0">
                 {currentUser.fullName.charAt(0)}
               </div>
               <div className="overflow-hidden flex-1 min-w-0">
-                <p className="text-xs font-semibold text-white/90 truncate">{currentUser.fullName}</p>
-                <p className="text-[9px] font-medium text-[#7ecde8]/70 uppercase tracking-wider">{currentUser.role === 'ADMIN' ? 'Administrateur' : 'Utilisateur'}</p>
+                <p className="text-xs font-semibold text-gray-900 truncate">{currentUser.fullName}</p>
+                <p className="text-[9px] font-medium text-blue-400 uppercase tracking-wider">{currentUser.role === 'ADMIN' ? 'Administrateur' : 'Utilisateur'}</p>
               </div>
             </div>
-            <button onClick={handleLogout} className="btn-press w-full text-[10px] font-medium text-slate-500 hover:text-red-400 hover:bg-red-500/8 py-1.5 rounded-lg transition-colors uppercase tracking-widest flex items-center justify-center gap-1.5">
+            <button onClick={handleLogout} className="btn-press w-full text-[10px] font-medium text-gray-500 hover:text-red-600 hover:bg-red-500/8 py-1.5 rounded-lg transition-colors uppercase tracking-widest flex items-center justify-center gap-1.5">
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
               Déconnexion
             </button>
@@ -1569,7 +1569,7 @@ const App: React.FC = () => {
 
           {/* APPLICATION NAV */}
           <div>
-            <p className="px-2 mb-2 text-[9px] font-semibold text-slate-600 uppercase tracking-widest">Application</p>
+            <p className="px-2 mb-2 text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Application</p>
             <div className="space-y-0.5">
               {[
                 { view: 'search', label: 'Recherche Ciblée', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
@@ -1578,7 +1578,7 @@ const App: React.FC = () => {
                 { view: 'bordereau', label: "Bordereau d'Envoi", icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
               ].map(item => (
                 <button key={item.view} onClick={() => setCurrentView(item.view as any)}
-                  className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 ${currentView === item.view ? 'nav-item-active text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}>
+                  className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 ${currentView === item.view ? 'nav-item-active text-[#1A56DB]' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}>
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}/></svg>
                   {item.label}
                 </button>
@@ -1588,10 +1588,10 @@ const App: React.FC = () => {
 
           {currentUser.role === 'ADMIN' && (
             <div>
-              <p className="px-2 mb-2 text-[9px] font-semibold text-slate-600 uppercase tracking-widest">Administration</p>
+              <p className="px-2 mb-2 text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Administration</p>
               <div className="space-y-0.5">
                 <button onClick={() => setCurrentView('users')}
-                  className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 ${currentView === 'users' ? 'nav-item-active text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}>
+                  className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 ${currentView === 'users' ? 'nav-item-active text-[#1A56DB]' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}>
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                   Utilisateurs
                 </button>
@@ -1601,7 +1601,7 @@ const App: React.FC = () => {
 
           {/* IMPORT DOCS */}
           <div>
-            <p className="px-2 mb-2 text-[9px] font-semibold text-slate-600 uppercase tracking-widest">Import Documents</p>
+            <p className="px-2 mb-2 text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Import Documents</p>
             <div className="space-y-0.5">
               {[
                 { key: 'docPermis', label: 'Permis de Conduire', icon: 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2' },
@@ -1610,7 +1610,7 @@ const App: React.FC = () => {
                 { key: 'docBrevetPers', label: 'Brevet Personnel', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
               ].map(item => (
                 <button key={item.key} onClick={() => openBulkImport(item.key as any, item.label)}
-                  className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all duration-150">
+                  className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all duration-150">
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}/></svg>
                   {item.label}
                 </button>
@@ -1620,45 +1620,45 @@ const App: React.FC = () => {
 
           {/* ACTIONS */}
           <div>
-            <p className="px-2 mb-2 text-[9px] font-semibold text-slate-600 uppercase tracking-widest">Actions</p>
+            <p className="px-2 mb-2 text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Actions</p>
             <div className="space-y-0.5">
               <button onClick={() => setActiveModal('ADD')}
-                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all">
+                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                 Nouveau Dossier
               </button>
               <button onClick={handleInternalSave} disabled={isSyncing}
-                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/8 transition-all disabled:opacity-40">
+                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-500/8 transition-all disabled:opacity-40">
                 <svg className={`w-4 h-4 shrink-0 ${isSyncing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 {isSyncing ? "Sauvegarde…" : "Sauvegarder"}
               </button>
-              {lastSaved && <p className="text-[9px] text-center text-slate-600 mt-1 italic">Synchro : {lastSaved}</p>}
+              {lastSaved && <p className="text-[9px] text-center text-gray-400 mt-1 italic">Synchro : {lastSaved}</p>}
             </div>
           </div>
 
           {/* EXPORTS */}
           <div>
-            <p className="px-2 mb-2 text-[9px] font-semibold text-slate-600 uppercase tracking-widest">Export</p>
+            <p className="px-2 mb-2 text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Export</p>
             <div className="space-y-0.5">
               {currentUser?.role === 'ADMIN' && (
                 <button onClick={handleExportZipPackage}
-                  className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all">
+                  className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all">
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                   Export Complet (.zip)
                 </button>
               )}
               <button onClick={handleExportAllExcel}
-                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all">
+                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Exporter Excel
               </button>
               <button onClick={handleExportDB}
-                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all">
+                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Exporter (.db)
               </button>
               <button onClick={() => setActiveModal('IMPORT')}
-                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all">
+                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                 Importer (.db)
               </button>
@@ -1666,9 +1666,9 @@ const App: React.FC = () => {
           </div>
 
           {currentUser.role === 'ADMIN' && (
-            <div className="pt-3 border-t border-white/5">
+            <div className="pt-3 border-t border-gray-200">
               <button onClick={() => setActiveModal('CONFIRM_CLEAR')}
-                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-red-500/70 hover:text-red-400 hover:bg-red-500/8 transition-all">
+                className="btn-press w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-red-500/70 hover:text-red-600 hover:bg-red-500/8 transition-all">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                 Vider la Base
               </button>
@@ -1676,8 +1676,8 @@ const App: React.FC = () => {
           )}
         </nav>
 
-        <div className="px-5 py-4 border-t border-white/5">
-          <p className="text-[9px] text-slate-700 font-medium">By AMROUS Ayham</p>
+        <div className="px-5 py-4 border-t border-gray-200">
+          <p className="text-[9px] text-gray-400 font-medium">By AMROUS Ayham</p>
         </div>
       </aside>
 
@@ -1687,20 +1687,20 @@ const App: React.FC = () => {
           <BordereauEnvoi workers={workers} currentUser={currentUser} />
         ) : (
         <>
-        <header className="px-8 pt-6 pb-5 flex justify-between items-center border-b border-white/5 bg-[#080c14]/80 backdrop-blur-sm">
+        <header className="px-8 pt-6 pb-5 flex justify-between items-center border-b border-gray-200 bg-white/80 backdrop-blur-sm">
           <div>
-            <h1 className="text-xl font-bold text-slate-100 tracking-tight">
+            <h1 className="text-xl font-bold text-gray-900 tracking-tight">
               {currentView === 'search' ? 'Recherche Ciblée' : currentView === 'mass_search' ? 'Recherche de Masse' : currentView === 'users' ? 'Utilisateurs' : 'Registre Général'}
             </h1>
-            <p className="text-slate-600 text-xs font-medium mt-0.5">CSGM AMROUS · Gestion Materiel HMD</p>
+            <p className="text-gray-400 text-xs font-medium mt-0.5">CSGM AMROUS · Gestion Materiel HMD</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-xl px-4 py-2">
+            <div className="flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-xl px-4 py-2">
               <div className={`w-1.5 h-1.5 rounded-full ${workers.length > 0 ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
-              <span className="text-xs font-semibold text-slate-400">{workers.length.toLocaleString()} dossiers</span>
+              <span className="text-xs font-semibold text-gray-500">{workers.length.toLocaleString()} dossiers</span>
             </div>
             <button onClick={handleInternalSave} disabled={isSyncing}
-              className="btn-press flex items-center gap-2 bg-[#345d6e] hover:bg-[#2c5263] text-white px-4 py-2 rounded-xl text-xs font-semibold transition-colors shadow-lg shadow-[#345d6e]/25 disabled:opacity-50">
+              className="btn-press flex items-center gap-2 bg-[#1A56DB] hover:bg-[#1E40AF] text-white px-4 py-2 rounded-xl text-xs font-semibold transition-colors shadow-lg shadow-blue-500/15 disabled:opacity-50">
               <svg className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               {isSyncing ? "Sync…" : "Sauvegarder"}
             </button>
@@ -1709,7 +1709,7 @@ const App: React.FC = () => {
 
         {/* TOAST DE SUCCES */}
         {showSaveToast && (
-          <div className="absolute top-20 right-8 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-fade-up z-[100] border border-white/10">
+          <div className="absolute top-20 right-8 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-fade-up z-[100] border border-gray-200">
             <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center shrink-0">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
             </div>
@@ -1722,18 +1722,18 @@ const App: React.FC = () => {
           {/* ÉCRAN DE RECHERCHE UNIFIÉ */}
           {currentView === 'search' && (
             <div className="max-w-4xl mx-auto w-full pt-4 space-y-5 animate-fade-in">
-              <section className="bg-[#0e1520] rounded-2xl border border-white/6 overflow-hidden shadow-xl shadow-black/30">
-                <div className="flex p-1.5 bg-white/3 border-b border-white/5">
+              <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                <div className="flex p-1.5 bg-gray-50 border-b border-gray-200">
                   <button 
                     onClick={() => setSearchMode('id')}
-                    className={`flex-1 flex items-center justify-center gap-2.5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150 ${searchMode === 'id' ? 'bg-white/10 text-[#7ecde8] border border-white/10' : 'text-slate-500 hover:text-slate-300'}`}
+                    className={`flex-1 flex items-center justify-center gap-2.5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150 ${searchMode === 'id' ? 'bg-gray-100 text-[#1A56DB] border border-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
                     Par Matricule
                   </button>
                   <button 
                     onClick={() => setSearchMode('name')}
-                    className={`flex-1 flex items-center justify-center gap-2.5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150 ${searchMode === 'name' ? 'bg-white/10 text-[#7ecde8] border border-white/10' : 'text-slate-500 hover:text-slate-300'}`}
+                    className={`flex-1 flex items-center justify-center gap-2.5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150 ${searchMode === 'name' ? 'bg-gray-100 text-[#1A56DB] border border-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                     Par Identité
@@ -1743,7 +1743,7 @@ const App: React.FC = () => {
                 <div className="p-8">
                   {searchMode === 'id' ? (
                     <div className="max-w-xl mx-auto">
-                      <p className="text-slate-500 text-sm font-medium text-center mb-6">Saisissez le matricule pour une consultation immédiate</p>
+                      <p className="text-gray-500 text-sm font-medium text-center mb-6">Saisissez le matricule pour une consultation immédiate</p>
                       <div className="flex gap-3">
                         <input
                           type="text"
@@ -1754,39 +1754,39 @@ const App: React.FC = () => {
                             const val = e.target.value;
                             if (/^\d*$/.test(val)) setSearchQuery(val);
                           }}
-                          className="premium-input flex-1 pl-5 pr-5 py-3 bg-white/5 border border-white/10 rounded-xl text-lg font-semibold text-slate-100 placeholder-slate-600 focus:bg-white/8"
+                          className="premium-input flex-1 pl-5 pr-5 py-3 bg-gray-100 border border-gray-200 rounded-xl text-lg font-semibold text-gray-900 placeholder-gray-400 focus:bg-gray-100"
                         />
-                        <button onClick={handleSearch} className="btn-press bg-[#345d6e] hover:bg-[#2c5263] text-white font-semibold px-8 py-3 rounded-xl transition-colors shadow-lg shadow-[#345d6e]/30">Chercher</button>
+                        <button onClick={handleSearch} className="btn-press bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-semibold px-8 py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/20">Chercher</button>
                       </div>
                     </div>
                   ) : (
                     <div>
-                      <p className="text-slate-500 text-sm font-medium text-center mb-6">Recherchez un collaborateur par ses noms et prénoms</p>
+                      <p className="text-gray-500 text-sm font-medium text-center mb-6">Recherchez un collaborateur par ses noms et prénoms</p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest pl-1">Nom de famille</label>
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest pl-1">Nom de famille</label>
                           <input
                             type="text"
                             placeholder="BENALI"
                             value={searchNom}
                             onKeyPress={handleKeyPress}
                             onChange={(e) => setSearchNom(e.target.value)}
-                            className="premium-input w-full px-5 py-3 bg-white/5 border border-white/10 rounded-xl font-semibold text-slate-200 placeholder-slate-600 focus:bg-white/8"
+                            className="premium-input w-full px-5 py-3 bg-gray-100 border border-gray-200 rounded-xl font-semibold text-gray-800 placeholder-gray-400 focus:bg-gray-100"
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest pl-1">Prénom</label>
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest pl-1">Prénom</label>
                           <input
                             type="text"
                             placeholder="Ahmed"
                             value={searchPrenom}
                             onKeyPress={handleKeyPress}
                             onChange={(e) => setSearchPrenom(e.target.value)}
-                            className="premium-input w-full px-5 py-3 bg-white/5 border border-white/10 rounded-xl font-semibold text-slate-200 placeholder-slate-600 focus:bg-white/8"
+                            className="premium-input w-full px-5 py-3 bg-gray-100 border border-gray-200 rounded-xl font-semibold text-gray-800 placeholder-gray-400 focus:bg-gray-100"
                           />
                         </div>
                         <div className="md:col-span-2 flex justify-center mt-2">
-                           <button onClick={handleNameSearch} className="btn-press bg-[#345d6e] hover:bg-[#2c5263] text-white font-semibold px-10 py-3 rounded-xl transition-colors shadow-lg shadow-[#345d6e]/30 flex items-center gap-2.5">
+                           <button onClick={handleNameSearch} className="btn-press bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-semibold px-10 py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/20 flex items-center gap-2.5">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             Rechercher
                           </button>
@@ -1798,37 +1798,37 @@ const App: React.FC = () => {
               </section>
 
               {searchMode === 'id' && hasSearched && searchResults && (
-                <div className="bg-[#0e1520] rounded-2xl border border-white/6 overflow-hidden animate-fade-up shadow-xl shadow-black/30">
-                  <div className="px-7 py-5 flex justify-between items-center border-b border-white/6">
+                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden animate-fade-up shadow-sm">
+                  <div className="px-7 py-5 flex justify-between items-center border-b border-gray-200">
                     <div className="flex items-center gap-4">
-                      <div className="w-11 h-11 bg-[#345d6e]/20 rounded-xl flex items-center justify-center">
-                        <svg className="w-5 h-5 text-[#7ecde8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                      <div className="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <svg className="w-5 h-5 text-[#1A56DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                       </div>
                       <div>
-                        <h4 className="text-xl font-bold text-slate-100 tracking-tight">{searchResults.nom} {searchResults.prenom}</h4>
-                        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Matricule #{searchResults.matricule} · {searchResults.fonction}</p>
+                        <h4 className="text-xl font-bold text-gray-900 tracking-tight">{searchResults.nom} {searchResults.prenom}</h4>
+                        <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mt-0.5">Matricule #{searchResults.matricule} · {searchResults.fonction}</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button onClick={() => setActiveModal('EDIT')} className="btn-press bg-white/8 hover:bg-white/12 text-slate-300 font-semibold px-4 py-2 rounded-lg text-sm transition-colors border border-white/6">Modifier</button>
+                      <button onClick={() => setActiveModal('EDIT')} className="btn-press bg-gray-100 hover:bg-gray-100 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm transition-colors border border-gray-200">Modifier</button>
                       {currentUser.role === 'ADMIN' && (
-                        <button onClick={() => { setTargetMatricule(searchResults.matricule); setActiveModal('CONFIRM_DELETE'); }} className="btn-press bg-red-900/20 hover:bg-red-900/30 text-red-400 font-semibold px-4 py-2 rounded-lg text-sm transition-colors border border-red-500/20">Supprimer</button>
+                        <button onClick={() => { setTargetMatricule(searchResults.matricule); setActiveModal('CONFIRM_DELETE'); }} className="btn-press bg-red-50 hover:bg-red-50 text-red-600 font-semibold px-4 py-2 rounded-lg text-sm transition-colors border border-red-200">Supprimer</button>
                       )}
                     </div>
                   </div>
                   <div className="p-8 flex flex-col gap-8">
                     {/* AUDIT INFO DISPLAY */}
-                    <div className="flex flex-col md:flex-row gap-4 mb-4 text-xs bg-white/4 p-4 rounded-xl border border-white/6">
+                    <div className="flex flex-col md:flex-row gap-4 mb-4 text-xs bg-gray-50 p-4 rounded-xl border border-gray-200">
                        <div className="flex flex-col">
-                          <span className="font-semibold text-slate-500 uppercase tracking-wider text-[10px]">Créé par</span>
-                          <span className="font-semibold text-slate-300">{searchResults.createdBy || '-'}</span>
-                          <span className="text-[10px] text-slate-500">{searchResults.createdAt || '-'}</span>
+                          <span className="font-semibold text-gray-500 uppercase tracking-wider text-[10px]">Créé par</span>
+                          <span className="font-semibold text-gray-700">{searchResults.createdBy || '-'}</span>
+                          <span className="text-[10px] text-gray-500">{searchResults.createdAt || '-'}</span>
                        </div>
-                       <div className="w-px bg-white/6 hidden md:block"></div>
+                       <div className="w-px bg-gray-100 hidden md:block"></div>
                        <div className="flex flex-col">
-                          <span className="font-semibold text-slate-500 uppercase tracking-wider text-[10px]">Dernière modif. par</span>
-                          <span className="font-semibold text-slate-300">{searchResults.lastModifiedBy || '-'}</span>
-                          <span className="text-[10px] text-slate-500">{searchResults.updatedAt || '-'}</span>
+                          <span className="font-semibold text-gray-500 uppercase tracking-wider text-[10px]">Dernière modif. par</span>
+                          <span className="font-semibold text-gray-700">{searchResults.lastModifiedBy || '-'}</span>
+                          <span className="text-[10px] text-gray-500">{searchResults.updatedAt || '-'}</span>
                        </div>
                     </div>
 
@@ -1847,8 +1847,8 @@ const App: React.FC = () => {
                     </div>
 
                     {(searchResults.fonction.toUpperCase().includes('CHAUFFEUR') || searchResults.fonction.toUpperCase().includes('GRUTIER')) && (
-                      <div className="border-t border-white/6 pt-10">
-                         <h3 className="text-xs font-semibold text-[#7ecde8] uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+                      <div className="border-t border-gray-200 pt-10">
+                         <h3 className="text-xs font-semibold text-[#1A56DB] uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" /></svg>
                           Documents Spécifiques (Chauffeur / Grutier)
                         </h3>
@@ -1867,11 +1867,11 @@ const App: React.FC = () => {
                               {brevets.map(b => {
                                 const expired = b.date && b.date < todayStr;
                                 return (
-                                  <div key={b.label} className={`p-3 rounded-xl border flex flex-col gap-1 ${expired ? 'bg-red-900/20 border-red-500/30' : 'bg-emerald-900/15 border-emerald-500/20'}`}>
-                                    <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">{b.label}</span>
-                                    {b.num && <span className="font-semibold text-slate-200 text-sm">{b.num}</span>}
+                                  <div key={b.label} className={`p-3 rounded-xl border flex flex-col gap-1 ${expired ? 'bg-red-50 border-red-300' : 'bg-emerald-50 border-emerald-200'}`}>
+                                    <span className="text-[9px] font-semibold text-gray-500 uppercase tracking-wider">{b.label}</span>
+                                    {b.num && <span className="font-semibold text-gray-800 text-sm">{b.num}</span>}
                                     {b.date && (
-                                      <span className={`text-xs font-semibold flex items-center gap-1 ${expired ? 'text-red-400' : 'text-emerald-400'}`}>
+                                      <span className={`text-xs font-semibold flex items-center gap-1 ${expired ? 'text-red-600' : 'text-emerald-600'}`}>
                                         {expired ? '⚠ Expiré' : '✓ Valide'} — {b.date}
                                       </span>
                                     )}
@@ -1943,30 +1943,30 @@ const App: React.FC = () => {
               )}
 
               {searchMode === 'id' && hasSearched && !searchResults && (
-                <div className="p-16 text-center bg-[#0e1520] border border-white/6 rounded-2xl shadow-xl shadow-black/20 animate-fade-up">
-                  <div className="w-12 h-12 bg-white/6 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <div className="p-16 text-center bg-white border border-gray-200 rounded-2xl shadow-sm animate-fade-up">
+                  <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                   </div>
-                  <p className="text-slate-300 font-semibold mb-1">Aucun résultat</p>
-                  <p className="text-slate-500 text-sm">Aucun dossier ne correspond à ce matricule.</p>
+                  <p className="text-gray-700 font-semibold mb-1">Aucun résultat</p>
+                  <p className="text-gray-500 text-sm">Aucun dossier ne correspond à ce matricule.</p>
                 </div>
               )}
 
               {searchMode === 'name' && hasSearchedByName && nameSearchResults.length > 0 && (
                 <div className="space-y-3 animate-fade-up">
-                  <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest px-1">{nameSearchResults.length} résultat(s)</p>
+                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest px-1">{nameSearchResults.length} résultat(s)</p>
                   <div className="grid grid-cols-1 gap-2">
                     {nameSearchResults.map(worker => (
-                      <div key={worker.matricule} className="bg-[#0e1520] border border-white/6 rounded-xl flex items-center justify-between px-5 py-3.5 hover:border-[#7ecde8]/20 hover:bg-white/3 transition-all group">
+                      <div key={worker.matricule} className="bg-white border border-gray-200 rounded-xl flex items-center justify-between px-5 py-3.5 hover:border-[#7ecde8]/20 hover:bg-gray-50 transition-all group">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-[#345d6e]/20 text-[#7ecde8] rounded-lg flex items-center justify-center font-bold text-sm group-hover:bg-[#345d6e] group-hover:text-white transition-all">
+                          <div className="w-10 h-10 bg-blue-100 text-[#1A56DB] rounded-lg flex items-center justify-center font-bold text-sm group-hover:bg-[#1A56DB] group-hover:text-white group-hover:text-white transition-all">
                             {worker.nom[0]}
                           </div>
                           <div>
-                            <h4 className="font-semibold text-slate-200 text-sm">{worker.nom} {worker.prenom}</h4>
+                            <h4 className="font-semibold text-gray-800 text-sm">{worker.nom} {worker.prenom}</h4>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-[9px] font-semibold text-[#7ecde8] bg-[#345d6e]/20 px-1.5 py-0.5 rounded uppercase">#{worker.matricule}</span>
-                              <span className="text-[9px] font-medium text-slate-500 uppercase tracking-wide">{worker.fonction}</span>
+                              <span className="text-[9px] font-semibold text-[#1A56DB] bg-blue-100 px-1.5 py-0.5 rounded uppercase">#{worker.matricule}</span>
+                              <span className="text-[9px] font-medium text-gray-500 uppercase tracking-wide">{worker.fonction}</span>
                             </div>
                           </div>
                         </div>
@@ -1977,7 +1977,7 @@ const App: React.FC = () => {
                              setSearchQuery(worker.matricule);
                              setSearchMode('id');
                            }}
-                           className="btn-press bg-white/6 hover:bg-[#345d6e] hover:text-white text-slate-400 font-semibold text-xs px-4 py-2 rounded-lg transition-all border border-white/6"
+                           className="btn-press bg-gray-100 hover:bg-[#1A56DB] hover:text-white text-gray-500 font-semibold text-xs px-4 py-2 rounded-lg transition-all border border-gray-200"
                          >
                            Voir fiche
                          </button>
@@ -1992,12 +1992,12 @@ const App: React.FC = () => {
           {/* ÉCRAN RECHERCHE DE MASSE */}
           {currentView === 'mass_search' && (
             <div className="max-w-6xl mx-auto w-full pt-4 space-y-4 animate-fade-in">
-              <section className="bg-[#0e1520] rounded-2xl border border-white/6 p-6 shadow-xl shadow-black/30 relative overflow-hidden">
+              <section className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm relative overflow-hidden">
                  {/* Export Button and Badge */}
                  <div className="absolute top-5 right-6 z-10 flex items-center gap-2">
                      <button
                         onClick={handleExportExcel}
-                        className="btn-press bg-emerald-900/20 text-emerald-400 border border-emerald-500/25 hover:bg-emerald-900/30 px-3 py-2 rounded-lg font-semibold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all"
+                        className="btn-press bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 px-3 py-2 rounded-lg font-semibold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all"
                      >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         Excel
@@ -2005,7 +2005,7 @@ const App: React.FC = () => {
                      {currentUser?.role === 'ADMIN' && (
                      <button
                         onClick={handleExportDriversZip}
-                        className="btn-press bg-[#345d6e]/15 text-[#7ecde8] border border-[#345d6e]/30 hover:bg-[#345d6e]/25 px-3 py-2 rounded-lg font-semibold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all"
+                        className="btn-press bg-blue-50 text-[#1A56DB] border border-blue-200 hover:bg-blue-100 px-3 py-2 rounded-lg font-semibold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all"
                      >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                         ZIP
@@ -2013,7 +2013,7 @@ const App: React.FC = () => {
                      )}
 
                      {activeResultsCount !== null && (
-                        <div className="bg-[#345d6e] text-white px-4 py-1.5 rounded-xl flex items-center gap-2 min-w-max shadow-lg shadow-[#345d6e]/30">
+                        <div className="bg-[#1A56DB] text-white px-4 py-1.5 rounded-xl flex items-center gap-2 min-w-max shadow-lg shadow-blue-500/20">
                            <span className="text-[9px] font-semibold uppercase tracking-wider opacity-70">Total</span>
                            <span className="text-lg font-bold leading-none">{activeResultsCount.toLocaleString()}</span>
                         </div>
@@ -2022,35 +2022,35 @@ const App: React.FC = () => {
 
                  <div className="max-w-4xl mx-auto space-y-5 pt-2">
                     <div className="mb-2">
-                       <h3 className="text-base font-bold text-slate-100">Filtre de Masse</h3>
-                       <p className="text-sm text-slate-500 mt-0.5">Recherchez et filtrez l'effectif global par critères</p>
+                       <h3 className="text-base font-bold text-gray-900">Filtre de Masse</h3>
+                       <p className="text-sm text-gray-500 mt-0.5">Recherchez et filtrez l'effectif global par critères</p>
                     </div>
 
                     {/* Active Filters Tags */}
                     {activeFilterTags.length > 0 && (
                       <div className="flex flex-wrap items-center justify-center gap-2 mb-2 animate-fade-in">
                         {activeFilterTags.map(tag => (
-                          <span key={tag.id} className="bg-[#345d6e]/20 text-[#7ecde8] px-3 py-1.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider flex items-center gap-2 border border-[#345d6e]/30">
+                          <span key={tag.id} className="bg-blue-100 text-[#1A56DB] px-3 py-1.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider flex items-center gap-2 border border-blue-200">
                             {tag.label}
-                            <button onClick={tag.clearAction} className="hover:text-red-400 transition-colors">
+                            <button onClick={tag.clearAction} className="hover:text-red-600 transition-colors">
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                           </span>
                         ))}
                         <button 
                           onClick={clearAllFilters}
-                          className="ml-2 text-rose-400 hover:text-rose-300 text-[10px] font-semibold uppercase tracking-widest border-b border-rose-500/30 hover:border-rose-400 transition-all"
+                          className="ml-2 text-red-500 hover:text-red-600 text-[10px] font-semibold uppercase tracking-widest border-b border-red-200 hover:border-rose-400 transition-all"
                         >
                           Effacer tout
                         </button>
                       </div>
                     )}
 
-                    <div className="bg-white/4 p-1.5 rounded-2xl border border-white/6 flex flex-col md:flex-row gap-1.5 transition-all focus-within:border-[#345d6e]/50 focus-within:bg-white/5 shadow-sm">
+                    <div className="bg-gray-50 p-1.5 rounded-2xl border border-gray-200 flex flex-col md:flex-row gap-1.5 transition-all focus-within:border-blue-300 focus-within:bg-gray-100 shadow-sm">
                        {/* Fonction Input */}
                        <div className="flex-1 relative group">
                           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                             <svg className="w-4 h-4 text-slate-600 group-focus-within:text-[#7ecde8] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                             <svg className="w-4 h-4 text-gray-400 group-focus-within:text-[#1A56DB] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                           </div>
                           <input
                             type="text"
@@ -2058,43 +2058,43 @@ const App: React.FC = () => {
                             value={massSearchFonction}
                             onChange={(e) => setMassSearchFonction(e.target.value)}
                             onKeyDown={handleMassSearchKeyDown}
-                            className="w-full pl-9 pr-4 py-2.5 bg-transparent border-none focus:ring-0 font-medium text-slate-200 placeholder-slate-600 text-sm outline-none rounded-xl"
+                            className="w-full pl-9 pr-4 py-2.5 bg-transparent border-none focus:ring-0 font-medium text-gray-800 placeholder-gray-400 text-sm outline-none rounded-xl"
                           />
                        </div>
                        
                        {/* Divider */}
-                       <div className="w-px bg-white/6 my-1.5 hidden md:block"></div>
-                       <div className="h-px bg-white/6 mx-1.5 md:hidden"></div>
+                       <div className="w-px bg-gray-100 my-1.5 hidden md:block"></div>
+                       <div className="h-px bg-gray-100 mx-1.5 md:hidden"></div>
 
                        {/* Chantier Input */}
                        <div className="md:w-1/3 relative group">
                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                             <svg className="w-4 h-4 text-slate-600 group-focus-within:text-[#7ecde8] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                             <svg className="w-4 h-4 text-gray-400 group-focus-within:text-[#1A56DB] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                           </div>
                           <input
                             type="text"
                             placeholder="Chantier..."
                             value={massSearchChantier}
                             onChange={(e) => setMassSearchChantier(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2.5 bg-transparent border-none focus:ring-0 font-medium text-slate-200 placeholder-slate-600 text-sm outline-none rounded-xl"
+                            className="w-full pl-9 pr-4 py-2.5 bg-transparent border-none focus:ring-0 font-medium text-gray-800 placeholder-gray-400 text-sm outline-none rounded-xl"
                           />
                        </div>
 
                        {/* User Filter Input (Admin Only) */}
                        {currentUser?.role === 'ADMIN' && (
                          <>
-                           <div className="w-px bg-white/6 my-1.5 hidden md:block"></div>
-                           <div className="h-px bg-white/6 mx-1.5 md:hidden"></div>
+                           <div className="w-px bg-gray-100 my-1.5 hidden md:block"></div>
+                           <div className="h-px bg-gray-100 mx-1.5 md:hidden"></div>
                            <div className="md:w-1/4 relative group">
                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                 <svg className="w-4 h-4 text-slate-600 group-focus-within:text-[#7ecde8] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                 <svg className="w-4 h-4 text-gray-400 group-focus-within:text-[#1A56DB] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                               </div>
                               <input
                                 type="text"
                                 placeholder="Utilisateur..."
                                 value={massSearchUser}
                                 onChange={(e) => setMassSearchUser(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2.5 bg-transparent border-none focus:ring-0 font-medium text-slate-200 placeholder-slate-600 text-sm outline-none rounded-xl"
+                                className="w-full pl-9 pr-4 py-2.5 bg-transparent border-none focus:ring-0 font-medium text-gray-800 placeholder-gray-400 text-sm outline-none rounded-xl"
                               />
                            </div>
                          </>
@@ -2109,41 +2109,41 @@ const App: React.FC = () => {
                 const hasActive = massSearchBrevetMode === 'single'
                   ? (massSearchBrevetMonth || massSearchBrevetYear)
                   : (massSearchBrevetMonthFrom || massSearchBrevetMonthTo || massSearchBrevetYear);
-                const selectCls = (active: boolean) => `premium-input flex-1 min-w-[130px] border rounded-xl px-3 py-2 text-sm font-medium outline-none transition-all ${active ? 'border-amber-500/40 text-amber-300 bg-amber-900/15' : 'border-white/8 text-slate-500 bg-white/4'}`;
+                const selectCls = (active: boolean) => `premium-input flex-1 min-w-[130px] border rounded-xl px-3 py-2 text-sm font-medium outline-none transition-all ${active ? 'border-amber-300 text-amber-700 bg-amber-50' : 'border-gray-200 text-gray-500 bg-gray-50'}`;
                 return (
-                <section className="bg-[#0e1520] rounded-2xl border border-white/6 px-5 py-4 shadow-xl shadow-black/20">
+                <section className="bg-white rounded-2xl border border-gray-200 px-5 py-4 shadow-sm">
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                       <div className="flex items-center gap-3 shrink-0">
-                        <div className="w-9 h-9 bg-amber-900/20 rounded-xl flex items-center justify-center border border-amber-500/20">
-                          <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center border border-amber-200">
+                          <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                           </svg>
                         </div>
                         <div>
-                          <p className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Expiration Brevet</p>
-                          <p className="text-xs font-medium text-slate-400">Tous types confondus</p>
+                          <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Expiration Brevet</p>
+                          <p className="text-xs font-medium text-gray-500">Tous types confondus</p>
                         </div>
                       </div>
 
                       {/* Mode toggle */}
-                      <div className="flex gap-1 p-1 bg-white/4 rounded-xl border border-white/6 shrink-0">
+                      <div className="flex gap-1 p-1 bg-gray-50 rounded-xl border border-gray-200 shrink-0">
                         <button
                           onClick={() => { setMassSearchBrevetMode('single'); setMassSearchBrevetMonthFrom(''); setMassSearchBrevetMonthTo(''); }}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${massSearchBrevetMode === 'single' ? 'bg-amber-500/25 text-amber-300 border border-amber-500/30' : 'text-slate-500 hover:text-slate-300'}`}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${massSearchBrevetMode === 'single' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'text-gray-500 hover:text-gray-700'}`}
                         >
                           Mois précis
                         </button>
                         <button
                           onClick={() => { setMassSearchBrevetMode('interval'); setMassSearchBrevetMonth(''); }}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${massSearchBrevetMode === 'interval' ? 'bg-amber-500/25 text-amber-300 border border-amber-500/30' : 'text-slate-500 hover:text-slate-300'}`}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${massSearchBrevetMode === 'interval' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'text-gray-500 hover:text-gray-700'}`}
                         >
                           Intervalle
                         </button>
                       </div>
 
                       {hasActive && (
-                        <span className="text-[9px] font-semibold text-amber-400 bg-amber-900/20 px-2.5 py-1 rounded-lg border border-amber-500/25 uppercase tracking-wide shrink-0">
+                        <span className="text-[9px] font-semibold text-amber-600 bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-200 uppercase tracking-wide shrink-0">
                           Filtre actif
                         </span>
                       )}
@@ -2174,7 +2174,7 @@ const App: React.FC = () => {
                               <option key={i+1} value={String(i+1).padStart(2,'0')}>{m}</option>
                             ))}
                           </select>
-                          <span className="text-slate-500 font-black text-sm shrink-0">→</span>
+                          <span className="text-gray-500 font-black text-sm shrink-0">→</span>
                           <select
                             value={massSearchBrevetMonthTo}
                             onChange={e => setMassSearchBrevetMonthTo(e.target.value)}
@@ -2202,7 +2202,7 @@ const App: React.FC = () => {
                       {hasActive && (
                         <button
                           onClick={() => { setMassSearchBrevetMonth(''); setMassSearchBrevetYear(''); setMassSearchBrevetMonthFrom(''); setMassSearchBrevetMonthTo(''); }}
-                          className="btn-press px-3 py-2 text-rose-400 hover:bg-rose-900/20 rounded-lg font-semibold text-xs transition-all border border-rose-500/20 flex items-center gap-1.5 shrink-0"
+                          className="btn-press px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg font-semibold text-xs transition-all border border-red-200 flex items-center gap-1.5 shrink-0"
                         >
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>
                           Effacer
@@ -2215,23 +2215,23 @@ const App: React.FC = () => {
               })()}
 
               {massSearchResults.length > 0 ? (
-                <div className="bg-[#0e1520] rounded-2xl border border-white/6 shadow-xl shadow-black/30 overflow-hidden animate-fade-up">
-                  <div className="px-5 py-3.5 border-b border-white/5 bg-white/3 flex justify-between items-center">
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden animate-fade-up">
+                  <div className="px-5 py-3.5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                     <div className="flex items-center gap-2.5">
                       <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
-                      <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">{massSearchResults.length} résultat(s)</span>
+                      <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">{massSearchResults.length} résultat(s)</span>
                     </div>
                   </div>
                   <div className="overflow-x-auto max-h-[550px]">
                     <table className="w-full text-left text-xs">
-                      <thead className="sticky top-0 bg-[#090d16] z-10">
-                        <tr className="border-b border-white/5">
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Matricule</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Collaborateur</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Fonction</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Documents</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Activité</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest text-right">Action</th>
+                      <thead className="sticky top-0 bg-gray-50 z-10">
+                        <tr className="border-b border-gray-200">
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Matricule</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Collaborateur</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Fonction</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Documents</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Activité</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest text-right">Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -2258,16 +2258,16 @@ const App: React.FC = () => {
                            ].filter(b => b.date) : [];
 
                            return (
-                              <tr key={worker.matricule} className="table-row-hover border-b border-white/4 last:border-0 group">
-                                <td className="px-5 py-3 text-xs font-semibold text-[#7ecde8]">{worker.matricule}</td>
-                                <td className="px-5 py-3 text-xs text-slate-200 font-medium">
+                              <tr key={worker.matricule} className="table-row-hover border-b border-gray-100 last:border-0 group">
+                                <td className="px-5 py-3 text-xs font-semibold text-[#1A56DB]">{worker.matricule}</td>
+                                <td className="px-5 py-3 text-xs text-gray-800 font-medium">
                                    {worker.nom} {worker.prenom}
                                    {brevetBadges.length > 0 && (
                                       <div className="mt-1 flex flex-wrap gap-1">
                                          {brevetBadges.map(b => {
                                            const expired = b.date! < todayStr;
                                            return (
-                                             <span key={b.label} className={`px-1.5 py-0.5 rounded-md text-[8px] font-semibold uppercase ${expired ? 'bg-red-900/30 text-red-400' : 'bg-emerald-900/20 text-emerald-400'}`}>
+                                             <span key={b.label} className={`px-1.5 py-0.5 rounded-md text-[8px] font-semibold uppercase ${expired ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>
                                                {b.label}: {expired ? 'Exp.' : 'OK'}
                                              </span>
                                            );
@@ -2275,7 +2275,7 @@ const App: React.FC = () => {
                                       </div>
                                    )}
                                 </td>
-                                <td className="px-5 py-3 text-xs text-slate-500">{worker.fonction}</td>
+                                <td className="px-5 py-3 text-xs text-gray-500">{worker.fonction}</td>
                                 <td className="px-5 py-3">
                                    {isSpecialRole ? (
                                       <div className="flex flex-wrap gap-1">
@@ -2283,25 +2283,25 @@ const App: React.FC = () => {
                                           const fileExists = !!(worker as any)[doc.key];
                                           const utilization = (worker as any)[doc.utilKey];
                                           if (!fileExists) {
-                                            return <span key={doc.key} className="bg-orange-900/25 text-orange-400 px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase">Manque</span>;
+                                            return <span key={doc.key} className="bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase">Manque</span>;
                                           } else if (utilization === 'OUI') {
-                                            return <span key={doc.key} className="bg-red-900/25 text-red-400 px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase">{doc.label}</span>;
+                                            return <span key={doc.key} className="bg-red-50 text-red-600 px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase">{doc.label}</span>;
                                           } else {
-                                            return <span key={doc.key} className="bg-emerald-900/20 text-emerald-400 px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase">{doc.label}</span>;
+                                            return <span key={doc.key} className="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase">{doc.label}</span>;
                                           }
                                         })}
                                       </div>
                                    ) : (
-                                     <span className="text-slate-600 text-xs">—</span>
+                                     <span className="text-gray-400 text-xs">—</span>
                                    )}
                                 </td>
                                 <td className="px-5 py-3">
                                   {worker.lastModifiedBy ? (
-                                    <span className="text-[9px] text-slate-500">Modifié · <span className="text-slate-400 font-medium">{worker.lastModifiedBy}</span></span>
+                                    <span className="text-[9px] text-gray-500">Modifié · <span className="text-gray-500 font-medium">{worker.lastModifiedBy}</span></span>
                                   ) : worker.createdBy ? (
-                                    <span className="text-[9px] text-slate-500">Créé · <span className="text-slate-400 font-medium">{worker.createdBy}</span></span>
+                                    <span className="text-[9px] text-gray-500">Créé · <span className="text-gray-500 font-medium">{worker.createdBy}</span></span>
                                   ) : (
-                                    <span className="text-[9px] text-slate-600">—</span>
+                                    <span className="text-[9px] text-gray-400">—</span>
                                   )}
                                 </td>
                                 <td className="px-5 py-3 text-right">
@@ -2313,7 +2313,7 @@ const App: React.FC = () => {
                                       setSearchMode('id');
                                       setCurrentView('search');
                                     }}
-                                    className="btn-press text-[9px] font-semibold text-[#7ecde8] hover:bg-[#345d6e]/20 px-2.5 py-1.5 rounded-lg transition-colors uppercase tracking-wide"
+                                    className="btn-press text-[9px] font-semibold text-[#1A56DB] hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors uppercase tracking-wide"
                                   >
                                     Fiche
                                   </button>
@@ -2326,12 +2326,12 @@ const App: React.FC = () => {
                   </div>
                 </div>
               ) : (massSearchChantier || massSearchFonction || massSearchUser || massSearchBrevetMonth || massSearchBrevetYear) && (
-                <div className="p-14 text-center bg-[#0e1520] border border-white/6 rounded-2xl shadow-xl shadow-black/20 animate-fade-up">
-                  <div className="w-12 h-12 bg-white/6 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <div className="p-14 text-center bg-white border border-gray-200 rounded-2xl shadow-sm animate-fade-up">
+                  <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   </div>
-                  <p className="text-slate-300 font-semibold mb-1">Aucune correspondance</p>
-                  <p className="text-slate-500 text-sm">Aucun dossier ne correspond aux critères sélectionnés.</p>
+                  <p className="text-gray-700 font-semibold mb-1">Aucune correspondance</p>
+                  <p className="text-gray-500 text-sm">Aucun dossier ne correspond aux critères sélectionnés.</p>
                 </div>
               )}
             </div>
@@ -2340,38 +2340,38 @@ const App: React.FC = () => {
           {/* RECORDS VIEW */}
           {currentView === 'records' && (
             <div className="max-w-6xl mx-auto w-full pt-4 space-y-4 animate-fade-in">
-               <div className="bg-[#0e1520] rounded-2xl border border-white/6 shadow-xl shadow-black/30 overflow-hidden">
-                 <div className="flex justify-between items-center px-6 py-4 border-b border-white/5">
+               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                 <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
                    <div>
-                     <h3 className="text-base font-bold text-slate-100">Registre Général</h3>
-                     <p className="text-xs text-slate-500 mt-0.5">{workers.length} dossiers au total</p>
+                     <h3 className="text-base font-bold text-gray-900">Registre Général</h3>
+                     <p className="text-xs text-gray-500 mt-0.5">{workers.length} dossiers au total</p>
                    </div>
                  </div>
                  
                  <div className="overflow-x-auto">
                     <table className="w-full text-left">
                       <thead>
-                        <tr className="bg-[#090d16] border-b border-white/5">
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Matricule</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Collaborateur</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Fonction</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Chantier</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest">Activité</th>
-                          <th className="px-5 py-3 text-[9px] font-semibold text-slate-500 uppercase tracking-widest text-right">Action</th>
+                        <tr className="bg-gray-50 border-b border-gray-200">
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Matricule</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Collaborateur</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Fonction</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Chantier</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest">Activité</th>
+                          <th className="px-5 py-3 text-[9px] font-semibold text-gray-500 uppercase tracking-widest text-right">Action</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/4">
+                      <tbody className="divide-y divide-gray-100">
                         {workers.slice(0, 100).map(w => (
                           <tr key={w.matricule} className="table-row-hover">
-                            <td className="px-5 py-3 text-xs font-semibold text-[#7ecde8]">{w.matricule}</td>
-                            <td className="px-5 py-3 text-xs font-medium text-slate-200">{w.nom} {w.prenom}</td>
-                            <td className="px-5 py-3 text-xs text-slate-500">{w.fonction}</td>
-                            <td className="px-5 py-3 text-xs text-slate-500">{w.chantier || '—'}</td>
+                            <td className="px-5 py-3 text-xs font-semibold text-[#1A56DB]">{w.matricule}</td>
+                            <td className="px-5 py-3 text-xs font-medium text-gray-800">{w.nom} {w.prenom}</td>
+                            <td className="px-5 py-3 text-xs text-gray-500">{w.fonction}</td>
+                            <td className="px-5 py-3 text-xs text-gray-500">{w.chantier || '—'}</td>
                             <td className="px-5 py-3">
                               {w.lastModifiedBy ? (
-                                <span className="text-[9px] text-slate-500">Modifié · <span className="text-slate-400 font-medium">{w.lastModifiedBy}</span></span>
+                                <span className="text-[9px] text-gray-500">Modifié · <span className="text-gray-500 font-medium">{w.lastModifiedBy}</span></span>
                               ) : (
-                                <span className="text-[9px] text-slate-500">Créé · <span className="text-slate-400 font-medium">{w.createdBy}</span></span>
+                                <span className="text-[9px] text-gray-500">Créé · <span className="text-gray-500 font-medium">{w.createdBy}</span></span>
                               )}
                             </td>
                             <td className="px-5 py-3 text-right">
@@ -2383,7 +2383,7 @@ const App: React.FC = () => {
                                    setSearchMode('id');
                                    setCurrentView('search');
                                  }}
-                                 className="btn-press text-[9px] font-semibold text-[#7ecde8] hover:bg-[#345d6e]/20 px-2.5 py-1.5 rounded-lg transition-colors uppercase tracking-wide"
+                                 className="btn-press text-[9px] font-semibold text-[#1A56DB] hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors uppercase tracking-wide"
                                >
                                  Consulter
                                </button>
@@ -2393,8 +2393,8 @@ const App: React.FC = () => {
                       </tbody>
                     </table>
                     {workers.length > 100 && (
-                       <div className="text-center py-3 bg-white/3 border-t border-white/5">
-                          <p className="text-[9px] text-slate-500 font-medium uppercase tracking-widest">Affichage limité aux 100 premiers résultats</p>
+                       <div className="text-center py-3 bg-gray-50 border-t border-gray-200">
+                          <p className="text-[9px] text-gray-500 font-medium uppercase tracking-widest">Affichage limité aux 100 premiers résultats</p>
                        </div>
                     )}
                  </div>
@@ -2408,35 +2408,35 @@ const App: React.FC = () => {
 
               {/* Pending approvals banner */}
               {users.filter(u => u.status === 'PENDING').length > 0 && (
-                <div className="bg-amber-900/15 border border-amber-500/25 rounded-2xl px-6 py-4 flex items-center gap-4">
-                  <div className="w-10 h-10 bg-amber-900/30 rounded-full flex items-center justify-center shrink-0 border border-amber-500/20">
-                    <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 flex items-center gap-4">
+                  <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center shrink-0 border border-amber-200">
+                    <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-amber-300 text-sm">{users.filter(u => u.status === 'PENDING').length} inscription(s) en attente d'approbation</p>
-                    <p className="text-xs text-amber-500">Faites défiler la liste pour les approuver ou refuser.</p>
+                    <p className="font-semibold text-amber-700 text-sm">{users.filter(u => u.status === 'PENDING').length} inscription(s) en attente d'approbation</p>
+                    <p className="text-xs text-amber-600">Faites défiler la liste pour les approuver ou refuser.</p>
                   </div>
                 </div>
               )}
 
-              <div className="bg-[#0e1520] rounded-2xl border border-white/6 shadow-xl shadow-black/30 overflow-hidden">
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center">
+                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                   <div>
-                    <h3 className="text-base font-bold text-slate-100">Gestion des Utilisateurs</h3>
-                    <p className="text-xs text-slate-500 mt-0.5">{users.length} compte(s) enregistré(s)</p>
+                    <h3 className="text-base font-bold text-gray-900">Gestion des Utilisateurs</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">{users.length} compte(s) enregistré(s)</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setShowPasswords(!showPasswords)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${showPasswords ? 'bg-rose-500 text-white' : 'bg-white/8 text-slate-400 hover:bg-white/12 border border-white/6'}`}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${showPasswords ? 'bg-rose-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={showPasswords ? "M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" : "M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"} /></svg>
                       {showPasswords ? 'Masquer MDP' : 'Voir MDP'}
                     </button>
                     <button
                       onClick={() => { setNewUserError(''); setActiveModal('ADD_USER'); }}
-                      className="flex items-center gap-2 px-5 py-2 bg-[#345d6e] text-white rounded-xl text-xs font-semibold uppercase tracking-wider hover:bg-[#2c5263] transition-all shadow-lg shadow-[#345d6e]/30"
+                      className="flex items-center gap-2 px-5 py-2 bg-[#1A56DB] text-white rounded-xl text-xs font-semibold uppercase tracking-wider hover:bg-[#1E40AF] transition-all shadow-lg shadow-blue-500/20"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                       Ajouter
@@ -2445,37 +2445,37 @@ const App: React.FC = () => {
                 </div>
 
                 {/* Search */}
-                <div className="px-6 py-3 border-b border-white/4">
+                <div className="px-6 py-3 border-b border-gray-100">
                   <input
                     type="text"
                     placeholder="Rechercher un utilisateur..."
                     value={userSearchQuery}
                     onChange={e => setUserSearchQuery(e.target.value)}
-                    className="premium-input w-full bg-white/5 border border-white/8 rounded-xl px-4 py-2 text-sm font-medium text-slate-200 placeholder-slate-600 focus:bg-white/8"
+                    className="premium-input w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-2 text-sm font-medium text-gray-800 placeholder-gray-400 focus:bg-gray-100"
                   />
                 </div>
 
                 {/* User list */}
-                <div className="divide-y divide-white/4">
+                <div className="divide-y divide-gray-100">
                   {filteredUsers.map((u, i) => (
-                    <div key={i} className={`flex items-center justify-between px-6 py-4 hover:bg-white/3 transition-colors ${u.status === 'PENDING' ? 'bg-amber-900/8' : ''}`}>
+                    <div key={i} className={`flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors ${u.status === 'PENDING' ? 'bg-amber-50/50' : ''}`}>
                       <div className="flex items-center gap-3.5">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${u.role === 'ADMIN' ? 'bg-[#345d6e] text-white' : 'bg-white/8 text-[#7ecde8]'}`}>
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${u.role === 'ADMIN' ? 'bg-[#1A56DB] text-white' : 'bg-gray-100 text-[#1A56DB]'}`}>
                           {u.fullName.charAt(0)}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-semibold text-slate-200 text-sm">{u.fullName}</p>
+                            <p className="font-semibold text-gray-800 text-sm">{u.fullName}</p>
                             {u.status === 'PENDING' && (
-                              <span className="bg-amber-900/30 text-amber-300 px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wide border border-amber-500/25">En attente</span>
+                              <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wide border border-amber-200">En attente</span>
                             )}
                             {u.role === 'ADMIN' && (
-                              <span className="bg-[#345d6e]/20 text-[#7ecde8] px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wide">Admin</span>
+                              <span className="bg-blue-100 text-[#1A56DB] px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wide">Admin</span>
                             )}
                           </div>
-                          <p className="text-[10px] text-slate-500 font-medium mt-0.5">{u.username}</p>
+                          <p className="text-[10px] text-gray-500 font-medium mt-0.5">{u.username}</p>
                           {showPasswords && (
-                            <p className="text-[10px] font-mono text-emerald-400 bg-emerald-900/20 px-2 py-0.5 rounded mt-1 border border-emerald-500/20">
+                            <p className="text-[10px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded mt-1 border border-emerald-200">
                               {decrypt(u.password)}
                             </p>
                           )}
@@ -2485,7 +2485,7 @@ const App: React.FC = () => {
                         {u.status === 'PENDING' && (
                           <button
                             onClick={() => handleApproveUser(u.username)}
-                            className="btn-press flex items-center gap-1.5 px-3 py-1.5 bg-emerald-900/20 text-emerald-400 rounded-lg text-[10px] font-semibold hover:bg-emerald-900/30 transition-colors border border-emerald-500/20"
+                            className="btn-press flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-semibold hover:bg-emerald-100 transition-colors border border-emerald-200"
                           >
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
                             Approuver
@@ -2494,7 +2494,7 @@ const App: React.FC = () => {
                         {u.username !== currentUser.username && (
                           <button
                             onClick={() => handleDeleteUser(u.username)}
-                            className="btn-press flex items-center gap-1.5 px-3 py-1.5 bg-white/5 text-slate-500 rounded-lg text-[10px] font-semibold hover:bg-red-900/20 hover:text-red-400 transition-colors border border-white/6"
+                            className="btn-press flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-500 rounded-lg text-[10px] font-semibold hover:bg-red-50 hover:text-red-600 transition-colors border border-gray-200"
                           >
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             Supprimer
@@ -2505,8 +2505,8 @@ const App: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="px-6 py-3.5 border-t border-white/5 bg-white/3">
-                  <p className="text-[9px] text-slate-600 text-center">{APP_CREDITS}</p>
+                <div className="px-6 py-3.5 border-t border-gray-200 bg-gray-50">
+                  <p className="text-[9px] text-gray-400 text-center">{APP_CREDITS}</p>
                 </div>
               </div>
             </div>
@@ -2560,33 +2560,33 @@ const App: React.FC = () => {
           executeDelete();
         };
         return (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-            <div className="bg-[#0e1520] border border-white/8 rounded-2xl shadow-2xl shadow-black/50 max-w-sm w-full overflow-hidden animate-scale-in">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-xl max-w-sm w-full overflow-hidden animate-scale-in">
               <div className="p-8">
                 <div className="text-center mb-5">
-                  <div className="w-16 h-16 bg-rose-900/30 border border-rose-500/25 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  <div className="w-16 h-16 bg-red-50 border border-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-100 mb-1">Confirmer la suppression</h3>
-                  <p className="text-slate-400 text-sm">Cette action est irréversible. Entrez le mot de passe administrateur pour confirmer.</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Confirmer la suppression</h3>
+                  <p className="text-gray-500 text-sm">Cette action est irréversible. Entrez le mot de passe administrateur pour confirmer.</p>
                 </div>
                 <div className="relative mb-2">
                   <input type={delShow ? 'text' : 'password'} value={delPwd} onChange={e => { setDelPwd(e.target.value); setDelErr(''); }}
                     onKeyDown={e => e.key === 'Enter' && confirmDelete()}
                     placeholder="Mot de passe administrateur"
-                    className="w-full px-4 py-3 pr-11 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-rose-500/50 font-semibold text-slate-200 placeholder-slate-600 text-sm" />
-                  <button type="button" onClick={() => setDelShow(s => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                    className="w-full px-4 py-3 pr-11 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 font-semibold text-gray-800 placeholder-gray-400 text-sm" />
+                  <button type="button" onClick={() => setDelShow(s => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{delShow ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/> : <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></>}</svg>
                   </button>
                 </div>
-                {delErr && <p className="text-xs font-semibold text-rose-400 mb-3">{delErr}</p>}
+                {delErr && <p className="text-xs font-semibold text-red-500 mb-3">{delErr}</p>}
                 <div className="flex gap-3 mt-4">
-                  <button onClick={() => setActiveModal(null)} className="flex-1 px-4 py-2.5 text-slate-400 font-semibold hover:bg-white/5 rounded-xl border border-white/8 transition-colors">Annuler</button>
+                  <button onClick={() => setActiveModal(null)} className="flex-1 px-4 py-2.5 text-gray-500 font-semibold hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors">Annuler</button>
                   <button onClick={confirmDelete} className="flex-1 px-4 py-2.5 bg-rose-500 text-white font-semibold rounded-xl hover:bg-rose-600 transition-colors">Supprimer</button>
                 </div>
               </div>
-              <div className="px-8 py-3 border-t border-white/5 bg-white/3">
-                <p className="text-[10px] text-slate-600 text-center">{APP_CREDITS}</p>
+              <div className="px-8 py-3 border-t border-gray-200 bg-gray-50">
+                <p className="text-[10px] text-gray-400 text-center">{APP_CREDITS}</p>
               </div>
             </div>
           </div>
@@ -2603,33 +2603,33 @@ const App: React.FC = () => {
           executeClear();
         };
         return (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-            <div className="bg-[#0e1520] border border-white/8 rounded-2xl shadow-2xl shadow-black/50 max-w-sm w-full overflow-hidden animate-scale-in">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-xl max-w-sm w-full overflow-hidden animate-scale-in">
               <div className="p-8">
                 <div className="text-center mb-5">
-                  <div className="w-16 h-16 bg-rose-900/30 border border-rose-500/25 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                  <div className="w-16 h-16 bg-red-50 border border-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-100 mb-1">Vider la base de données ?</h3>
-                  <p className="text-slate-400 text-sm">Toutes les données seront effacées définitivement. Entrez le mot de passe administrateur pour confirmer.</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Vider la base de données ?</h3>
+                  <p className="text-gray-500 text-sm">Toutes les données seront effacées définitivement. Entrez le mot de passe administrateur pour confirmer.</p>
                 </div>
                 <div className="relative mb-2">
                   <input type={clrShow ? 'text' : 'password'} value={clrPwd} onChange={e => { setClrPwd(e.target.value); setClrErr(''); }}
                     onKeyDown={e => e.key === 'Enter' && confirmClear()}
                     placeholder="Mot de passe administrateur"
-                    className="w-full px-4 py-3 pr-11 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-rose-500/50 font-semibold text-slate-200 placeholder-slate-600 text-sm" />
-                  <button type="button" onClick={() => setClrShow(s => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                    className="w-full px-4 py-3 pr-11 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 font-semibold text-gray-800 placeholder-gray-400 text-sm" />
+                  <button type="button" onClick={() => setClrShow(s => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{clrShow ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/> : <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></>}</svg>
                   </button>
                 </div>
-                {clrErr && <p className="text-xs font-semibold text-rose-400 mb-3">{clrErr}</p>}
+                {clrErr && <p className="text-xs font-semibold text-red-500 mb-3">{clrErr}</p>}
                 <div className="flex gap-3 mt-4">
-                  <button onClick={() => setActiveModal(null)} className="flex-1 px-4 py-2.5 text-slate-400 font-semibold hover:bg-white/5 rounded-xl border border-white/8 transition-colors">Annuler</button>
+                  <button onClick={() => setActiveModal(null)} className="flex-1 px-4 py-2.5 text-gray-500 font-semibold hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors">Annuler</button>
                   <button onClick={confirmClear} className="flex-1 px-4 py-2.5 bg-rose-500 text-white font-semibold rounded-xl hover:bg-rose-600 transition-colors">Tout Effacer</button>
                 </div>
               </div>
-              <div className="px-8 py-3 border-t border-white/5 bg-white/3">
-                <p className="text-[10px] text-slate-600 text-center">{APP_CREDITS}</p>
+              <div className="px-8 py-3 border-t border-gray-200 bg-gray-50">
+                <p className="text-[10px] text-gray-400 text-center">{APP_CREDITS}</p>
               </div>
             </div>
           </div>
@@ -2638,65 +2638,65 @@ const App: React.FC = () => {
 
       {/* ADD USER MODAL */}
       {activeModal === 'ADD_USER' && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-          <div className="bg-[#0e1520] w-full max-w-md rounded-2xl shadow-2xl shadow-black/50 overflow-hidden border border-white/8 animate-scale-in">
-            <div className="px-6 py-4 border-b border-white/6 flex justify-between items-center">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-200 animate-scale-in">
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
               <div>
-                <h2 className="text-base font-bold text-slate-100">Ajouter un utilisateur</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Créer un nouveau compte d'accès</p>
+                <h2 className="text-base font-bold text-gray-900">Ajouter un utilisateur</h2>
+                <p className="text-xs text-gray-500 mt-0.5">Créer un nouveau compte d'accès</p>
               </div>
-              <button onClick={() => setActiveModal(null)} className="w-8 h-8 rounded-lg bg-white/8 hover:bg-white/12 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors">
+              <button onClick={() => setActiveModal(null)} className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="p-6 space-y-4">
               {newUserError && (
-                <p className="text-xs font-medium text-red-400 bg-red-900/20 border border-red-500/25 p-3 rounded-lg">{newUserError}</p>
+                <p className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 p-3 rounded-lg">{newUserError}</p>
               )}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest pl-0.5">Nom</label>
+                  <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest pl-0.5">Nom</label>
                   <input
                     type="text"
                     value={newUserName}
                     onChange={e => { setNewUserName(e.target.value.toUpperCase()); setNewUserError(''); }}
                     placeholder="NOM"
-                    className="premium-input w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 font-semibold text-slate-200 placeholder-slate-600 text-sm uppercase"
+                    className="premium-input w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-2.5 font-semibold text-gray-800 placeholder-gray-400 text-sm uppercase"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest pl-0.5">Prénom</label>
+                  <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest pl-0.5">Prénom</label>
                   <input
                     type="text"
                     value={newUserSurname}
                     onChange={e => { setNewUserSurname(e.target.value); setNewUserError(''); }}
                     placeholder="Prénom"
-                    className="premium-input w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 font-semibold text-slate-200 placeholder-slate-600 text-sm"
+                    className="premium-input w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-2.5 font-semibold text-gray-800 placeholder-gray-400 text-sm"
                   />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest pl-0.5">Mot de passe</label>
+                <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest pl-0.5">Mot de passe</label>
                 <input
                   type="text"
                   value={newUserPassword}
                   onChange={e => { setNewUserPassword(e.target.value); setNewUserError(''); }}
                   placeholder="Mot de passe"
-                  className="premium-input w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 font-semibold text-slate-200 placeholder-slate-600 text-sm"
+                  className="premium-input w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-2.5 font-semibold text-gray-800 placeholder-gray-400 text-sm"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest pl-0.5">Rôle</label>
-                <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/6">
+                <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest pl-0.5">Rôle</label>
+                <div className="flex gap-2 p-1 bg-gray-100 rounded-xl border border-gray-200">
                   <button
                     onClick={() => setNewUserRole('USER')}
-                    className={`flex-1 py-2 rounded-lg font-semibold text-sm transition-all ${newUserRole === 'USER' ? 'bg-white/12 text-[#7ecde8] border border-white/10' : 'text-slate-500 hover:text-slate-300'}`}
+                    className={`flex-1 py-2 rounded-lg font-semibold text-sm transition-all ${newUserRole === 'USER' ? 'bg-blue-50 text-[#1A56DB] border border-blue-200' : 'text-gray-500 hover:text-gray-700'}`}
                   >
                     Utilisateur
                   </button>
                   <button
                     onClick={() => setNewUserRole('ADMIN')}
-                    className={`flex-1 py-2 rounded-lg font-semibold text-sm transition-all ${newUserRole === 'ADMIN' ? 'bg-white/12 text-[#7ecde8] border border-white/10' : 'text-slate-500 hover:text-slate-300'}`}
+                    className={`flex-1 py-2 rounded-lg font-semibold text-sm transition-all ${newUserRole === 'ADMIN' ? 'bg-blue-50 text-[#1A56DB] border border-blue-200' : 'text-gray-500 hover:text-gray-700'}`}
                   >
                     Administrateur
                   </button>
@@ -2704,13 +2704,13 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={handleAddUser}
-                className="btn-press w-full bg-[#345d6e] hover:bg-[#2c5263] text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-[#345d6e]/30 mt-1"
+                className="btn-press w-full bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/20 mt-1"
               >
                 Créer le compte
               </button>
             </div>
-            <div className="px-6 py-3 border-t border-white/6 bg-white/3">
-              <p className="text-[9px] text-slate-600 text-center">{APP_CREDITS}</p>
+            <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
+              <p className="text-[9px] text-gray-400 text-center">{APP_CREDITS}</p>
             </div>
           </div>
         </div>
@@ -2718,47 +2718,47 @@ const App: React.FC = () => {
 
       {/* Advanced Filter Modal */}
       {showAdvancedFilterModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-           <div className="bg-[#0e1520] w-full max-w-md rounded-2xl shadow-2xl shadow-black/50 overflow-hidden border border-white/8 animate-scale-in">
-              <div className="bg-[#0e1520] border-b border-white/6 px-6 py-4 flex justify-between items-center">
-                <h2 className="text-lg font-bold text-slate-100">Filtres Avancés (Brevets)</h2>
-                <button onClick={() => setShowAdvancedFilterModal(false)} className="text-slate-500 hover:text-red-400 transition-colors">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+           <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-200 animate-scale-in">
+              <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                <h2 className="text-lg font-bold text-gray-900">Filtres Avancés (Brevets)</h2>
+                <button onClick={() => setShowAdvancedFilterModal(false)} className="text-gray-500 hover:text-red-600 transition-colors">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
               <div className="p-6 space-y-6 overflow-y-auto max-h-[65vh]">
                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-300">Aucun Brevet</span>
+                    <span className="font-semibold text-gray-700">Aucun Brevet</span>
                     <button 
                        onClick={() => handleAdvancedFilterChange('aucunBrevet', !advancedFilters.aucunBrevet)}
-                       className={`w-12 h-6 rounded-full p-1 transition-colors ${advancedFilters.aucunBrevet ? 'bg-[#345d6e]' : 'bg-white/10'}`}
+                       className={`w-12 h-6 rounded-full p-1 transition-colors ${advancedFilters.aucunBrevet ? 'bg-[#1A56DB]' : 'bg-gray-100'}`}
                     >
                        <div className={`w-4 h-4 bg-white rounded-full transition-transform ${advancedFilters.aucunBrevet ? 'translate-x-6' : ''}`}></div>
                     </button>
                  </div>
                  
                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-300">Avec Brevet (Au moins un)</span>
+                    <span className="font-semibold text-gray-700">Avec Brevet (Au moins un)</span>
                     <button 
                        onClick={() => handleAdvancedFilterChange('avecBrevet', !advancedFilters.avecBrevet)}
-                       className={`w-12 h-6 rounded-full p-1 transition-colors ${advancedFilters.avecBrevet ? 'bg-[#345d6e]' : 'bg-white/10'}`}
+                       className={`w-12 h-6 rounded-full p-1 transition-colors ${advancedFilters.avecBrevet ? 'bg-[#1A56DB]' : 'bg-gray-100'}`}
                     >
                        <div className={`w-4 h-4 bg-white rounded-full transition-transform ${advancedFilters.avecBrevet ? 'translate-x-6' : ''}`}></div>
                     </button>
                  </div>
                  
-                 <hr className="border-white/6" />
+                 <hr className="border-gray-200" />
                  
                  <div className="space-y-4">
                     {/* Permis de Conduire */}
-                    <div className="bg-white/4 border border-white/5 rounded-xl p-3 space-y-2">
-                      <span className="text-[10px] font-semibold text-[#7ecde8] uppercase tracking-wider">Permis de Conduire</span>
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-2">
+                      <span className="text-[10px] font-semibold text-[#1A56DB] uppercase tracking-wider">Permis de Conduire</span>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-semibold text-slate-500 uppercase">Expiration</span>
+                        <span className="text-[9px] font-semibold text-gray-500 uppercase">Expiration</span>
                         <div className="flex gap-1.5">
                           {(['ALL', 'VALID', 'EXPIRED'] as const).map(opt => (
                             <button key={opt} onClick={() => handleAdvancedFilterChange('expirationPermis', opt)}
-                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.expirationPermis === opt ? 'bg-[#345d6e] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10 border border-white/8'}`}>
+                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.expirationPermis === opt ? 'bg-[#1A56DB] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}>
                               {opt === 'ALL' ? 'Tous' : opt === 'VALID' ? 'Valide' : 'Expiré'}
                             </button>
                           ))}
@@ -2767,25 +2767,25 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Brevet Marchandises */}
-                    <div className="bg-white/4 border border-white/5 rounded-xl p-3 space-y-2">
-                      <span className="text-[10px] font-semibold text-[#7ecde8] uppercase tracking-wider">Brevet Marchandises</span>
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-2">
+                      <span className="text-[10px] font-semibold text-[#1A56DB] uppercase tracking-wider">Brevet Marchandises</span>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-semibold text-slate-500 uppercase">Possession / Utilisation</span>
+                        <span className="text-[9px] font-semibold text-gray-500 uppercase">Possession / Utilisation</span>
                         <div className="flex gap-1.5">
                           {(['ALL', 'HAS', 'OUI', 'NON'] as const).map(opt => (
                             <button key={opt} onClick={() => handleAdvancedFilterChange('march', opt)}
-                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.march === opt ? 'bg-[#345d6e] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10 border border-white/8'}`}>
+                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.march === opt ? 'bg-[#1A56DB] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}>
                               {opt === 'ALL' ? 'Tous' : opt === 'HAS' ? 'Possède' : opt === 'OUI' ? 'Utilisé' : 'Non Ut.'}
                             </button>
                           ))}
                         </div>
                       </div>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-semibold text-slate-500 uppercase">Expiration</span>
+                        <span className="text-[9px] font-semibold text-gray-500 uppercase">Expiration</span>
                         <div className="flex gap-1.5">
                           {(['ALL', 'VALID', 'EXPIRED'] as const).map(opt => (
                             <button key={opt} onClick={() => handleAdvancedFilterChange('expirationMarch', opt)}
-                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.expirationMarch === opt ? 'bg-[#345d6e] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10 border border-white/8'}`}>
+                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.expirationMarch === opt ? 'bg-[#1A56DB] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}>
                               {opt === 'ALL' ? 'Tous' : opt === 'VALID' ? 'Valide' : 'Expiré'}
                             </button>
                           ))}
@@ -2794,25 +2794,25 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Brevet Matières Dangereuses */}
-                    <div className="bg-white/4 border border-white/5 rounded-xl p-3 space-y-2">
-                      <span className="text-[10px] font-semibold text-[#7ecde8] uppercase tracking-wider">Brevet Matières Dangereuses</span>
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-2">
+                      <span className="text-[10px] font-semibold text-[#1A56DB] uppercase tracking-wider">Brevet Matières Dangereuses</span>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-semibold text-slate-500 uppercase">Possession / Utilisation</span>
+                        <span className="text-[9px] font-semibold text-gray-500 uppercase">Possession / Utilisation</span>
                         <div className="flex gap-1.5">
                           {(['ALL', 'HAS', 'OUI', 'NON'] as const).map(opt => (
                             <button key={opt} onClick={() => handleAdvancedFilterChange('dang', opt)}
-                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.dang === opt ? 'bg-[#345d6e] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10 border border-white/8'}`}>
+                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.dang === opt ? 'bg-[#1A56DB] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}>
                               {opt === 'ALL' ? 'Tous' : opt === 'HAS' ? 'Possède' : opt === 'OUI' ? 'Utilisé' : 'Non Ut.'}
                             </button>
                           ))}
                         </div>
                       </div>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-semibold text-slate-500 uppercase">Expiration</span>
+                        <span className="text-[9px] font-semibold text-gray-500 uppercase">Expiration</span>
                         <div className="flex gap-1.5">
                           {(['ALL', 'VALID', 'EXPIRED'] as const).map(opt => (
                             <button key={opt} onClick={() => handleAdvancedFilterChange('expirationDang', opt)}
-                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.expirationDang === opt ? 'bg-[#345d6e] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10 border border-white/8'}`}>
+                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.expirationDang === opt ? 'bg-[#1A56DB] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}>
                               {opt === 'ALL' ? 'Tous' : opt === 'VALID' ? 'Valide' : 'Expiré'}
                             </button>
                           ))}
@@ -2821,25 +2821,25 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Brevet Personnel */}
-                    <div className="bg-white/4 border border-white/5 rounded-xl p-3 space-y-2">
-                      <span className="text-[10px] font-semibold text-[#7ecde8] uppercase tracking-wider">Brevet Personnel</span>
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-2">
+                      <span className="text-[10px] font-semibold text-[#1A56DB] uppercase tracking-wider">Brevet Personnel</span>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-semibold text-slate-500 uppercase">Possession / Utilisation</span>
+                        <span className="text-[9px] font-semibold text-gray-500 uppercase">Possession / Utilisation</span>
                         <div className="flex gap-1.5">
                           {(['ALL', 'HAS', 'OUI', 'NON'] as const).map(opt => (
                             <button key={opt} onClick={() => handleAdvancedFilterChange('pers', opt)}
-                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.pers === opt ? 'bg-[#345d6e] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10 border border-white/8'}`}>
+                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.pers === opt ? 'bg-[#1A56DB] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}>
                               {opt === 'ALL' ? 'Tous' : opt === 'HAS' ? 'Possède' : opt === 'OUI' ? 'Utilisé' : 'Non Ut.'}
                             </button>
                           ))}
                         </div>
                       </div>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-semibold text-slate-500 uppercase">Expiration</span>
+                        <span className="text-[9px] font-semibold text-gray-500 uppercase">Expiration</span>
                         <div className="flex gap-1.5">
                           {(['ALL', 'VALID', 'EXPIRED'] as const).map(opt => (
                             <button key={opt} onClick={() => handleAdvancedFilterChange('expirationPers', opt)}
-                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.expirationPers === opt ? 'bg-[#345d6e] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10 border border-white/8'}`}>
+                              className={`flex-1 py-1.5 rounded-lg text-[9px] font-semibold uppercase transition-all ${advancedFilters.expirationPers === opt ? 'bg-[#1A56DB] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-100 border border-gray-200'}`}>
                               {opt === 'ALL' ? 'Tous' : opt === 'VALID' ? 'Valide' : 'Expiré'}
                             </button>
                           ))}
@@ -2848,9 +2848,9 @@ const App: React.FC = () => {
                     </div>
                  </div>
               </div>
-              <div className="bg-white/3 border-t border-white/6 px-6 py-4 flex justify-between items-center">
-                 <button onClick={resetAdvancedFilters} className="text-xs font-semibold text-slate-500 hover:text-slate-200 transition-colors">Réinitialiser</button>
-                 <button onClick={() => setShowAdvancedFilterModal(false)} className="bg-[#345d6e] text-white font-semibold px-6 py-2 rounded-xl text-xs uppercase tracking-widest hover:bg-[#2c5263] transition-colors">Appliquer</button>
+              <div className="bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-between items-center">
+                 <button onClick={resetAdvancedFilters} className="text-xs font-semibold text-gray-500 hover:text-gray-800 transition-colors">Réinitialiser</button>
+                 <button onClick={() => setShowAdvancedFilterModal(false)} className="bg-[#1A56DB] text-white font-semibold px-6 py-2 rounded-xl text-xs uppercase tracking-widest hover:bg-[#1E40AF] transition-colors">Appliquer</button>
               </div>
            </div>
         </div>
@@ -2858,14 +2858,14 @@ const App: React.FC = () => {
 
       {/* Password Guard Modal — for document deletion */}
       {pwdGuard && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-[350] p-4">
-          <div className="bg-[#0e1520] border border-white/8 rounded-2xl shadow-2xl shadow-black/50 max-w-sm w-full overflow-hidden animate-scale-in">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[350] p-4">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-xl max-w-sm w-full overflow-hidden animate-scale-in">
             <div className="bg-rose-600/90 px-8 py-5 flex items-center gap-3">
               <svg className="w-6 h-6 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
               <h2 className="text-lg font-bold text-white">{pwdGuard.label}</h2>
             </div>
             <div className="p-8 space-y-4">
-              <p className="text-sm text-slate-400">{pwdGuard.sub}</p>
+              <p className="text-sm text-gray-500">{pwdGuard.sub}</p>
               <div className="relative">
                 <input
                   type={pwdGuardShow ? 'text' : 'password'}
@@ -2874,15 +2874,15 @@ const App: React.FC = () => {
                   onKeyDown={e => e.key === 'Enter' && executePwdGuard()}
                   placeholder="Mot de passe administrateur"
                   autoFocus
-                  className="w-full px-4 py-3 pr-11 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-rose-500/50 font-semibold text-slate-200 placeholder-slate-600 text-sm"
+                  className="w-full px-4 py-3 pr-11 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 font-semibold text-gray-800 placeholder-gray-400 text-sm"
                 />
-                <button type="button" onClick={() => setPwdGuardShow(s => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                <button type="button" onClick={() => setPwdGuardShow(s => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{pwdGuardShow ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/> : <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></>}</svg>
                 </button>
               </div>
-              {pwdGuardError && <p className="text-xs font-semibold text-rose-400">{pwdGuardError}</p>}
+              {pwdGuardError && <p className="text-xs font-semibold text-red-500">{pwdGuardError}</p>}
               <div className="flex gap-3 pt-2">
-                <button onClick={() => { setPwdGuard(null); setPwdGuardInput(''); setPwdGuardError(''); }} className="flex-1 px-4 py-2.5 text-slate-400 font-semibold hover:bg-white/5 rounded-xl border border-white/8 transition-colors">Annuler</button>
+                <button onClick={() => { setPwdGuard(null); setPwdGuardInput(''); setPwdGuardError(''); }} className="flex-1 px-4 py-2.5 text-gray-500 font-semibold hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors">Annuler</button>
                 <button onClick={executePwdGuard} className="flex-1 px-4 py-2.5 bg-rose-500 text-white font-semibold rounded-xl hover:bg-rose-600 transition-colors">Confirmer</button>
               </div>
             </div>
@@ -2902,13 +2902,13 @@ const App: React.FC = () => {
 
       {/* APP INTRO MODAL */}
       {showIntro && currentUser?.role === 'ADMIN' && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center z-[500] p-4">
-          <div className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 max-w-lg w-full overflow-hidden"
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[500] p-4">
+          <div className="bg-white border border-gray-200 rounded-3xl shadow-xl max-w-lg w-full overflow-hidden"
             style={{ animation: 'introSlideIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both' }}>
             <style>{`@keyframes introSlideIn { from { opacity:0; transform:scale(0.88) translateY(24px); } to { opacity:1; transform:scale(1) translateY(0); } }`}</style>
 
             {/* Hero */}
-            <div className="bg-gradient-to-br from-[#1e3a47] to-[#345d6e] px-10 py-10 text-center relative overflow-hidden">
+            <div className="bg-gradient-to-br from-[#1A56DB] to-[#6366F1] px-10 py-10 text-center relative overflow-hidden">
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute -top-8 -right-8 w-40 h-40 bg-white rounded-full"></div>
                 <div className="absolute -bottom-12 -left-12 w-56 h-56 bg-white rounded-full"></div>
@@ -2922,15 +2922,15 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <h1 className="text-3xl font-black text-white tracking-tight">CSGM AMROUS</h1>
-                <p className="text-white/70 text-sm font-bold uppercase tracking-[0.25em] mt-1">Gestion Materiel HMD</p>
+                <p className="text-gray-600 text-sm font-bold uppercase tracking-[0.25em] mt-1">Gestion Materiel HMD</p>
               </div>
             </div>
 
             {/* Content */}
             <div className="px-10 py-8">
-              <p className="text-slate-200 font-bold text-lg mb-1">Welcome to CSGM AMROUS</p>
-              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                A secure, all-in-one personnel and document management platform built for <span className="font-semibold text-[#7ecde8]">HMD construction sites</span>. Manage your workforce, track certifications, and stay on top of expiration dates — all in one place.
+              <p className="text-gray-800 font-bold text-lg mb-1">Welcome to CSGM AMROUS</p>
+              <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                A secure, all-in-one personnel and document management platform built for <span className="font-semibold text-[#1A56DB]">HMD construction sites</span>. Manage your workforce, track certifications, and stay on top of expiration dates — all in one place.
               </p>
 
               <div className="grid grid-cols-2 gap-3 mb-6">
@@ -2940,36 +2940,36 @@ const App: React.FC = () => {
                   { icon: 'M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', label: 'ZIP / Excel Export', desc: 'Full packages with all documents' },
                   { icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', label: 'Bordereau d\'Envoi', desc: 'Site arrival & departure receipts' },
                 ].map(item => (
-                  <div key={item.label} className="flex items-start gap-3 p-3 bg-white/4 rounded-xl border border-white/6">
-                    <div className="w-8 h-8 bg-[#345d6e]/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-[#7ecde8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div key={item.label} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-[#1A56DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}/>
                       </svg>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-200">{item.label}</p>
-                      <p className="text-[10px] text-slate-500 font-medium mt-0.5">{item.desc}</p>
+                      <p className="text-xs font-semibold text-gray-800">{item.label}</p>
+                      <p className="text-[10px] text-gray-500 font-medium mt-0.5">{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="bg-[#345d6e]/10 border border-[#345d6e]/25 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
-                <svg className="w-4 h-4 text-[#7ecde8] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
+                <svg className="w-4 h-4 text-[#1A56DB] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <p className="text-xs text-[#7ecde8] font-semibold leading-relaxed">
+                <p className="text-xs text-[#1A56DB] font-semibold leading-relaxed">
                   All data is stored <span className="font-bold">locally on this device</span> using IndexedDB. Use the ZIP or SQLite export features to back up your data regularly.
                 </p>
               </div>
 
               <button
                 onClick={() => { localStorage.setItem('csgm_intro_seen', '1'); setShowIntro(false); }}
-                className="w-full py-4 bg-gradient-to-r from-[#1e3a47] to-[#345d6e] text-white font-bold rounded-2xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-[#345d6e]/30 text-sm uppercase tracking-widest"
+                className="w-full py-4 bg-gradient-to-r from-[#1A56DB] to-[#6366F1] text-white font-bold rounded-2xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-blue-500/20 text-sm uppercase tracking-widest"
               >
                 Get Started →
               </button>
-              <p className="text-center text-[10px] text-slate-600 font-medium mt-3">{APP_CREDITS}</p>
+              <p className="text-center text-[10px] text-gray-400 font-medium mt-3">{APP_CREDITS}</p>
             </div>
           </div>
         </div>
@@ -2990,8 +2990,8 @@ const App: React.FC = () => {
 
       {/* ── App Expired: full-screen block ── */}
       {isExpired && !showExpiryPanel && currentUser?.role !== 'ADMIN' && (
-        <div className="fixed inset-0 bg-slate-900/95 backdrop-blur-md flex items-center justify-center z-[9999] p-6">
-          <div className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 max-w-md w-full overflow-hidden text-center"
+        <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-md flex items-center justify-center z-[9999] p-6">
+          <div className="bg-white border border-gray-200 rounded-3xl shadow-xl max-w-md w-full overflow-hidden text-center"
             style={{ animation: 'introSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both' }}>
             <div className="bg-gradient-to-br from-rose-600 to-rose-700 px-8 pt-10 pb-8">
               <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-5">
@@ -3003,12 +3003,12 @@ const App: React.FC = () => {
               <p className="text-rose-200 text-sm font-bold">L'accès à cette application a expiré.</p>
             </div>
             <div className="px-8 py-8 space-y-4">
-              <p className="text-slate-200 font-black text-sm">Pour continuer, veuillez contacter :</p>
+              <p className="text-gray-800 font-black text-sm">Pour continuer, veuillez contacter :</p>
               <div className="space-y-3 text-left">
-                <div className="bg-[#1e3a47]/15 border border-[#1e3a47]/30 rounded-2xl p-4">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Propriétaire</p>
-                  <p className="text-slate-100 font-black text-base">AMROUS Abdallah</p>
-                  <a href="tel:0699407036" className="text-[#7ecde8] font-black text-xl hover:underline tracking-wide">06 99 40 70 36</a>
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Propriétaire</p>
+                  <p className="text-gray-900 font-black text-base">AMROUS Abdallah</p>
+                  <a href="tel:0699407036" className="text-[#1A56DB] font-black text-xl hover:underline tracking-wide">06 99 40 70 36</a>
                 </div>
               </div>
             </div>
@@ -3032,8 +3032,8 @@ const App: React.FC = () => {
 
           {/* Contact popup for normal users */}
           {showExpiryContactPopup && currentUser?.role !== 'ADMIN' && (
-            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[400] p-4" onClick={() => setShowExpiryContactPopup(false)}>
-              <div className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 max-w-sm w-full overflow-hidden" style={{ animation: 'introSlideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={e => e.stopPropagation()}>
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[400] p-4" onClick={() => setShowExpiryContactPopup(false)}>
+              <div className="bg-white border border-gray-200 rounded-3xl shadow-xl max-w-sm w-full overflow-hidden" style={{ animation: 'introSlideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={e => e.stopPropagation()}>
                 <div className="bg-amber-500 px-6 py-5 flex items-center gap-3">
                   <div className="w-10 h-10 bg-white/25 rounded-xl flex items-center justify-center shrink-0">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3046,8 +3046,8 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <div className="px-6 py-6">
-                  <p className="text-slate-400 text-sm font-medium leading-relaxed mb-5">
-                    La date d'expiration de l'application approche. Veuillez contacter le propriétaire <span className="font-black text-slate-200">AMROUS Abdallah</span> pour obtenir un délai supplémentaire.
+                  <p className="text-gray-500 text-sm font-medium leading-relaxed mb-5">
+                    La date d'expiration de l'application approche. Veuillez contacter le propriétaire <span className="font-black text-gray-800">AMROUS Abdallah</span> pour obtenir un délai supplémentaire.
                   </p>
                   <a
                     href="tel:0699407036"
@@ -3058,7 +3058,7 @@ const App: React.FC = () => {
                     </svg>
                     06 99 40 70 36
                   </a>
-                  <button onClick={() => setShowExpiryContactPopup(false)} className="w-full mt-3 py-2.5 text-slate-400 font-bold text-sm hover:text-slate-600 transition-all">
+                  <button onClick={() => setShowExpiryContactPopup(false)} className="w-full mt-3 py-2.5 text-gray-500 font-bold text-sm hover:text-gray-400 transition-all">
                     Fermer
                   </button>
                 </div>

@@ -135,12 +135,12 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-      <div className="bg-[#0e1520] w-full max-w-md rounded-2xl shadow-2xl shadow-black/50 overflow-hidden border border-white/8 animate-scale-in">
-        <div className="bg-[#0e1520] border-b border-white/6 px-8 py-5 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-slate-100">Administration Base de Données</h2>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-200 animate-scale-in">
+        <div className="border-b border-gray-200 px-8 py-5 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-gray-900">Administration Base de Données</h2>
           {step !== 'loading' && (
-            <button onClick={onClose} className="w-8 h-8 rounded-lg bg-white/8 hover:bg-white/12 flex items-center justify-center text-slate-500 hover:text-red-400 transition-colors">
+            <button onClick={onClose} className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           )}
@@ -148,11 +148,10 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
 
         <div className="p-8 flex flex-col items-center gap-6 text-center">
 
-          {/* STEP: File selection + confirm */}
           {step === 'confirm' && (
             <>
-              <div className="bg-[#345d6e]/15 border border-[#345d6e]/25 p-6 rounded-full">
-                <svg className="h-12 w-12 text-[#7ecde8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-blue-50 border border-blue-200 p-6 rounded-full">
+                <svg className="h-12 w-12 text-[#1A56DB]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
               </div>
@@ -160,34 +159,34 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
               {!pendingFile ? (
                 <>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-bold text-slate-200">Importer un fichier .db</h3>
-                    <p className="text-sm text-slate-500">Sélectionnez votre base de données SQLite locale.</p>
+                    <h3 className="text-lg font-bold text-gray-900">Importer un fichier .db</h3>
+                    <p className="text-sm text-gray-500">Sélectionnez votre base de données SQLite locale.</p>
                   </div>
                   <div className="w-full">
-                    <label className="block w-full border-2 border-dashed border-white/10 rounded-xl p-6 cursor-pointer hover:border-[#345d6e]/50 hover:bg-white/4 transition-all">
+                    <label className="block w-full border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer hover:border-[#1A56DB]/50 hover:bg-blue-50/50 transition-all">
                       <input type="file" accept=".db,.sqlite,.sqlite3,.db3" className="hidden" onChange={handleFileSelect} />
-                      <span className="text-sm font-bold text-[#7ecde8]">Sélectionner le fichier .db</span>
+                      <span className="text-sm font-bold text-[#1A56DB]">Sélectionner le fichier .db</span>
                     </label>
-                    <button onClick={onClose} className="mt-4 text-sm text-slate-500 font-semibold hover:text-slate-300 transition-colors">Annuler</button>
+                    <button onClick={onClose} className="mt-4 text-sm text-gray-400 font-semibold hover:text-gray-600 transition-colors">Annuler</button>
                   </div>
                 </>
               ) : (
                 <>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-bold text-slate-200">Remplacer la base de données ?</h3>
-                    <p className="text-sm text-slate-400">Fichier sélectionné : <span className="font-bold text-[#7ecde8]">{pendingFile.name}</span></p>
-                    <p className="text-sm text-amber-400 font-medium">Cette action remplacera toutes les données actuelles.</p>
+                    <h3 className="text-lg font-bold text-gray-900">Remplacer la base de données ?</h3>
+                    <p className="text-sm text-gray-500">Fichier sélectionné : <span className="font-bold text-[#1A56DB]">{pendingFile.name}</span></p>
+                    <p className="text-sm text-amber-600 font-medium">Cette action remplacera toutes les données actuelles.</p>
                   </div>
                   <div className="flex gap-3 w-full">
                     <button
                       onClick={() => setPendingFile(null)}
-                      className="flex-1 py-3 border border-white/8 text-slate-400 font-bold rounded-xl hover:bg-white/5 transition-all"
+                      className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-all"
                     >
                       Non
                     </button>
                     <button
                       onClick={handleConfirmYes}
-                      className="flex-1 py-3 bg-[#345d6e] text-white font-black rounded-xl hover:bg-[#2c5263] transition-all shadow-lg shadow-[#345d6e]/25"
+                      className="flex-1 py-3 bg-[#1A56DB] text-white font-black rounded-xl hover:bg-[#1E40AF] transition-all shadow-sm"
                     >
                       Oui, Remplacer
                     </button>
@@ -197,21 +196,20 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
             </>
           )}
 
-          {/* STEP: Admin password required for normal user */}
           {step === 'admin_password' && (
             <>
-              <div className="bg-amber-900/20 border border-amber-500/25 p-6 rounded-full">
-                <svg className="h-12 w-12 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-amber-50 border border-amber-200 p-6 rounded-full">
+                <svg className="h-12 w-12 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-bold text-slate-200">Confirmation administrateur requise</h3>
-                <p className="text-sm text-slate-400">Entrez le mot de passe administrateur pour procéder à l'importation.</p>
+                <h3 className="text-lg font-bold text-gray-900">Confirmation administrateur requise</h3>
+                <p className="text-sm text-gray-500">Entrez le mot de passe administrateur pour procéder à l'importation.</p>
               </div>
               <form onSubmit={handleAdminPasswordSubmit} className="w-full space-y-4">
                 {adminPwdError && (
-                  <p className="text-xs font-bold text-red-400 bg-red-900/20 border border-red-500/20 p-3 rounded-lg">{adminPwdError}</p>
+                  <p className="text-xs font-bold text-red-600 bg-red-50 border border-red-200 p-3 rounded-lg">{adminPwdError}</p>
                 )}
                 <div className="relative">
                   <input
@@ -219,65 +217,62 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
                     value={adminPassword}
                     onChange={(e) => { setAdminPassword(e.target.value); setAdminPwdError(''); }}
                     placeholder="Mot de passe administrateur"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-12 py-3 font-bold text-slate-200 placeholder-slate-600 focus:ring-2 focus:ring-[#345d6e]/50 focus:outline-none transition-all"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 pr-12 py-3 font-bold text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#1A56DB]/20 focus:border-[#1A56DB] focus:outline-none transition-all"
                     autoFocus
                   />
                   <button
                     type="button"
                     onClick={() => setShowAdminPwd(!showAdminPwd)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                   </button>
                 </div>
                 <div className="flex gap-3">
-                  <button type="button" onClick={onClose} className="flex-1 py-3 border border-white/8 text-slate-400 font-bold rounded-xl hover:bg-white/5 transition-all">Annuler</button>
-                  <button type="submit" className="flex-1 py-3 bg-[#345d6e] text-white font-black rounded-xl hover:bg-[#2c5263] shadow-lg shadow-[#345d6e]/25 transition-all">Confirmer</button>
+                  <button type="button" onClick={onClose} className="flex-1 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-all">Annuler</button>
+                  <button type="submit" className="flex-1 py-3 bg-[#1A56DB] text-white font-black rounded-xl hover:bg-[#1E40AF] shadow-sm transition-all">Confirmer</button>
                 </div>
               </form>
             </>
           )}
 
-          {/* STEP: Loading */}
           {step === 'loading' && (
             <>
               <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-[#345d6e] border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-slate-400 font-semibold">Lecture du fichier .db...</p>
+                <div className="w-12 h-12 border-4 border-[#1A56DB] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-500 font-semibold">Lecture du fichier .db...</p>
               </div>
             </>
           )}
 
-          {/* STEP: Success */}
           {step === 'success' && (
             <>
-              <div className="bg-emerald-900/20 border border-emerald-500/20 p-6 rounded-full">
-                <svg className="h-12 w-12 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-emerald-50 border border-emerald-200 p-6 rounded-full">
+                <svg className="h-12 w-12 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-bold text-slate-200">Données Chargées</h3>
-                <p className="text-sm text-slate-400">Les fiches ont été extraites avec succès.</p>
+                <h3 className="text-lg font-bold text-gray-900">Données Chargées</h3>
+                <p className="text-sm text-gray-500">Les fiches ont été extraites avec succès.</p>
               </div>
             </>
           )}
 
-          {/* STEP: Error */}
           {step === 'error' && (
             <>
-              <div className="bg-red-900/20 border border-red-500/20 p-6 rounded-full">
-                <svg className="h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-red-50 border border-red-200 p-6 rounded-full">
+                <svg className="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-bold text-slate-200">Erreur d'Importation</h3>
-                <p className="text-sm text-red-400 font-medium">{error}</p>
+                <h3 className="text-lg font-bold text-gray-900">Erreur d'Importation</h3>
+                <p className="text-sm text-red-600 font-medium">{error}</p>
               </div>
               <button
                 onClick={() => { setStep('confirm'); setPendingFile(null); setError(null); }}
-                className="text-sm text-[#7ecde8] font-bold underline px-4 py-2 hover:bg-[#345d6e]/10 rounded-lg transition-all"
+                className="text-sm text-[#1A56DB] font-bold underline px-4 py-2 hover:bg-blue-50 rounded-lg transition-all"
               >
                 Réessayer
               </button>
@@ -285,8 +280,8 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImportComplete, cu
           )}
         </div>
 
-        <div className="px-8 py-4 border-t border-white/6 bg-white/3">
-          <p className="text-[10px] text-slate-600 font-bold text-center">{APP_CREDITS}</p>
+        <div className="px-8 py-4 border-t border-gray-100 bg-gray-50">
+          <p className="text-[10px] text-gray-400 font-bold text-center">{APP_CREDITS}</p>
         </div>
       </div>
     </div>

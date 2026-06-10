@@ -242,80 +242,80 @@ const BulkDocImportModal: React.FC<BulkDocImportModalProps> = ({ config, workers
   const totalSuccess = successUpdateCount + successCreateCount;
 
   return (
-    <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
-      <div className="bg-[#0e1520] w-full max-w-5xl rounded-3xl shadow-2xl shadow-black/60 overflow-hidden border border-white/8 flex flex-col max-h-[90vh] animate-scale-in">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
+      <div className="bg-white w-full max-w-5xl rounded-3xl shadow-xl overflow-hidden border border-gray-200 flex flex-col max-h-[90vh] animate-scale-in">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#1e3a47] to-[#345d6e] px-8 py-5 flex justify-between items-center text-white shrink-0">
+        <div className="bg-gradient-to-r from-[#1A56DB] to-[#6366F1] px-8 py-5 flex justify-between items-center text-white shrink-0">
             <div>
                 <h2 className="text-lg font-black tracking-wide uppercase">Importation {config.title}</h2>
-                <p className="text-[10px] text-white/60 font-medium">Algorithme: Matricule BD &rarr; Nom Complet BD &rarr; Création Auto (Chauffeur)</p>
+                <p className="text-[10px] text-white/70 font-medium">Algorithme: Matricule BD &rarr; Nom Complet BD &rarr; Création Auto (Chauffeur)</p>
             </div>
-            <button onClick={onClose} className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors">
+            <button onClick={onClose} className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
         </div>
 
         {/* Content */}
-        <div className="p-8 flex-1 overflow-y-auto">
+        <div className="p-8 flex-1 overflow-y-auto bg-[#F8F9FA]">
             {results.length === 0 && !isProcessing && (
-                <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-white/10 rounded-3xl bg-white/3 hover:bg-white/5 transition-colors">
-                    <div className="w-16 h-16 bg-[#345d6e]/15 border border-[#345d6e]/25 rounded-full flex items-center justify-center mb-4">
-                        <svg className="w-8 h-8 text-[#7ecde8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-gray-200 rounded-3xl bg-white hover:bg-gray-50 transition-colors">
+                    <div className="w-16 h-16 bg-blue-50 border border-blue-200 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-[#1A56DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                     </div>
                     <label className="cursor-pointer">
-                        <span className="bg-[#345d6e] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#2c5263] transition-all shadow-lg shadow-[#345d6e]/25 inline-block">Sélectionner les fichiers</span>
+                        <span className="bg-[#1A56DB] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#1E40AF] transition-all shadow-sm inline-block">Sélectionner les fichiers</span>
                         <input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.bmp,.webp" className="hidden" onChange={handleFiles} />
                     </label>
-                    <p className="mt-4 text-xs text-slate-500 font-bold uppercase tracking-wider">Formats: PDF, PNG, JPG, BMP</p>
-                    <p className="mt-1 text-[10px] text-slate-600 font-medium">Nommage: Matricule obligatoire pour création auto. Sinon Nom + Prénom requis.</p>
+                    <p className="mt-4 text-xs text-gray-400 font-bold uppercase tracking-wider">Formats: PDF, PNG, JPG, BMP</p>
+                    <p className="mt-1 text-[10px] text-gray-400 font-medium">Nommage: Matricule obligatoire pour création auto. Sinon Nom + Prénom requis.</p>
                 </div>
             )}
 
             {isProcessing && (
                 <div className="flex flex-col items-center justify-center py-20">
-                    <div className="w-12 h-12 border-4 border-[#345d6e] border-t-transparent rounded-full animate-spin mb-4"></div>
-                    <p className="text-slate-400 font-bold text-sm">Analyse intelligente du fichier {processedCount}...</p>
+                    <div className="w-12 h-12 border-4 border-[#1A56DB] border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p className="text-gray-500 font-bold text-sm">Analyse intelligente du fichier {processedCount}...</p>
                 </div>
             )}
 
             {results.length > 0 && !isProcessing && (
                 <div className="space-y-6">
                     <div className="flex gap-4">
-                        <div className="flex-1 bg-emerald-900/20 border border-emerald-500/25 p-4 rounded-xl">
-                            <span className="text-2xl font-black text-emerald-400">{successUpdateCount}</span>
-                            <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mt-0.5">Mises à jour</p>
+                        <div className="flex-1 bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
+                            <span className="text-2xl font-black text-emerald-700">{successUpdateCount}</span>
+                            <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-0.5">Mises à jour</p>
                         </div>
-                        <div className="flex-1 bg-[#345d6e]/15 border border-[#345d6e]/30 p-4 rounded-xl">
-                            <span className="text-2xl font-black text-[#7ecde8]">{successCreateCount}</span>
-                            <p className="text-[10px] font-bold text-[#7ecde8]/60 uppercase tracking-widest mt-0.5">Nouveaux Dossiers</p>
+                        <div className="flex-1 bg-blue-50 border border-blue-200 p-4 rounded-xl">
+                            <span className="text-2xl font-black text-[#1A56DB]">{successCreateCount}</span>
+                            <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-0.5">Nouveaux Dossiers</p>
                         </div>
-                        <div className="flex-1 bg-rose-900/20 border border-rose-500/25 p-4 rounded-xl">
-                            <span className="text-2xl font-black text-rose-400">{errorCount}</span>
-                            <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest mt-0.5">Échecs</p>
+                        <div className="flex-1 bg-red-50 border border-red-200 p-4 rounded-xl">
+                            <span className="text-2xl font-black text-red-600">{errorCount}</span>
+                            <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-0.5">Échecs</p>
                         </div>
                     </div>
 
-                    <div className="border border-white/8 rounded-2xl overflow-hidden">
+                    <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white">
                         <table className="w-full text-left text-xs">
-                            <thead className="bg-white/4 border-b border-white/8">
+                            <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th className="px-4 py-3 font-black text-slate-500 uppercase tracking-wider">Fichier</th>
-                                    <th className="px-4 py-3 font-black text-slate-500 uppercase tracking-wider">Action</th>
-                                    <th className="px-4 py-3 font-black text-slate-500 uppercase tracking-wider">Détail</th>
+                                    <th className="px-4 py-3 font-black text-gray-500 uppercase tracking-wider">Fichier</th>
+                                    <th className="px-4 py-3 font-black text-gray-500 uppercase tracking-wider">Action</th>
+                                    <th className="px-4 py-3 font-black text-gray-500 uppercase tracking-wider">Détail</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-gray-100">
                                 {results.map((res, idx) => (
-                                    <tr key={idx} className={res.status.includes('SUCCESS') ? 'hover:bg-white/3' : 'bg-rose-900/10 hover:bg-rose-900/15'}>
-                                        <td className="px-4 py-3 font-bold text-slate-300 truncate max-w-[200px]">{res.filename}</td>
+                                    <tr key={idx} className={res.status.includes('SUCCESS') ? 'hover:bg-gray-50' : 'bg-red-50/50 hover:bg-red-50'}>
+                                        <td className="px-4 py-3 font-bold text-gray-700 truncate max-w-[200px]">{res.filename}</td>
                                         <td className="px-4 py-3">
-                                            {res.status === 'SUCCESS_UPDATE' && <span className="bg-emerald-900/25 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded font-black uppercase text-[9px]">Mise à jour</span>}
-                                            {res.status === 'SUCCESS_CREATE' && <span className="bg-[#345d6e]/20 text-[#7ecde8] border border-[#345d6e]/30 px-2 py-1 rounded font-black uppercase text-[9px]">Création</span>}
-                                            {res.status === 'ERROR' && <span className="text-rose-400 font-black">ERREUR</span>}
+                                            {res.status === 'SUCCESS_UPDATE' && <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded font-black uppercase text-[9px]">Mise à jour</span>}
+                                            {res.status === 'SUCCESS_CREATE' && <span className="bg-blue-50 text-[#1A56DB] border border-blue-200 px-2 py-1 rounded font-black uppercase text-[9px]">Création</span>}
+                                            {res.status === 'ERROR' && <span className="text-red-600 font-black">ERREUR</span>}
                                         </td>
-                                        <td className="px-4 py-3 text-slate-400">
-                                            {res.workerName && <span className="font-bold text-[#7ecde8] mr-2">{res.workerName} ({res.matricule})</span>}
+                                        <td className="px-4 py-3 text-gray-500">
+                                            {res.workerName && <span className="font-bold text-[#1A56DB] mr-2">{res.workerName} ({res.matricule})</span>}
                                             <span>{res.message}</span>
                                         </td>
                                     </tr>
@@ -328,10 +328,10 @@ const BulkDocImportModal: React.FC<BulkDocImportModalProps> = ({ config, workers
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-white/6 bg-white/3 flex justify-end gap-3 shrink-0">
-            <button onClick={onClose} className="px-6 py-3 rounded-xl border border-white/8 text-slate-400 font-bold hover:bg-white/5 transition-all">Annuler</button>
+        <div className="p-6 border-t border-gray-200 bg-white flex justify-end gap-3 shrink-0">
+            <button onClick={onClose} className="px-6 py-3 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-all">Annuler</button>
             {totalSuccess > 0 && (
-                <button onClick={handleConfirm} className="px-8 py-3 rounded-xl bg-[#345d6e] text-white font-black hover:bg-[#2c5263] transition-all shadow-lg shadow-[#345d6e]/25 active:scale-95 uppercase text-xs tracking-widest">
+                <button onClick={handleConfirm} className="px-8 py-3 rounded-xl bg-[#1A56DB] text-white font-black hover:bg-[#1E40AF] transition-all shadow-sm active:scale-95 uppercase text-xs tracking-widest">
                     Valider {totalSuccess} Opérations
                 </button>
             )}

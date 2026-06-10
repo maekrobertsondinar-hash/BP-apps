@@ -45,22 +45,22 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ label, value, onChange, sug
 
   return (
     <div className="flex flex-col gap-1.5 relative" ref={containerRef}>
-      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</label>
+      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</label>
       <input
         type="text"
         value={value}
         onChange={handleInputChange}
         onFocus={() => value.length > 0 && setShowSuggestions(true)}
-        className="premium-input border border-white/10 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#345d6e] bg-white/5 text-slate-200 placeholder-slate-600 w-full transition-all"
+        className="premium-input border border-gray-200 px-4 py-2.5 rounded-lg focus:outline-none bg-gray-50 text-gray-900 placeholder-gray-400 w-full transition-all"
         placeholder="Commencez à taper une fonction..."
       />
       {showSuggestions && filteredSuggestions.length > 0 && (
-        <ul className="absolute z-50 top-[100%] left-0 w-full bg-[#0e1520] border border-white/10 shadow-2xl shadow-black/40 max-h-48 overflow-y-auto rounded-lg mt-1 py-1">
+        <ul className="absolute z-50 top-[100%] left-0 w-full bg-white border border-gray-200 shadow-xl max-h-48 overflow-y-auto rounded-xl mt-1 py-1">
           {filteredSuggestions.map((suggestion, index) => (
             <li
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
-              className="px-4 py-2 hover:bg-[#345d6e] hover:text-white cursor-pointer text-sm font-medium transition-colors text-slate-300"
+              className="px-4 py-2 hover:bg-[#1A56DB] hover:text-white cursor-pointer text-sm font-medium transition-colors text-gray-700"
             >
               {suggestion}
             </li>

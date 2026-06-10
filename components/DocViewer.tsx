@@ -27,7 +27,6 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
   const zoomIn  = () => setZoom(z => clampZoom(z + ZOOM_STEP));
   const zoomOut = () => setZoom(z => clampZoom(z - ZOOM_STEP));
 
-  /* --- Mouse wheel zoom (centered on cursor) --- */
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     const delta = e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP;
@@ -41,7 +40,6 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
     return () => el.removeEventListener('wheel', handleWheel);
   }, [handleWheel, isPdf]);
 
-  /* --- Drag to pan --- */
   const onMouseDown = (e: React.MouseEvent) => {
     if (zoom <= 1) return;
     e.preventDefault();
@@ -59,7 +57,6 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
 
   const onMouseUp = () => { dragging.current = false; };
 
-  /* --- Keyboard --- */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -71,25 +68,22 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  /* --- Reset pan when zoom goes back to 1 --- */
   useEffect(() => {
     if (zoom <= 1) setPan({ x: 0, y: 0 });
   }, [zoom]);
 
-  /* --- Print --- */
   const handlePrint = () => {
     const win = window.open('', '_blank');
     if (!win) return;
     if (isPdf) {
       win.document.write(`<html><body style="margin:0"><embed src="${data}" type="application/pdf" width="100%" height="100%" /></body></html>`);
     } else {
-      win.document.write(`<html><body style="margin:0;display:flex;align-items:center;justify-content:center;background:#111;min-height:100vh"><img src="${data}" style="max-width:100%;max-height:100vh;object-fit:contain" /></body></html>`);
+      win.document.write(`<html><body style="margin:0;display:flex;align-items:center;justify-content:center;background:#fff;min-height:100vh"><img src="${data}" style="max-width:100%;max-height:100vh;object-fit:contain" /></body></html>`);
     }
     win.document.close();
     setTimeout(() => { win.focus(); win.print(); }, 500);
   };
 
-  /* --- Download --- */
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = data;
@@ -104,14 +98,13 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
       : 'zoom-in';
 
   return (
-    <div className="fixed inset-0 bg-black/95 z-[300] flex flex-col" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/90 z-[300] flex flex-col" onClick={onClose}>
 
       {/* ── Toolbar ── */}
       <div
-        className="flex items-center justify-between px-6 py-3 bg-black/60 backdrop-blur-md border-b border-white/10 shrink-0"
+        className="flex items-center justify-between px-6 py-3 bg-gray-900/95 backdrop-blur-md border-b border-white/10 shrink-0"
         onClick={e => e.stopPropagation()}
       >
-        {/* Left: title */}
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-white font-black text-sm uppercase tracking-widest">{label}</span>
           {filename && (
@@ -119,10 +112,7 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
           )}
         </div>
 
-        {/* Right: controls */}
         <div className="flex items-center gap-2 shrink-0">
-
-          {/* Zoom controls — images only */}
           {!isPdf && (
             <div className="flex items-center gap-1 bg-white/10 rounded-xl px-1 py-1">
               <button
@@ -131,7 +121,6 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
                 className="w-8 h-8 flex items-center justify-center rounded-lg text-white hover:bg-white/20 disabled:opacity-30 transition-all text-lg font-bold leading-none"
                 title="Zoom arrière (−)"
               >−</button>
-
               <button
                 onClick={resetView}
                 className="px-2 h-8 flex items-center justify-center rounded-lg text-white/80 hover:bg-white/20 transition-all text-xs font-black tracking-wider tabular-nums min-w-[52px]"
@@ -139,7 +128,6 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
               >
                 {Math.round(zoom * 100)}%
               </button>
-
               <button
                 onClick={zoomIn}
                 disabled={zoom >= MAX_ZOOM}
@@ -161,7 +149,7 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
 
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 bg-[#345d6e] hover:bg-[#2c5263] text-white font-bold text-xs px-4 py-2 rounded-xl transition-all uppercase tracking-wider"
+            className="flex items-center gap-2 bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-bold text-xs px-4 py-2 rounded-xl transition-all uppercase tracking-wider"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
@@ -219,9 +207,8 @@ const DocViewer: React.FC<DocViewerProps> = ({ data, label, filename, onClose })
           </div>
         )}
 
-        {/* Zoom hint — shown only at default zoom */}
         {!isPdf && zoom === 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white/60 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full pointer-events-none select-none">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white/70 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full pointer-events-none select-none">
             Molette ou +/− pour zoomer
           </div>
         )}

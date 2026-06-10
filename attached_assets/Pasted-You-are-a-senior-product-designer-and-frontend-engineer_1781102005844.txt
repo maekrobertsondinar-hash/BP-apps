@@ -1,0 +1,475 @@
+You are a senior product designer and frontend engineer improving an existing React + TypeScript + Vite app called CSGM AMROUS.
+
+The app is already functional. Do not rebuild it from scratch. Preserve all existing business logic, data structures, IndexedDB/localStorage persistence, import/export behavior, authentication, user roles, licence expiry system, worker records, brevet/document handling, Bordereau d'Envoi, and all current features.
+
+Your task is to perform a full UI/UX refinement, animation, and consistency pass across the entire application.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTEXT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CSGM AMROUS is an internal industrial personnel and document management system. It manages workers, chantiers, functions, driver/grutier certificates, document previews, exports, imports, user approval, audit information, and Bordereau d'Envoi arrival/departure documents.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CURRENT MAIN PROBLEMS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Visually inconsistent — login and shell areas use one style; modals, tables, and Bordereau screens use a different, unpolished style.
+2. Almost no motion — transitions are jarring, modals pop in hard, tables render instantly with no entry animation, there is no feedback on interaction.
+3. UX patterns are incomplete — no loading skeletons, no empty states, no inline validation, no micro-interactions on key actions.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PRIMARY GOALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Transform the entire app into one cohesive, premium LIGHT MODE enterprise desktop application.
+2. Implement rich, purposeful animations throughout using framer-motion — every transition, entrance, exit, and state change must feel smooth and intentional.
+3. Apply industry best UX practices: loading feedback, empty states, inline validation, optimistic UI, clear affordances, keyboard navigation, and accessible interactions.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IMPORTANT CONSTRAINTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Do not remove features.
+- Do not break data compatibility.
+- Do not change stored data keys unless migration is handled.
+- Do not simplify the app by deleting functionality.
+- Keep React, TypeScript, Vite, IndexedDB, localStorage, xlsx, JSZip, sql.js compatibility.
+- Use existing dependencies: framer-motion and lucide-react are required — use them throughout.
+- Prefer improving the existing component structure over rewriting everything.
+- Ensure the app builds successfully after changes.
+- Keep the current French UI language.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DESIGN DIRECTION — PREMIUM LIGHT MODE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The visual language must feel like a premium light-mode SaaS enterprise product in the style of:
+Linear (light), Notion, Figma, Vercel Dashboard, Stripe Dashboard, Intercom, Retool light, and high-end French industrial software.
+
+Color system:
+- App background: warm neutral white (#FAFAF9 or #F8F9FA), not pure white.
+- Panel surfaces: white (#FFFFFF) with subtle shadow-sm or a 1px border (#E5E7EB or similar).
+- Primary accent: deep cobalt/indigo (#1A56DB or #3730A3) — used for primary actions, focus rings, active states, and links.
+- Secondary accent: slate blue (#6366F1) for highlights.
+- Status colors:
+  • Success: muted emerald (#059669 / #D1FAE5 fill)
+  • Warning: warm amber (#D97706 / #FEF3C7 fill)
+  • Danger: rose red (#DC2626 / #FEE2E2 fill)
+  • Info: sky blue (#0284C7 / #E0F2FE fill)
+- Text hierarchy:
+  • Primary: #111827
+  • Secondary: #6B7280
+  • Tertiary/placeholder: #9CA3AF
+- Borders: 1px solid #E5E7EB (default), #D1D5DB (hover/emphasis)
+- Focus ring: 2px solid accent with 2px offset, always visible on keyboard focus
+- Card shadows: shadow-sm (0 1px 3px rgba(0,0,0,0.07)) for default, shadow-md on hover/active
+
+Typography:
+- Font: Inter or system-ui as fallback
+- Compact hierarchy: 13–14px for data/table rows, 15–16px for body, 18–20px for section titles
+- Font weights: 400 regular, 500 medium, 600 semibold (for headings and key labels only)
+- No oversized display numbers inside dense data tools
+
+Spacing:
+- 4px base unit
+- Component padding: 12px–16px
+- Section spacing: 24px–32px
+- Table row height: 44px comfortable, 36px compact
+- Border-radius: 6px controls, 8px cards/modals, 12px larger drawers
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ANIMATION SYSTEM — IMPLEMENT FULLY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Use framer-motion for ALL of the following. Every animation must be fast, purposeful, and non-intrusive. Total durations should feel snappy (120ms–350ms). Never make the UI feel slow.
+
+1. Page and view transitions
+- Wrap each main view in .
+- Enter: opacity 0→1, y +8→0, duration 200ms, ease "easeOut".
+- Exit: opacity 1→0, y 0→-4, duration 150ms, ease "easeIn".
+
+2. Modal entrance and exit
+- Backdrop: opacity 0→1 (200ms).
+- Modal panel: opacity 0→1, scale 0.96→1, y +12→0 (250ms, ease [0.16, 1, 0.3, 1]).
+- Exit: reverse, duration 180ms.
+- Use AnimatePresence to unmount cleanly.
+
+3. Drawer / side panel entrance
+- Slide in from right or left: x ±320→0 (280ms, spring stiffness 300 damping 30).
+- Backdrop fade simultaneously.
+
+4. Table and list row stagger
+- On initial data load or filter change, rows animate in with staggerChildren 0.03s.
+- Each row: opacity 0→1, y +6→0 (150ms).
+- Use variants with staggerChildren on the container.
+
+5. Search result reveal
+- Results container: AnimatePresence.
+- Result cards: stagger 0.04s, opacity 0→1, y +8→0.
+- Empty state: fade + slight scale 0.97→1.
+
+6. Expanding/collapsing sections (certificate fields, advanced filters, audit details)
+- Use framer-motion layout animations:  on containers.
+- Expanding content: AnimatePresence with initial={false}, height animation via animate={{ height: "auto" }} using a motion.div with overflow hidden.
+- Duration 250ms, ease [0.04, 0.62, 0.23, 0.98].
+
+7. Button micro-interactions
+- All primary and danger buttons: whileTap={{ scale: 0.97 }}.
+- Icon-only buttons: whileHover={{ scale: 1.08 }}, whileTap={{ scale: 0.93 }}.
+- Loading state: replace button content with a spinning  (lucide) wrapped in motion.div with rotate animation (360deg, repeat Infinity, duration 0.8s linear).
+
+8. Badge and chip animations
+- New status chips entering: scale 0→1, opacity 0→1 (180ms spring).
+- Removing a filter chip: scale 1→0, opacity 1→0 (150ms).
+
+9. Form field interactions
+- Input focus: border-color transitions (CSS transition 150ms) and a soft shadow ring appears.
+- Inline validation messages: AnimatePresence, enter with height 0→auto + opacity 0→1 (200ms).
+- Error shake: on submit with errors, use keyframes x: [0, -6, 6, -4, 4, 0] (400ms).
+
+10. Skeleton loading states
+- Before data loads, show animated skeleton placeholders (pulsing opacity 0.4→0.8 via framer-motion animate with repeat Infinity, repeatType "reverse", duration 1s).
+- Match the exact shape of the expected content: table rows, cards, worker result card.
+
+11. Worker card appearance in search
+- The result card should animate in with: opacity 0→1, y +16→0, scale 0.98→1 (300ms, ease [0.16, 1, 0.3, 1]).
+- Internal sections (documents, certifications) stagger in 80ms after the card.
+
+12. Notification / toast system
+- Implement a toast notification system using framer-motion AnimatePresence.
+- Toasts enter from the bottom-right: y +40→0, opacity 0→1 (240ms spring).
+- Auto-dismiss after 4s with exit animation.
+- Variants: success (emerald), error (rose), warning (amber), info (sky).
+- Use for: save confirmed, import success, export complete, validation errors, auth events.
+
+13. Hover states on interactive rows and cards
+- Table rows: background transitions to #F9FAFB on hover (CSS transition 100ms).
+- Cards: box-shadow transitions to shadow-md on hover (CSS transition 150ms).
+- Clickable rows: add cursor pointer and a subtle left border accent on hover.
+
+14. Number / counter transitions
+- When counts change (worker count in header, result count in search), use a number spring animation or simple crossfade.
+
+15. Empty state entrance
+- Empty state illustrations/icons: scale 0.8→1, opacity 0→1 (300ms spring) when they appear.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DESIGN SYSTEM — CREATE REUSABLE PRIMITIVES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Create or refactor these reusable components and apply them everywhere:
+
+Button:
+- Variants: primary (cobalt fill), secondary (white + border), ghost (transparent), danger (rose fill), success (emerald fill), warning (amber fill).
+- Sizes: sm (28px height, 12px padding), md (36px, 14px padding), lg (44px, 18px padding).
+- All include: disabled state (opacity 0.4, cursor not-allowed), loading state (spinner), whileTap animation.
+- Icon support: leading or trailing lucide icons, consistent 16px size.
+
+Badge / StatusChip:
+- Variants matching status colors above.
+- Two sizes: sm (pill, 12px text) and md (12px text, slightly more padding).
+- Use for: worker status, document validity, brevet expiry, user role, request pending.
+
+Panel:
+- White background, 1px border, shadow-sm, 8px radius.
+- Variants: default, elevated (shadow-md), inset (bg #F9FAFB, no shadow).
+- Add className support for custom spacing.
+
+ModalShell:
+- Consistent modal structure: backdrop, centered panel, header (title + close button), scrollable body, sticky footer with actions.
+- Max widths: sm (420px), md (560px), lg (720px), xl (900px), full (95vw).
+- All use the same framer-motion entrance/exit animation.
+- Header has a divider line. Footer has a divider line.
+- Close button is an X icon (lucide X), top right, ghost variant.
+
+InputField:
+- Label above, input, helper text or error message below.
+- Error state: red border, red helper text, with framer-motion entrance for the error message.
+- All inputs have consistent height (36px md), padding, border-radius, focus ring.
+- Select fields match the same style.
+
+SectionHeader:
+- Title (16px, 600 weight) + optional subtitle (13px, secondary color) + optional trailing action button.
+- Consistent spacing: 20px bottom margin.
+
+EmptyState:
+- Centered layout: lucide icon (48px, muted), title (16px medium), subtitle (14px secondary), optional CTA button.
+- Icon and text animate in on mount.
+- Variants: no results, no documents, no records, import error, network error.
+
+DataTable:
+- Sticky header (position: sticky, top 0, white bg, shadow-sm on scroll).
+- Compact rows with consistent column padding.
+- Sortable column headers with animated sort direction indicator (lucide ChevronUp/Down, transitions).
+- Row hover state.
+- Row selection checkbox state.
+- Built-in loading skeleton (5 placeholder rows).
+- Built-in empty state slot.
+
+Skeleton:
+- Reusable  component.
+- Animated pulse via framer-motion.
+- Use in: table rows, cards, worker result, form fields while loading.
+
+ToastProvider:
+- Global toast system using React context + framer-motion AnimatePresence.
+-  wraps the app. useToast() hook for triggering from anywhere.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SPECIFIC SCREENS TO IMPROVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. AUTHENTICATION SCREEN
+- Clean white card centered on a warm neutral background (#F3F4F6 or a very subtle geometric pattern).
+- App logo or wordmark at top of card.
+- Input fields use the new InputField primitive.
+- Primary CTA uses the primary Button variant with loading state.
+- Smooth card entrance animation on mount: opacity 0→1, y +24→0, scale 0.98→1 (350ms).
+- Error messages animate in below inputs.
+- Switch between login/signup/pending states with AnimatePresence crossfade.
+- Pending approval screen shows a clean status card with a pulsing indicator.
+
+2. MAIN SHELL AND SIDEBAR
+Sidebar:
+- White or #FAFAFA background, 1px right border.
+- Width: 220px expanded.
+- Navigation groups: Application, Administration, Import Documents, Actions, Export — each group has a muted uppercase label (11px, #9CA3AF).
+- Active nav item: cobalt left border accent (3px), cobalt text, cobalt-tinted background (#EEF2FF).
+- Hover state: #F3F4F6 background, 100ms transition.
+- Nav item text: 14px, no wrapping (text-overflow ellipsis).
+- User profile section at bottom: avatar initials circle, name, role, logout button.
+- Destructive actions (logout, delete) visually separated with a top border.
+- Nav item enter animations on sidebar mount: staggerChildren 0.04s, each item slides in from x -8.
+
+Top header:
+- White background, 1px bottom border, 56px height.
+- Left: current page breadcrumb (home > section > page).
+- Center or right: database status chip, worker count badge, last sync time.
+- Far right: user avatar, notification bell (if applicable).
+- Feels like a desktop app title bar, not a website header.
+
+3. SEARCH CIBLÉE
+- Search input is large, prominent, centered at top of the view.
+- Segmented control for Matricule vs Identité: pill-style tabs with smooth sliding indicator using framer-motion layoutId.
+- Strong focus state on the input: accent border + subtle shadow ring.
+- While loading: skeleton worker card.
+- No result: animated EmptyState component.
+- Result worker card:
+  • Animates in with the worker card animation defined above.
+  • Clear sections: Identity summary, Employment/site info, Audit metadata, Documents & Certifications, Actions.
+  • Section headers use SectionHeader primitive.
+  • Documents list: each document chip/card animates in with stagger.
+  • Certificate sections expand/collapse with smooth height animation.
+  • Action buttons (edit, export, print) grouped in a button row using the Button primitive.
+
+4. RECHERCHE DE MASSE
+Filter area:
+- Clean filter bar at the top of the view.
+- Each filter (Fonction, Chantier, Utilisateur, brevet expiry month/year) is a compact select or combobox.
+- Advanced filters button opens a filter drawer (slides in from right, framer-motion spring).
+- Active filters shown as removable chips below the filter bar — chips animate in/out with framer-motion AnimatePresence.
+- "Reset filters" ghost button appears only when filters are active (AnimatePresence).
+
+Result table:
+- Uses the DataTable primitive.
+- Sticky header.
+- Compact rows: matricule, name, fonction, chantier, status chips for missing/valid/expired/not used documents.
+- Status chips are consistent with the Badge primitive.
+- Row hover highlights.
+- Export buttons in a top action bar, not scattered.
+- Loading state: skeleton rows.
+- Empty state: EmptyState component with contextual message.
+
+5. REGISTRE GÉNÉRAL
+- Uses the DataTable primitive.
+- Full-width, sticky header.
+- Columns: matricule, nom, prénom, fonction, chantier, date of entry, status.
+- Each row is clickable — cursor pointer, hover highlight, opens worker detail in a modal or panel.
+- Clicking a row triggers the modal entrance animation.
+- Empty state if no records.
+- Compact pagination or virtualization note for large lists.
+
+6. WORKERFORM MODAL
+- Uses ModalShell (lg or xl size).
+- Fields grouped into sections: Identity, Assignment, Dates/Location, Documents & Certifications.
+- SectionHeader for each group.
+- All inputs use InputField primitive.
+- Sections separated by subtle divider lines.
+- Fonction/Chantier fields are prominent selects.
+- When Fonction contains "CHAUFFEUR" or "GRUTIER":
+  • Certificate and document section appears with framer-motion height animation (AnimatePresence, initial={false}).
+  • Section reveals smoothly in 280ms — no layout jump.
+- Document upload cards:
+  • Compact: file type icon (lucide), filename (truncated), status badge, actions (View, Download, Remove).
+  • Drag-and-drop zone: dashed border on idle, solid accent border on drag-over (transition 150ms), success fill on drop.
+  • Upload progress: animated progress bar using framer-motion width transition.
+- Inline validation: errors appear below each field, animate in with AnimatePresence.
+- Submit button in the sticky modal footer. Loading state on submit.
+- Error shake animation on failed submit.
+
+7. DOCUMENT PREVIEW CARDS AND DOCVIEWER
+Document cards:
+- Consistent size, white card, 1px border, shadow-sm on hover.
+- File type icon: use lucide (FileText for PDF, Image for images, File for others).
+- Filename: truncated with ellipsis, full name on hover (title attribute or tooltip).
+- Metadata: file size, upload date, validity/expiry badge.
+- Actions: "Voir", "Télécharger", "Supprimer" — use icon buttons with tooltips for compact display.
+- Card entrance animation when a document is added.
+
+DocViewer:
+- Toolbar does not overflow — use a horizontal scroll if needed, or collapse to icon-only on narrow widths.
+- Close button always visible.
+- Navigation controls (prev/next page) are clearly labeled.
+- Smooth fade transition between pages/documents.
+
+8. IMPORTMODAL AND BULKDOCIMPORTMODAL
+- Both converted to ModalShell.
+- Step indicator: numbered steps with connecting line, active step highlighted in cobalt, completed step with checkmark and muted style.
+- Steps animate: completed step fades and shrinks slightly, next step scales in.
+- File drop zone: lucide UploadCloud icon, clear "Glisser ou cliquer pour importer" label, drag-over state with accent fill.
+- Import progress: animated progress bar.
+- Success summary: animated green checkmark (framer-motion draw SVG or lucide CheckCircle2 with scale animation), results list staggered in.
+- Error summary: animated rose alert, error rows staggered in.
+- Admin password confirmation: visually distinct step — red-tinted border, lock icon, clear warning label.
+- Bulk import result table uses compact DataTable with status chips per row.
+
+9. BORDEREAU D'ENVOI
+- Fully converted to the light mode design system — no remaining white ERP style.
+- Header: page title, chantier selector, action buttons (Nouveau, Importer ZIP, Exporter ZIP) in a clean button group.
+- Chantier sections: Panel cards with section header and collapse toggle (animated).
+- Document columns (arrival / departure):
+  • Each column is a Panel with its own header and document list.
+  • Documents shown as compact rows: icon, name, date, status badge, actions.
+  • Select mode: rows show checkboxes, selection count badge appears in header (AnimatePresence).
+- Upload popup: converted to ModalShell (sm size) with drag-and-drop zone.
+- Delete confirmation: ModalShell (sm size) with danger styling — red icon, clear consequence text, danger Button.
+- Audit log modal: ModalShell (lg size) with DataTable of audit entries.
+- ZIP import/export: progress states with animated feedback via ToastProvider.
+- Admin-only actions: visually marked (shield icon, "Admin" badge, slightly distinct button style).
+
+10. USER MANAGEMENT
+- Pending approvals section: appears at the top with an amber badge count.
+- Pending user rows: amber-tinted background, "Approuver" and "Refuser" buttons clearly visible.
+- Approved user rows: normal compact table rows.
+- Role badges: consistent with Badge primitive (role color coding).
+- Status badges: consistent with StatusChip.
+- Password reveal: visually distinct — a high-risk action button with lock icon, danger/warning style, confirmation step before revealing.
+- Table uses DataTable primitive.
+
+11. EXPIRY / LICENCE SYSTEM
+- ExpiryPanel: clean Panel card, license info, expiry date, days-remaining countdown badge.
+  • Badge color transitions: emerald (>30 days), amber (≤30 days), rose (expired).
+- Expiry warning badge in the sidebar or header: amber badge with animation (gentle pulse using framer-motion animate opacity 1→0.6 repeat).
+- Contact popup: ModalShell (sm) with clean contact info and CTA button.
+- Expired screen: full-page centered Panel with rose accent, clear expiry message, contact details, and a clean "Contacter l'administrateur" CTA.
+- All states use consistent light mode styling.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UX BEST PRACTICES — IMPLEMENT THROUGHOUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Loading and feedback:
+- Every async operation (data load, import, export, save) must show a loading state — skeleton, spinner, or progress bar as appropriate.
+- Never show a blank screen while loading. Always show a skeleton.
+- After save/import/export: always trigger a toast notification confirming success or showing the error.
+- Optimistic UI where practical (e.g. immediately show a worker added to a list while the DB write completes).
+
+Inline validation:
+- Required field validation triggers on blur, not only on submit.
+- Error messages are specific and in French.
+- Successful field validation shows a subtle checkmark icon on blur.
+- On form submit with errors: scroll to the first error field, shake the form, show all errors.
+
+Empty states:
+- Every list, table, and result area must have a designed empty state.
+- Empty states include: an icon (lucide, 48px, muted), a title, a subtitle, and optionally a primary CTA.
+- Never show a blank white area.
+
+Accessibility:
+- All interactive elements have visible focus rings (the 2px cobalt ring defined above).
+- All icon-only buttons have aria-label.
+- Modals trap focus and return focus on close.
+- Color is never the only indicator of status — always combine color with text or icon.
+- All form inputs have associated labels.
+- Keyboard shortcuts for common actions (Escape to close modal, Enter to submit) should work correctly.
+
+Tooltips:
+- Icon-only buttons and truncated text show tooltips on hover.
+- Tooltips use a consistent style: dark background (#1F2937), white text, 12px, 6px radius, 200ms delay before appearing.
+
+Confirmation dialogs:
+- Destructive actions (delete, reset, remove admin rights) always require a confirmation modal.
+- Use the ModalShell (sm) with danger styling.
+- Primary action button is the danger variant.
+- Cancel is the secondary variant.
+- Confirmation text clearly states what will be deleted/lost.
+
+Keyboard navigation:
+- Tab order is logical throughout all forms and modals.
+- Arrow keys work in segmented controls and tabs.
+- The search input is auto-focused when the search view is activated.
+- The first input in a modal is auto-focused on open.
+
+Performance feel:
+- Debounce search inputs (300ms) to avoid unnecessary DB queries.
+- Use React.memo and useMemo where re-renders are expensive (large tables, filter operations).
+- Virtualize long lists if >200 rows using react-window or similar if already in dependencies.
+- Avoid layout shifts — reserve space for dynamic content.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EMPTY, LOADING, AND ERROR STATES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Define and implement these states consistently:
+
+App loading:
+- Full-page centered: logo/wordmark, animated spinner or pulsing logo, "Chargement en cours..."
+
+No search result:
+- Icon: SearchX (lucide), Title: "Aucun résultat trouvé", Subtitle: "Vérifiez le matricule ou le nom saisi.", CTA: "Effacer la recherche"
+
+No mass filter result:
+- Icon: Filter (lucide), Title: "Aucun travailleur correspond à ces filtres", Subtitle: "Modifiez ou réinitialisez les filtres.", CTA: "Réinitialiser les filtres"
+
+No database records:
+- Icon: Database (lucide), Title: "Base de données vide", Subtitle: "Importez des données pour commencer.", CTA: "Importer"
+
+No uploaded document:
+- Icon: FileX (lucide), Title: "Aucun document", Subtitle: "Aucun document associé à ce travailleur."
+
+No Bordereau documents:
+- Icon: FolderOpen (lucide), Title: "Aucun document Bordereau", Subtitle: "Commencez par ajouter un document."
+
+Import error:
+- Icon: AlertTriangle (lucide, rose), Title: "Erreur d'importation", Subtitle: error details, CTA: "Réessayer"
+
+Export error:
+- Icon: AlertTriangle (lucide, rose), Title: "Erreur d'exportation", Subtitle: error details, CTA: "Réessayer"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESPONSIVE REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- All main screens work at desktop widths (1280px+).
+- Modals fit smaller screens with internal scrolling (max-height 90vh, overflow-y auto on body).
+- Prevent text overflow in buttons, badges, table cells, and cards.
+- Toolbar actions remain usable on narrower screens — collapse secondary actions into a "..." menu if needed.
+- Avoid layout shifts when data loads or changes.
+- Sidebar collapses to icon-only at narrow widths if needed.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IMPLEMENTATION QUALITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Clean up duplicated styling — consolidate into the design system primitives.
+- Create a central design-tokens.ts or tailwind.config.ts with the full color and spacing system so values are not scattered.
+- All new components should be in TypeScript with proper prop types.
+- Fix any existing TypeScript/build errors.
+- After changes, run the build and resolve all errors before considering the task complete.
+- Do not introduce unnecessary complexity — every abstraction must be used in at least 3 places to justify creation.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FINAL ACCEPTANCE CRITERIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- The entire app feels like one cohesive premium light mode enterprise product.
+- Every screen, modal, table, card, and form uses the same design system.
+- Every async operation has a loading state and success/error feedback.
+- Every list and table has a designed empty state.
+- Every modal has smooth entrance and exit animations.
+- Every form has inline validation.
+- All interactive elements have proper hover, focus, and active states.
+- All destructive actions have confirmation dialogs.
+- Toast notifications fire for all key operations.
+- The app builds successfully with no TypeScript errors.
+- Existing features, data, and business logic are fully preserved.

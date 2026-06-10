@@ -276,7 +276,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
     <div className="flex flex-col h-full">
 
       {/* ── Header ── */}
-      <div className="bg-gradient-to-r from-[#1e3a47] to-[#345d6e] px-8 py-6 shrink-0">
+      <div className="bg-gradient-to-r from-[#1A56DB] to-[#6366F1] px-8 py-6 shrink-0">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
@@ -306,7 +306,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
             <button
               onClick={() => { setSelectMode(p => !p); setSelectedChantiers(new Set()); }}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
-                selectMode ? 'bg-white text-[#1e3a47] shadow-md' : 'bg-white/10 hover:bg-white/20 text-white'
+                selectMode ? 'bg-white text-[#1A56DB] shadow-md' : 'bg-white/10 hover:bg-white/20 text-white'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -368,7 +368,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
 
         {/* Multi-select bar */}
         {selectMode && (
-          <div className="mt-4 flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 flex-wrap">
+          <div className="mt-4 flex items-center gap-3 bg-gray-100 rounded-xl px-4 py-3 flex-wrap">
             <button onClick={toggleSelectAll} className="text-xs font-black text-white hover:text-white/80 transition-colors">
               {selectedChantiers.size === allChantiers.length && allChantiers.length > 0 ? 'Tout désélectionner' : 'Tout sélectionner'}
             </button>
@@ -391,16 +391,16 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
       </div>
 
       {/* ── Content ── */}
-      <div className="flex-1 overflow-y-auto bg-[#080c14] p-6">
+      <div className="flex-1 overflow-y-auto bg-[#F8F9FA] p-6">
         {allChantiers.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center">
-            <div className="w-20 h-20 bg-white/5 border border-white/8 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-10 h-10 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
               </svg>
             </div>
-            <p className="text-slate-400 font-bold">Aucun chantier trouvé</p>
-            <p className="text-slate-600 text-sm mt-1">Ajoutez des collaborateurs avec un chantier assigné.</p>
+            <p className="text-gray-500 font-bold">Aucun chantier trouvé</p>
+            <p className="text-gray-400 text-sm mt-1">Ajoutez des collaborateurs avec un chantier assigné.</p>
           </div>
         ) : (
           <div className="space-y-4 max-w-3xl mx-auto">
@@ -412,40 +412,40 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
                 <div
                   key={chantier}
                   onClick={selectMode ? () => toggleSelectChantier(chantier) : undefined}
-                  className={`bg-[#0e1520] rounded-2xl border overflow-hidden transition-all duration-150 shadow-xl shadow-black/20 ${
+                  className={`bg-white rounded-2xl border overflow-hidden transition-all duration-150 shadow-sm ${
                     selectMode && selectedChantiers.has(chantier)
-                      ? 'border-rose-500/50 ring-2 ring-rose-500/25 cursor-pointer'
+                      ? 'border-red-400 ring-2 ring-red-200 cursor-pointer'
                       : selectMode
-                        ? 'border-white/8 hover:border-rose-500/30 cursor-pointer'
-                        : 'border-white/8'
+                        ? 'border-gray-200 hover:border-red-300 cursor-pointer'
+                        : 'border-gray-200'
                   }`}
                 >
                   {/* Chantier header */}
-                  <div className="px-6 py-4 border-b border-white/6 flex items-center justify-between gap-2">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 bg-[#345d6e]/15 rounded-lg flex items-center justify-center shrink-0">
-                        <svg className="w-4 h-4 text-[#7ecde8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4 text-[#1A56DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/>
                         </svg>
                       </div>
-                      <span className="font-black text-slate-100 text-base uppercase tracking-wide">{chantier}</span>
+                      <span className="font-black text-gray-900 text-base uppercase tracking-wide">{chantier}</span>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                       {arrivees.length > 0 && (
-                        <span className="text-xs font-bold bg-emerald-900/25 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                        <span className="text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full">
                           {arrivees.length} arrivée{arrivees.length > 1 ? 's' : ''}
                         </span>
                       )}
                       {departs.length > 0 && (
-                        <span className="text-xs font-bold bg-rose-900/20 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-full">
+                        <span className="text-xs font-bold bg-red-50 text-red-500 border border-red-200 px-2 py-0.5 rounded-full">
                           {departs.length} départ{departs.length > 1 ? 's' : ''}
                         </span>
                       )}
                       {/* Select mode indicator */}
                       {selectMode && (
                         <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
-                          selectedChantiers.has(chantier) ? 'bg-rose-500 border-rose-500' : 'bg-white/5 border-white/20'
+                          selectedChantiers.has(chantier) ? 'bg-rose-500 border-rose-500' : 'bg-gray-100 border-gray-300'
                         }`}>
                           {selectedChantiers.has(chantier) && (
                             <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -503,38 +503,38 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
                               onClick={e => e.stopPropagation()}
                               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all ${
                                 entry.type === 'arrivee'
-                                  ? 'bg-emerald-900/15 border-emerald-500/20 hover:bg-emerald-900/25'
-                                  : 'bg-rose-900/15 border-rose-500/20 hover:bg-rose-900/25'
+                                  ? 'bg-emerald-50 border-emerald-200 hover:bg-emerald-50'
+                                  : 'bg-red-50 border-red-200 hover:bg-red-50'
                               }`}
                             >
-                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${entry.type === 'arrivee' ? 'bg-emerald-900/30' : 'bg-rose-900/30'}`}>
+                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${entry.type === 'arrivee' ? 'bg-emerald-100' : 'bg-red-50'}`}>
                                 {isPdf(entry) ? (
-                                  <svg className={`w-4 h-4 ${entry.type === 'arrivee' ? 'text-emerald-400' : 'text-rose-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className={`w-4 h-4 ${entry.type === 'arrivee' ? 'text-emerald-600' : 'text-red-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                   </svg>
                                 ) : (
-                                  <svg className={`w-4 h-4 ${entry.type === 'arrivee' ? 'text-emerald-400' : 'text-rose-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className={`w-4 h-4 ${entry.type === 'arrivee' ? 'text-emerald-600' : 'text-red-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                   </svg>
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-xs font-black text-slate-200 truncate">{entry.filename}</p>
+                                <p className="text-xs font-black text-gray-800 truncate">{entry.filename}</p>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                  <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${entry.type === 'arrivee' ? 'bg-emerald-900/40 text-emerald-400' : 'bg-rose-900/40 text-rose-400'}`}>
+                                  <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${entry.type === 'arrivee' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-500'}`}>
                                     {entry.type === 'arrivee' ? '↑ Arrivée' : '↓ Départ'}
                                   </span>
-                                  <p className="text-[10px] text-slate-500 font-bold">{formatDate(entry.date)}</p>
+                                  <p className="text-[10px] text-gray-500 font-bold">{formatDate(entry.date)}</p>
                                 </div>
                               </div>
-                              <button onClick={e => { e.stopPropagation(); openPreview(entry); }} className="shrink-0 p-1.5 text-slate-500 hover:text-[#7ecde8] hover:bg-white/5 rounded-lg transition-all" title="Voir">
+                              <button onClick={e => { e.stopPropagation(); openPreview(entry); }} className="shrink-0 p-1.5 text-gray-500 hover:text-[#1A56DB] hover:bg-gray-100 rounded-lg transition-all" title="Voir">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
                               </button>
                               {isAdmin && (
-                              <button onClick={e => { e.stopPropagation(); setDeleteTarget(entry.id); }} className="shrink-0 p-1.5 text-slate-600 hover:text-rose-400 hover:bg-rose-900/20 rounded-lg transition-all" title="Supprimer">
+                              <button onClick={e => { e.stopPropagation(); setDeleteTarget(entry.id); }} className="shrink-0 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Supprimer">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
@@ -555,11 +555,11 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
       {/* ── Add Chantier Modal ── */}
       {showAddChantier && (
         <div
-          className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-[200] p-4"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4"
           onClick={e => { if (e.target === e.currentTarget) { setShowAddChantier(false); setAddChantierInput(''); } }}
         >
-          <div className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 w-full max-w-sm overflow-hidden animate-scale-in">
-            <div className="bg-gradient-to-r from-[#1e3a47] to-[#345d6e] px-7 py-5 flex items-center gap-4">
+          <div className="bg-white border border-gray-200 rounded-3xl shadow-xl w-full max-w-sm overflow-hidden animate-scale-in">
+            <div className="bg-gradient-to-r from-[#1A56DB] to-[#6366F1] px-7 py-5 flex items-center gap-4">
               <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/>
@@ -579,7 +579,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
               </button>
             </div>
             <div className="p-6">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 block">Nom du chantier</label>
+              <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 block">Nom du chantier</label>
               <input
                 autoFocus
                 type="text"
@@ -587,19 +587,19 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
                 onChange={e => setAddChantierInput(e.target.value.toUpperCase())}
                 onKeyDown={e => { if (e.key === 'Enter') confirmAddChantier(); if (e.key === 'Escape') { setShowAddChantier(false); setAddChantierInput(''); } }}
                 placeholder="Ex: CHANTIER ALGER NORD"
-                className="premium-input w-full bg-white/5 border border-white/10 focus:border-[#345d6e]/50 focus:ring-2 focus:ring-[#345d6e]/20 px-4 py-3 rounded-xl text-slate-200 font-black text-sm outline-none transition-all uppercase placeholder:font-normal placeholder:normal-case placeholder:text-slate-600 mb-4"
+                className="premium-input w-full bg-gray-50 border border-gray-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-200 px-4 py-3 rounded-xl text-gray-900 font-black text-sm outline-none transition-all uppercase placeholder:font-normal placeholder:normal-case placeholder:text-gray-400 mb-4"
               />
               <div className="flex gap-2">
                 <button
                   onClick={confirmAddChantier}
                   disabled={!addChantierInput.trim()}
-                  className="flex-1 py-3 bg-[#345d6e] hover:bg-[#2c5263] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black rounded-xl text-sm transition-all active:scale-95 shadow-lg shadow-[#345d6e]/25"
+                  className="flex-1 py-3 bg-[#1A56DB] hover:bg-[#1E40AF] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black rounded-xl text-sm transition-all active:scale-95 shadow-lg shadow-blue-500/15"
                 >
                   Ajouter
                 </button>
                 <button
                   onClick={() => { setShowAddChantier(false); setAddChantierInput(''); }}
-                  className="px-5 py-3 text-slate-400 font-bold border border-white/8 rounded-xl hover:bg-white/5 text-sm transition-all"
+                  className="px-5 py-3 text-gray-500 font-bold border border-gray-200 rounded-xl hover:bg-gray-100 text-sm transition-all"
                 >
                   Annuler
                 </button>
@@ -612,11 +612,11 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
       {/* ── Upload Popup ── */}
       {popup && (
         <div
-          className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-[200] p-4"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4"
           onClick={e => { if (e.target === e.currentTarget) closePopup(); }}
         >
           <div
-            className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 w-full max-w-md overflow-hidden"
+            className="bg-white border border-gray-200 rounded-3xl shadow-xl w-full max-w-md overflow-hidden"
             style={{
               transform: popupVisible ? 'scale(1) translateY(0)' : 'scale(0.85) translateY(20px)',
               opacity: popupVisible ? 1 : 0,
@@ -643,7 +643,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
 
             <div className="p-8">
               <div
-                className={`relative border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-200 cursor-pointer ${dragOver ? 'border-[#345d6e]/70 bg-[#345d6e]/10 scale-[1.02]' : 'border-white/12 bg-white/3 hover:border-[#345d6e]/50 hover:bg-[#345d6e]/8'}`}
+                className={`relative border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-200 cursor-pointer ${dragOver ? 'border-blue-400 bg-blue-50 scale-[1.02]' : 'border-gray-200 bg-gray-50 hover:border-blue-300 hover:bg-blue-50'}`}
                 onDragOver={e => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
@@ -652,27 +652,27 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
                 <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.bmp" className="hidden" onChange={handleFileInput} />
                 {uploading ? (
                   <div className="flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 border-4 border-[#345d6e]/30 border-t-[#345d6e] rounded-full animate-spin"></div>
-                    <p className="text-sm font-bold text-slate-400">Traitement en cours…</p>
+                    <div className="w-10 h-10 border-4 border-blue-100 border-t-[#1A56DB] rounded-full animate-spin"></div>
+                    <p className="text-sm font-bold text-gray-500">Traitement en cours…</p>
                   </div>
                 ) : (
                   <>
-                    <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center ${dragOver ? 'bg-[#345d6e]/25' : 'bg-white/6'}`}>
-                      <svg className={`w-8 h-8 transition-colors ${dragOver ? 'text-[#7ecde8]' : 'text-slate-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center ${dragOver ? 'bg-blue-50' : 'bg-gray-50'}`}>
+                      <svg className={`w-8 h-8 transition-colors ${dragOver ? 'text-[#1A56DB]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                       </svg>
                     </div>
-                    <p className="text-sm font-black text-slate-200 mb-1">Glissez-déposez un fichier ici</p>
-                    <p className="text-xs text-slate-500 font-bold mb-3">ou cliquez pour choisir</p>
+                    <p className="text-sm font-black text-gray-800 mb-1">Glissez-déposez un fichier ici</p>
+                    <p className="text-xs text-gray-500 font-bold mb-3">ou cliquez pour choisir</p>
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                       {['PDF', 'JPG', 'PNG', 'BMP'].map(fmt => (
-                        <span key={fmt} className="px-2.5 py-1 bg-white/6 border border-white/10 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-widest">{fmt}</span>
+                        <span key={fmt} className="px-2.5 py-1 bg-gray-100 border border-gray-200 rounded-lg text-[10px] font-black text-gray-500 uppercase tracking-widest">{fmt}</span>
                       ))}
                     </div>
                   </>
                 )}
               </div>
-              <button onClick={closePopup} className="mt-4 w-full py-2.5 text-sm font-bold text-slate-500 hover:text-slate-300 hover:bg-white/5 rounded-xl transition-all">Annuler</button>
+              <button onClick={closePopup} className="mt-4 w-full py-2.5 text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all">Annuler</button>
             </div>
           </div>
         </div>
@@ -685,9 +685,9 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
           style={{ opacity: previewVisible ? 1 : 0, transition: 'opacity 0.2s ease' }}
           onClick={e => { if (e.target === e.currentTarget) closePreview(); }}
         >
-          <div className="flex items-center justify-between px-6 py-4 bg-black/50 border-b border-white/10 shrink-0">
+          <div className="flex items-center justify-between px-6 py-4 bg-black/50 border-b border-gray-200 shrink-0">
             <div className="flex items-center gap-3">
-              <span className={`text-xs font-black uppercase tracking-widest px-2.5 py-1 rounded-lg ${previewEntry.type === 'arrivee' ? 'bg-emerald-500/30 text-emerald-300' : 'bg-rose-500/30 text-rose-300'}`}>
+              <span className={`text-xs font-black uppercase tracking-widest px-2.5 py-1 rounded-lg ${previewEntry.type === 'arrivee' ? 'bg-emerald-500/30 text-emerald-700' : 'bg-rose-500/30 text-red-400'}`}>
                 {previewEntry.type === 'arrivee' ? '↑ Arrivée' : '↓ Départ'}
               </span>
               <p className="text-white font-bold text-sm truncate max-w-xs">{previewEntry.filename}</p>
@@ -714,23 +714,23 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
 
       {/* ── Delete: single / selected entries ── */}
       {deleteTarget && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-[400] p-4">
-          <div className="bg-[#0e1520] border border-white/8 rounded-2xl shadow-2xl shadow-black/60 max-w-sm w-full p-6 text-center animate-scale-in">
-            <div className="w-12 h-12 bg-amber-900/25 border border-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-              <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[400] p-4">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-xl max-w-sm w-full p-6 text-center animate-scale-in">
+            <div className="w-12 h-12 bg-amber-100 border border-amber-200 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
               </svg>
             </div>
-            <p className="text-slate-200 font-black mb-1">
+            <p className="text-gray-800 font-black mb-1">
               {deleteTarget === '__selected__'
                 ? `Supprimer ${selectedChantiers.size} chantier${selectedChantiers.size > 1 ? 's' : ''} et leurs documents ?`
                 : 'Supprimer ce document ?'}
             </p>
-            <p className="text-rose-400 text-xs font-bold mb-5">Cette action est irréversible.</p>
+            <p className="text-red-500 text-xs font-bold mb-5">Cette action est irréversible.</p>
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => deleteTarget === '__selected__' ? doDeleteSelectedChantiers(true) : doDeleteSingle(deleteTarget, true)}
-                className="w-full py-2.5 bg-[#345d6e] hover:bg-[#2c5263] text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#345d6e]/20"
+                className="w-full py-2.5 bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/15"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Supprimer avec backup
@@ -742,7 +742,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                 Supprimer sans backup
               </button>
-              <button onClick={() => setDeleteTarget(null)} className="w-full py-2.5 text-slate-400 font-bold border border-white/8 rounded-xl hover:bg-white/5 text-sm transition-all">
+              <button onClick={() => setDeleteTarget(null)} className="w-full py-2.5 text-gray-500 font-bold border border-gray-200 rounded-xl hover:bg-gray-100 text-sm transition-all">
                 Annuler
               </button>
             </div>
@@ -752,25 +752,25 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
 
       {/* ── Delete: entire chantier section (admin) ── */}
       {deleteChantierTarget && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-[400] p-4">
-          <div className="bg-[#0e1520] border border-white/8 rounded-2xl shadow-2xl shadow-black/60 max-w-sm w-full p-6 text-center animate-scale-in">
-            <div className="w-12 h-12 bg-rose-900/25 border border-rose-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-              <svg className="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[400] p-4">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-xl max-w-sm w-full p-6 text-center animate-scale-in">
+            <div className="w-12 h-12 bg-red-50 border border-red-200 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
               </svg>
             </div>
-            <p className="text-slate-200 font-black mb-1">
-              Supprimer la section <span className="text-[#7ecde8] uppercase">{deleteChantierTarget}</span> ?
+            <p className="text-gray-800 font-black mb-1">
+              Supprimer la section <span className="text-[#1A56DB] uppercase">{deleteChantierTarget}</span> ?
             </p>
-            <p className="text-slate-400 text-xs mb-1 leading-relaxed">
+            <p className="text-gray-500 text-xs mb-1 leading-relaxed">
               Cette section disparaîtra du bordereau.<br/>
-              <strong className="text-slate-300">Le chantier reste intact dans l'application.</strong>
+              <strong className="text-gray-700">Le chantier reste intact dans l'application.</strong>
             </p>
-            <p className="text-rose-400 text-xs font-bold mb-5">Cette action est irréversible.</p>
+            <p className="text-red-500 text-xs font-bold mb-5">Cette action est irréversible.</p>
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => doDeleteChantier(deleteChantierTarget, true)}
-                className="w-full py-2.5 bg-[#345d6e] hover:bg-[#2c5263] text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#345d6e]/20"
+                className="w-full py-2.5 bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/15"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Supprimer avec backup
@@ -782,7 +782,7 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                 Supprimer sans backup
               </button>
-              <button onClick={() => setDeleteChantierTarget(null)} className="w-full py-2.5 text-slate-400 font-bold border border-white/8 rounded-xl hover:bg-white/5 text-sm transition-all">
+              <button onClick={() => setDeleteChantierTarget(null)} className="w-full py-2.5 text-gray-500 font-bold border border-gray-200 rounded-xl hover:bg-gray-100 text-sm transition-all">
                 Annuler
               </button>
             </div>
@@ -793,16 +793,16 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
       {/* ── Audit Log Modal (Admin Only) ── */}
       {showAuditLog && isAdmin && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setShowAuditLog(false)}
         >
           <div
-            className="bg-[#0e1520] border border-white/8 rounded-3xl shadow-2xl shadow-black/60 w-full max-w-5xl max-h-[85vh] flex flex-col overflow-hidden animate-scale-in"
+            className="bg-white border border-gray-200 rounded-3xl shadow-xl w-full max-w-5xl max-h-[85vh] flex flex-col overflow-hidden animate-scale-in"
             onClick={e => e.stopPropagation()}
           >
-            <div className="bg-gradient-to-r from-[#1e3a47] to-[#345d6e] px-8 py-5 flex items-center justify-between shrink-0">
+            <div className="bg-gradient-to-r from-[#1A56DB] to-[#6366F1] px-8 py-5 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                   </svg>
@@ -827,18 +827,18 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
             <div className="overflow-auto flex-1">
               {entries.length === 0 ? (
                 <div className="p-20 text-center">
-                  <p className="text-slate-500 font-black uppercase tracking-widest text-sm">Aucun document enregistré</p>
+                  <p className="text-gray-500 font-black uppercase tracking-widest text-sm">Aucun document enregistré</p>
                 </div>
               ) : (
                 <table className="w-full text-left text-xs">
-                  <thead className="sticky top-0 bg-[#0a1118] border-b border-white/8 z-10">
+                  <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
                     <tr>
-                      <th className="px-5 py-3.5 font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">Date Upload</th>
-                      <th className="px-5 py-3.5 font-black text-slate-500 uppercase tracking-wider">Uploadé par</th>
-                      <th className="px-5 py-3.5 font-black text-slate-500 uppercase tracking-wider">Chantier</th>
-                      <th className="px-5 py-3.5 font-black text-slate-500 uppercase tracking-wider">Type</th>
-                      <th className="px-5 py-3.5 font-black text-slate-500 uppercase tracking-wider">Fichier</th>
-                      <th className="px-5 py-3.5 font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">Date Doc.</th>
+                      <th className="px-5 py-3.5 font-black text-gray-500 uppercase tracking-wider whitespace-nowrap">Date Upload</th>
+                      <th className="px-5 py-3.5 font-black text-gray-500 uppercase tracking-wider">Uploadé par</th>
+                      <th className="px-5 py-3.5 font-black text-gray-500 uppercase tracking-wider">Chantier</th>
+                      <th className="px-5 py-3.5 font-black text-gray-500 uppercase tracking-wider">Type</th>
+                      <th className="px-5 py-3.5 font-black text-gray-500 uppercase tracking-wider">Fichier</th>
+                      <th className="px-5 py-3.5 font-black text-gray-500 uppercase tracking-wider whitespace-nowrap">Date Doc.</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -847,26 +847,26 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
                       .map((e, i) => (
                         <tr
                           key={e.id}
-                          className={`border-b border-white/5 hover:bg-white/3 transition-colors ${i % 2 === 0 ? '' : 'bg-white/2'}`}
+                          className={`border-b border-gray-200 hover:bg-gray-50 transition-colors ${i % 2 === 0 ? '' : 'bg-gray-50'}`}
                         >
-                          <td className="px-5 py-3 text-slate-300 font-bold whitespace-nowrap">
+                          <td className="px-5 py-3 text-gray-700 font-bold whitespace-nowrap">
                             {e.uploadedAt
                               ? formatDate(e.uploadedAt)
-                              : <span className="text-slate-600 italic">—</span>}
+                              : <span className="text-gray-400 italic">—</span>}
                           </td>
                           <td className="px-5 py-3">
                             {e.uploadedBy
-                              ? <span className="bg-[#345d6e]/20 text-[#7ecde8] border border-[#345d6e]/30 px-2 py-0.5 rounded font-black uppercase text-[10px] tracking-wide">{e.uploadedBy}</span>
-                              : <span className="text-slate-600 italic">—</span>}
+                              ? <span className="bg-blue-100 text-[#1A56DB] border border-blue-200 px-2 py-0.5 rounded font-black uppercase text-[10px] tracking-wide">{e.uploadedBy}</span>
+                              : <span className="text-gray-400 italic">—</span>}
                           </td>
-                          <td className="px-5 py-3 font-black text-slate-200 uppercase">{e.chantier}</td>
+                          <td className="px-5 py-3 font-black text-gray-800 uppercase">{e.chantier}</td>
                           <td className="px-5 py-3">
-                            <span className={`px-2 py-0.5 rounded font-black text-[10px] uppercase ${e.type === 'arrivee' ? 'bg-emerald-900/25 text-emerald-400 border border-emerald-500/20' : 'bg-rose-900/20 text-rose-400 border border-rose-500/20'}`}>
+                            <span className={`px-2 py-0.5 rounded font-black text-[10px] uppercase ${e.type === 'arrivee' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-red-50 text-red-500 border border-red-200'}`}>
                               {e.type === 'arrivee' ? 'Arrivée' : 'Départ'}
                             </span>
                           </td>
-                          <td className="px-5 py-3 text-slate-400 max-w-[220px] truncate font-medium">{e.filename}</td>
-                          <td className="px-5 py-3 text-slate-500 whitespace-nowrap">{formatDate(e.date)}</td>
+                          <td className="px-5 py-3 text-gray-500 max-w-[220px] truncate font-medium">{e.filename}</td>
+                          <td className="px-5 py-3 text-gray-500 whitespace-nowrap">{formatDate(e.date)}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -874,13 +874,13 @@ const BordereauEnvoi: React.FC<Props> = ({ workers, currentUser }) => {
               )}
             </div>
 
-            <div className="px-6 py-4 border-t border-white/6 bg-white/3 shrink-0 flex items-center justify-between">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 shrink-0 flex items-center justify-between">
+              <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
                 {entries.filter(e => e.uploadedBy).length} / {entries.length} avec info utilisateur
               </span>
               <button
                 onClick={() => setShowAuditLog(false)}
-                className="px-5 py-2 bg-[#1e3a47] hover:bg-[#2c5263] text-white font-black text-xs rounded-xl transition-all"
+                className="px-5 py-2 bg-[#1A56DB] hover:bg-[#1E40AF] text-white font-black text-xs rounded-xl transition-all"
               >
                 Fermer
               </button>
