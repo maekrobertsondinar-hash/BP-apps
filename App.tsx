@@ -1533,37 +1533,37 @@ const App: React.FC = () => {
     <div className="flex h-screen bg-[#F8F9FA] overflow-hidden">
       
       {/* SIDEBAR */}
-      <aside className="w-72 bg-white border-r border-slate-200 flex flex-col shrink-0 shadow-2xl z-20">
+      <aside className="w-72 bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 shadow-2xl z-20">
 
         {/* Logo Header */}
-        <div className="relative h-28 px-6 flex flex-col justify-center overflow-hidden group border-b border-slate-200 cursor-default select-none shrink-0">
-          <div className="absolute -top-8 -right-8 w-28 h-28 rounded-full bg-[#345d6e]/[0.07] transition-all duration-500 group-hover:scale-110" />
-          <div className="absolute -top-2 -right-2 w-14 h-14 rounded-full bg-[#345d6e]/[0.10] transition-all duration-500 group-hover:scale-110" />
-          <p className="text-5xl font-black italic text-gray-900 leading-none tracking-tight transition-all duration-500 group-hover:text-[#345d6e] relative z-10">CSGM</p>
+        <div className="relative h-28 px-6 flex flex-col justify-center overflow-hidden group border-b border-gray-200 cursor-default select-none shrink-0">
+          <div className="absolute -top-8 -right-8 w-28 h-28 rounded-full bg-[#1A56DB]/[0.07] transition-all duration-500 group-hover:scale-110" />
+          <div className="absolute -top-2 -right-2 w-14 h-14 rounded-full bg-[#1A56DB]/[0.10] transition-all duration-500 group-hover:scale-110" />
+          <p className="text-5xl font-black italic text-gray-900 leading-none tracking-tight transition-all duration-500 group-hover:text-[#1A56DB] relative z-10">CSGM</p>
           <div className="flex items-center gap-2 mt-2 relative z-10">
-            <div className="flex-1 h-px bg-slate-300" />
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.25em]">AMROUS</p>
-            <div className="flex-1 h-px bg-slate-300" />
+            <div className="flex-1 h-px bg-gray-300" />
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.25em]">AMROUS</p>
+            <div className="flex-1 h-px bg-gray-300" />
           </div>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto sidebar-scroll">
 
           {/* User Profile Card */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+          <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-[#345d6e] text-white flex items-center justify-center font-bold text-base shrink-0">
+              <div className="w-10 h-10 rounded-full bg-[#1A56DB] text-white flex items-center justify-center font-bold text-base shrink-0">
                 {currentUser.fullName.charAt(0)}
               </div>
               <div className="overflow-hidden flex-1 min-w-0">
-                <p className="text-sm font-bold text-slate-800 truncate">{currentUser.fullName}</p>
-                <span className="inline-block text-[10px] font-bold text-[#345d6e] bg-[#345d6e]/10 px-2 py-0.5 rounded-full uppercase tracking-wider mt-0.5">
+                <p className="text-sm font-bold text-gray-900 truncate">{currentUser.fullName}</p>
+                <span className="inline-block text-[10px] font-bold text-[#1A56DB] bg-[#1A56DB]/10 px-2 py-0.5 rounded-full uppercase tracking-wider mt-0.5">
                   {currentUser.role === 'ADMIN' ? 'ADMIN' : 'USER'}
                 </span>
               </div>
             </div>
             <button onClick={handleLogout}
-              className="btn-press w-full text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50 py-2 rounded-xl transition-all flex items-center justify-center gap-2">
+              className="btn-press w-full text-xs font-bold text-gray-500 hover:text-red-600 hover:bg-red-50 py-2 rounded-xl transition-all flex items-center justify-center gap-2">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
               Déconnexion
             </button>
@@ -1571,7 +1571,7 @@ const App: React.FC = () => {
 
           {/* Application Nav */}
           <div>
-            <p className="px-4 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Application</p>
+            <p className="px-4 mb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Application</p>
             <div className="space-y-1">
               {[
                 { view: 'search', label: 'Recherche Ciblée', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
@@ -1582,8 +1582,8 @@ const App: React.FC = () => {
                 <button key={item.view} onClick={() => setCurrentView(item.view as any)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
                     currentView === item.view
-                      ? 'bg-[#345d6e] text-white shadow-lg'
-                      : 'text-slate-600 hover:bg-slate-100'
+                      ? 'bg-[#1A56DB] text-white shadow-lg'
+                      : 'text-gray-500 hover:bg-gray-100'
                   }`}>
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}/></svg>
                   {item.label}
@@ -1595,13 +1595,13 @@ const App: React.FC = () => {
           {/* Administration (admin only) */}
           {currentUser.role === 'ADMIN' && (
             <div>
-              <p className="px-4 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Administration</p>
+              <p className="px-4 mb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Administration</p>
               <div className="space-y-1">
                 <button onClick={() => setCurrentView('users')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
                     currentView === 'users'
-                      ? 'bg-[#345d6e] text-white shadow-lg'
-                      : 'text-slate-600 hover:bg-slate-100'
+                      ? 'bg-[#1A56DB] text-white shadow-lg'
+                      : 'text-gray-500 hover:bg-gray-100'
                   }`}>
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                   Utilisateurs
@@ -1612,7 +1612,7 @@ const App: React.FC = () => {
 
           {/* Importation Documents */}
           <div>
-            <p className="px-4 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Importation Documents</p>
+            <p className="px-4 mb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Importation Documents</p>
             <div className="space-y-1">
               {[
                 { key: 'docPermis', label: 'Permis', icon: 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0' },
@@ -1621,7 +1621,7 @@ const App: React.FC = () => {
                 { key: 'docBrevetPers', label: 'Brevet Personnel', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
               ].map(item => (
                 <button key={item.key} onClick={() => openBulkImport(item.key as any, item.label)}
-                  className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-all active:scale-95">
+                  className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all active:scale-95">
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}/></svg>
                   {item.label}
                 </button>
@@ -1631,10 +1631,10 @@ const App: React.FC = () => {
 
           {/* Actions de Base */}
           <div>
-            <p className="px-4 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Actions de Base</p>
+            <p className="px-4 mb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Actions de Base</p>
             <div className="space-y-1">
               <button onClick={() => setActiveModal('ADD')}
-                className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-all active:scale-95">
+                className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all active:scale-95">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                 Nouveau Dossier
               </button>
@@ -1643,13 +1643,13 @@ const App: React.FC = () => {
                 <svg className={`w-4 h-4 shrink-0 ${isSyncing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 {isSyncing ? "Sauvegarde…" : "Sauvegarder"}
               </button>
-              {lastSaved && <p className="text-[10px] text-center text-slate-400 mt-1.5 italic">Synchro : {lastSaved}</p>}
+              {lastSaved && <p className="text-[10px] text-center text-gray-400 mt-1.5 italic">Synchro : {lastSaved}</p>}
             </div>
           </div>
 
           {/* Export Excel */}
           <div>
-            <p className="px-4 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Export Excel</p>
+            <p className="px-4 mb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Export Excel</p>
             <div className="space-y-1">
               {currentUser?.role === 'ADMIN' && (
                 <button onClick={handleExportZipPackage}
@@ -1659,7 +1659,7 @@ const App: React.FC = () => {
                 </button>
               )}
               <button onClick={handleExportAllExcel}
-                className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all active:scale-95">
+                className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 border border-gray-200 transition-all active:scale-95">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Exporter Excel (.xlsx)
               </button>
@@ -1668,15 +1668,15 @@ const App: React.FC = () => {
 
           {/* Import / Export SQLite */}
           <div>
-            <p className="px-4 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Import / Export SQLite</p>
+            <p className="px-4 mb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Import / Export SQLite</p>
             <div className="space-y-1">
               <button onClick={handleExportDB}
-                className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-[#345d6e] hover:bg-slate-100 transition-all active:scale-95">
+                className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-[#1A56DB] hover:bg-gray-100 transition-all active:scale-95">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Exporter (.db)
               </button>
               <button onClick={() => setActiveModal('IMPORT')}
-                className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-all active:scale-95">
+                className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all active:scale-95">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                 Importer (.db)
               </button>
@@ -1685,7 +1685,7 @@ const App: React.FC = () => {
 
           {/* Danger Zone */}
           {currentUser.role === 'ADMIN' && (
-            <div className="pt-3 border-t border-slate-200">
+            <div className="pt-3 border-t border-gray-200">
               <button onClick={() => setActiveModal('CONFIRM_CLEAR')}
                 className="btn-press w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all active:scale-95">
                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -1696,9 +1696,9 @@ const App: React.FC = () => {
         </nav>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-200 bg-slate-50/50 shrink-0">
-          <p className="text-[9px] text-slate-400 font-medium uppercase tracking-widest">Développé par</p>
-          <p className="text-xs font-bold text-[#345d6e] mt-0.5">By AMROUS Ayham</p>
+        <div className="px-6 py-4 border-t border-gray-200 bg-gray-100/50 shrink-0">
+          <p className="text-[9px] text-gray-400 font-medium uppercase tracking-widest">Développé par</p>
+          <p className="text-xs font-bold text-[#1A56DB] mt-0.5">By AMROUS Ayham</p>
         </div>
       </aside>
 
